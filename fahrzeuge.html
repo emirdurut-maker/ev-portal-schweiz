@@ -4,20 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SEO Meta Tags -->
     <meta name="description" content="Elektroauto-Datenbank Schweiz: 100+ Modelle mit Preisen, Reichweite, Batterie und technischen Daten. Vergleichen Sie Tesla, BMW, VW, Hyundai und mehr.">
     <meta name="keywords" content="Elektroauto Vergleich, EV Datenbank, Elektroauto Preise Schweiz, Tesla Model 3, BMW iX, VW ID.4, Reichweite Elektroauto">
     <meta name="author" content="EV Technical Insights">
     <meta name="robots" content="index, follow">
     
-    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://emirdurut-maker.github.io/ev-portal-schweiz/fahrzeuge.html">
     <meta property="og:title" content="Elektroauto-Datenbank Schweiz | 100+ Modelle vergleichen">
     <meta property="og:description" content="Vergleichen Sie 100+ Elektroautos mit Preisen, Reichweite und technischen Daten.">
     <meta property="og:image" content="https://emirdurut-maker.github.io/ev-portal-schweiz/og-image.png">
     
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Elektroauto-Datenbank Schweiz">
     <meta name="twitter:description" content="100+ Elektroautos vergleichen - Preise, Reichweite, Specs">
@@ -79,12 +76,12 @@
         .vehicles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
         
         /* Vehicle Card */
-        .vehicle-card{background:white;border-radius:12px;border:1px solid var(--stone);overflow:hidden;transition:all 0.3s}
+        .vehicle-card{background:white;border-radius:12px;border:1px solid var(--stone);overflow:hidden;transition:all 0.3s; display: flex; flex-direction: column;}
         .vehicle-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,43,91,0.15);border-color:var(--cyan)}
-        .vehicle-image{height:160px;background:linear-gradient(135deg,var(--navy-dark),var(--navy));display:flex;align-items:center;justify-content:center;position:relative}
+        .vehicle-image{height:200px; background:linear-gradient(135deg,var(--navy-dark),var(--navy));display:flex;align-items:center;justify-content:center;position:relative; overflow: hidden;}
         .vehicle-image-placeholder{font-size:56px;opacity:0.4}
         .vehicle-badge{position:absolute;top:12px;right:12px;background:var(--cyan);color:var(--navy);font-family:var(--font-mono);font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px}
-        .vehicle-content{padding:20px}
+        .vehicle-content{padding:20px; flex: 1; display: flex; flex-direction: column;}
         .vehicle-brand{font-family:var(--font-mono);font-size:12px;color:var(--cyan);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
         .vehicle-name{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:4px}
         .vehicle-variant{font-size:14px;color:var(--text-secondary);margin-bottom:16px}
@@ -93,7 +90,7 @@
         .spec-label{font-family:var(--font-mono);font-size:10px;color:var(--text-secondary);text-transform:uppercase}
         .spec-value{font-family:var(--font-mono);font-size:14px;font-weight:600;color:var(--anthracite)}
         .spec-value.highlight{color:var(--cyan)}
-        .vehicle-footer{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--stone)}
+        .vehicle-footer{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--stone); margin-top: auto;}
         .vehicle-price{font-size:22px;font-weight:800;color:var(--navy)}
         .vehicle-cta{padding:10px 20px;background:var(--navy);color:white;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s}
         .vehicle-cta:hover{background:var(--cyan);color:var(--navy)}
@@ -129,7 +126,6 @@
     </style>
 </head>
 <body>
-    <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobile-menu">
         <button class="mobile-menu-close" onclick="toggleMobileMenu()">✕</button>
         <a href="index.html">🏠 Home</a>
@@ -215,16 +211,19 @@
                 renderVehicles();
                 setupEventListeners();
             } catch(e) {
+                console.error(e);
                 document.getElementById('vehicles-grid').innerHTML = '<div class="no-results"><div class="no-results-icon">❌</div><h3>Fehler beim Laden</h3><p>Die Fahrzeugdaten konnten nicht geladen werden.</p></div>';
             }
         }
         
         function updateStats() {
             const brands = [...new Set(allVehicles.map(v => v.marke))];
-            document.getElementById('stat-total').textContent = allVehicles.length;
-            document.getElementById('stat-brands').textContent = brands.length;
-            document.getElementById('stat-cheapest').textContent = Math.min(...allVehicles.map(v => v.preis_chf)).toLocaleString('de-CH');
-            document.getElementById('stat-range').textContent = Math.max(...allVehicles.map(v => v.reichweite_wltp));
+            if(allVehicles.length > 0) {
+                document.getElementById('stat-total').textContent = allVehicles.length;
+                document.getElementById('stat-brands').textContent = brands.length;
+                document.getElementById('stat-cheapest').textContent = Math.min(...allVehicles.map(v => v.preis_chf)).toLocaleString('de-CH');
+                document.getElementById('stat-range').textContent = Math.max(...allVehicles.map(v => v.reichweite_wltp));
+            }
         }
         
         function populateBrandFilter() {
@@ -268,16 +267,21 @@
                 return;
             }
             
-            grid.innerHTML = filteredVehicles.map(v => `
+            grid.innerHTML = filteredVehicles.map(v => {
+                // HIER IST DIE REPARATUR:
+                // Wir suchen automatisch nach dem richtigen Namen für das Bild
+                const imageSrc = v.image || v.bild || v.img || v.url || v.src || v.photo;
+
+                return `
                 <article class="vehicle-card">
-<div class="vehicle-image">
-    ${v.image ? `<img src="${v.image}" alt="${v.marke || 'Fahrzeug'}" style="width:100%; height:auto;">` : `<span class="vehicle-image-placeholder">🚗</span>`}
-    <span class="vehicle-badge">${v.kategorie}</span>
-</div> <div class="vehicle-image">
-    <div style="font-size: 10px; color: red; background: white; position: absolute; z-index: 99;">
-        ${Object.keys(v).join(', ')}
-    </div>
-    ${v.image ? ... (hier dein existierender Code) ... }                   <div class="vehicle-content">
+                    <div class="vehicle-image">
+                        ${imageSrc 
+                            ? `<img src="${imageSrc}" alt="${v.marke} ${v.modell}" style="width:100%; height:100%; object-fit:cover; display:block;">` 
+                            : `<span class="vehicle-image-placeholder">🚗</span>`
+                        }
+                        <span class="vehicle-badge">${v.kategorie}</span>
+                    </div>
+                    <div class="vehicle-content">
                         <div class="vehicle-brand">${v.marke}</div>
                         <h2 class="vehicle-name">${v.modell}</h2>
                         <div class="vehicle-variant">${v.variante} · ${v.antrieb}</div>
@@ -295,7 +299,7 @@
                         </div>
                     </div>
                 </article>
-            `).join('');
+            `}).join('');
         }
         
         function showDetails(id) {
