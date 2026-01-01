@@ -378,8 +378,8 @@
                 <li><a href="fahrzeuge.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">🚗 Fahrzeuge</a></li>
                 <li><a href="news.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">📰 News</a></li>
                 <li><a href="laden.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">🔌 Laden</a></li>
+                <li><a href="ratgeber.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">💰 Ratgeber</a></li>
                 <li><a href="#verkaufszahlen">Verkaufszahlen</a></li>
-                <li><a href="#ratgeber">Ratgeber</a></li>
                 <li><a href="#service">Service</a></li>
             </ul>
             <button class="lang-toggle" onclick="toggleLanguage()">🇬🇧 EN</button>
@@ -663,21 +663,35 @@
                 <h2 class="section-title">Kauf & Finanzierung</h2>
             </div>
             
+            <!-- Buyer's Guide CTA -->
+            <div style="background: linear-gradient(135deg, #ffd166 0%, #f77f00 100%); padding: 3rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                <h3 style="color: white; font-size: 2rem; margin-bottom: 1rem;">💰 Der ultimative Kaufratgeber</h3>
+                <p style="color: white; opacity: 0.95; font-size: 1.2rem; margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+                    Kostenrechner, TCO-Vergleich, Finanzierung & Schweizer Steuervorteile. Treffen Sie die richtige Kaufentscheidung!
+                </p>
+                <a href="ratgeber.html" class="btn" style="font-size: 1.2rem; padding: 1rem 2.5rem; background: white; color: var(--dark); display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    🧮 Zum Kaufratgeber
+                </a>
+            </div>
+            
             <div class="cards-grid">
-                <div class="card">
+                <div class="card" onclick="window.location.href='ratgeber.html'" style="cursor: pointer;">
                     <div class="card-icon">💳</div>
                     <h3>Initialkosten</h3>
                     <p>Kaufpreis, Garantie, Grundausstattung - vollständiger Kostenvergleich nach Fahrzeugklassen.</p>
+                    <div style="margin-top: 1rem; color: #f77f00; font-weight: bold;">→ Kosten berechnen</div>
                 </div>
-                <div class="card">
+                <div class="card" onclick="window.location.href='ratgeber.html'" style="cursor: pointer;">
                     <div class="card-icon">📈</div>
                     <h3>Laufende Kosten</h3>
                     <p>Service, Reifen, Versicherung, Gebühren - alle wiederkehrenden Kosten im Überblick.</p>
+                    <div style="margin-top: 1rem; color: #f77f00; font-weight: bold;">→ Mehr erfahren</div>
                 </div>
-                <div class="card">
+                <div class="card" onclick="window.location.href='ratgeber.html'" style="cursor: pointer;">
                     <div class="card-icon">🎯</div>
                     <h3>Kaufberatung</h3>
                     <p>Individueller Ratgeber für Ihren EV-Kauf - basierend auf Ihren Anforderungen und Budget.</p>
+                    <div style="margin-top: 1rem; color: #f77f00; font-weight: bold;">→ Checkliste ansehen</div>
                 </div>
             </div>
         </section>
