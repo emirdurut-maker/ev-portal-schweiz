@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Impressum - EV Technical Insights">
+    <meta name="robots" content="noindex, follow">
+    <title>Impressum | EV Technical Insights</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--navy:#002B5B;--navy-dark:#001a38;--cyan:#00F2FF;--cyan-dim:rgba(0,242,255,0.15);--surface:#F9FAFB;--stone:#E5E7EB;--anthracite:#1F2937;--text-secondary:#6B7280;--font-headline:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace}
+        body{font-family:var(--font-headline);background:var(--surface);color:var(--anthracite)}
+        .container{max-width:800px;margin:0 auto;padding:0 24px}
+        
+        /* Header */
+        .header{background:var(--navy);color:white;position:sticky;top:0;z-index:1000}
+        .header-main{display:flex;justify-content:space-between;align-items:center;padding:16px 0;max-width:1280px;margin:0 auto;padding-left:24px;padding-right:24px}
+        .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:white}
+        .logo-icon{width:44px;height:44px;background:var(--cyan);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px}
+        .logo-text{font-weight:800;font-size:20px}.logo-text span{color:var(--cyan)}
+        .nav-links{display:flex;list-style:none;gap:8px}
+        .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:500;padding:10px 16px;border-radius:6px;transition:all 0.2s}
+        .nav-links a:hover{color:var(--cyan);background:rgba(0,242,255,0.1)}
+        .mobile-menu-btn{display:none;background:none;border:none;color:white;font-size:28px;cursor:pointer;padding:8px}
+        
+        /* Page Header */
+        .page-header{background:linear-gradient(135deg,var(--navy),var(--navy-dark));color:white;padding:60px 0}
+        .page-header h1{font-size:36px;margin-bottom:8px}
+        .page-subtitle{font-family:var(--font-mono);font-size:14px;color:rgba(255,255,255,0.7)}
+        
+        /* Content */
+        .content{padding:60px 0;background:white}
+        .content-inner{background:white;border-radius:16px}
+        .content h2{font-size:24px;color:var(--navy);margin:40px 0 16px;padding-bottom:12px;border-bottom:2px solid var(--stone)}
+        .content h2:first-child{margin-top:0}
+        .content h3{font-size:18px;color:var(--navy);margin:24px 0 12px}
+        .content p{font-size:15px;line-height:1.8;color:var(--anthracite);margin-bottom:16px}
+        .content ul{margin:16px 0;padding-left:24px}
+        .content li{font-size:15px;line-height:1.8;margin-bottom:8px}
+        .content a{color:var(--cyan);text-decoration:none}
+        .content a:hover{text-decoration:underline}
+        .info-box{background:var(--cyan-dim);border-left:4px solid var(--cyan);padding:20px;border-radius:0 8px 8px 0;margin:24px 0}
+        .info-box p{margin:0;font-size:14px}
+        
+        /* Footer */
+        .footer{background:var(--navy-dark);color:white;padding:40px 0 24px}
+        .footer-content{display:flex;justify-content:space-between;align-items:center;max-width:1280px;margin:0 auto;padding:0 24px}
+        .footer-copyright{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5)}
+        .footer-links{display:flex;gap:24px}
+        .footer-links a{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none}
+        .footer-links a:hover{color:var(--cyan)}
+        
+        /* Mobile Menu */
+        .mobile-menu{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--navy);z-index:999;display:flex;flex-direction:column;padding:80px 24px 24px;transform:translateX(100%);transition:transform 0.3s}
+        .mobile-menu.active{transform:translateX(0)}
+        .mobile-menu a{color:white;text-decoration:none;font-size:20px;font-weight:600;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.1)}
+        .mobile-menu-close{position:absolute;top:20px;right:20px;background:none;border:none;color:white;font-size:32px;cursor:pointer}
+        
+        @media(max-width:1024px){.nav-links{display:none}.mobile-menu-btn{display:block}}
+        @media(max-width:768px){.page-header h1{font-size:28px}.footer-content{flex-direction:column;gap:16px;text-align:center}}
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <button class="mobile-menu-close" onclick="toggleMobileMenu()">✕</button>
+        <a href="index.html">🏠 Home</a>
+        <a href="dashboard.html">📊 Dashboard</a>
+        <a href="fahrzeuge.html">🔋 Fahrzeuge</a>
+        <a href="news.html">📰 News</a>
+        <a href="laden.html">⚡ Laden</a>
+        <a href="ratgeber.html">📋 Ratgeber</a>
+        <a href="service.html">🔧 Service</a>
+        <a href="reichweite.html">📏 Reichweite</a>
+    </div>
+
+    <header class="header">
+        <div class="header-main">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">⚡</div>
+                <div class="logo-text">EV Technical <span>Insights</span></div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="dashboard.html">📊 Dashboard</a></li>
+                <li><a href="fahrzeuge.html">🔋 Fahrzeuge</a></li>
+                <li><a href="news.html">📰 News</a></li>
+                <li><a href="laden.html">⚡ Laden</a></li>
+                <li><a href="ratgeber.html">📋 Ratgeber</a></li>
+            </ul>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>📄 Impressum</h1>
+            <p class="page-subtitle">Rechtliche Informationen gemäss Schweizer Recht</p>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container">
+            <div class="content-inner">
+                
+                <h2>Kontaktadresse</h2>
+                <p>
+                    <strong>EV Technical Insights</strong><br>
+                    [Ihr Name / Firma]<br>
+                    [Strasse und Hausnummer]<br>
+                    [PLZ Ort]<br>
+                    Schweiz
+                </p>
+                <p>
+                    E-Mail: <a href="mailto:info@ev-technical-insights.ch">info@ev-technical-insights.ch</a>
+                </p>
+                
+                <div class="info-box">
+                    <p>⚠️ <strong>Hinweis:</strong> Bitte ersetzen Sie die Platzhalter [in Klammern] mit Ihren echten Kontaktdaten, bevor Sie diese Seite veröffentlichen.</p>
+                </div>
+
+                <h2>Vertretungsberechtigte Person(en)</h2>
+                <p>[Ihr vollständiger Name], Inhaber/in</p>
+
+                <h2>Handelsregistereintrag</h2>
+                <p>
+                    Eingetragener Firmenname: [Falls vorhanden]<br>
+                    Handelsregister: [Kanton]<br>
+                    UID-Nummer: CHE-[XXX.XXX.XXX]
+                </p>
+                <p><em>Oder falls nicht im Handelsregister eingetragen:</em></p>
+                <p>Diese Website wird als privates Informationsportal betrieben und ist nicht im Handelsregister eingetragen.</p>
+
+                <h2>Mehrwertsteuernummer</h2>
+                <p>CHE-[XXX.XXX.XXX] MWST</p>
+                <p><em>Oder:</em> Nicht mehrwertsteuerpflichtig.</p>
+
+                <h2>Haftungsausschluss</h2>
+                <p>Der Autor übernimmt keinerlei Gewähr hinsichtlich der inhaltlichen Richtigkeit, Genauigkeit, Aktualität, Zuverlässigkeit und Vollständigkeit der Informationen.</p>
+                <p>Haftungsansprüche gegen den Autor wegen Schäden materieller oder immaterieller Art, welche aus dem Zugriff oder der Nutzung bzw. Nichtnutzung der veröffentlichten Informationen, durch Missbrauch der Verbindung oder durch technische Störungen entstanden sind, werden ausgeschlossen.</p>
+                <p>Alle Angebote sind unverbindlich. Der Autor behält es sich ausdrücklich vor, Teile der Seiten oder das gesamte Angebot ohne gesonderte Ankündigung zu verändern, zu ergänzen, zu löschen oder die Veröffentlichung zeitweise oder endgültig einzustellen.</p>
+
+                <h2>Haftung für Links</h2>
+                <p>Verweise und Links auf Webseiten Dritter liegen ausserhalb unseres Verantwortungsbereichs. Es wird jegliche Verantwortung für solche Webseiten abgelehnt. Der Zugriff und die Nutzung solcher Webseiten erfolgen auf eigene Gefahr des Nutzers oder der Nutzerin.</p>
+
+                <h2>Urheberrechte</h2>
+                <p>Die Urheber- und alle anderen Rechte an Inhalten, Bildern, Fotos oder anderen Dateien auf der Website gehören ausschliesslich dem Betreiber dieser Website oder den speziell genannten Rechtsinhabern. Für die Reproduktion jeglicher Elemente ist die schriftliche Zustimmung der Urheberrechtsträger im Voraus einzuholen.</p>
+
+                <h2>Datenquellen</h2>
+                <p>Die auf dieser Website dargestellten Marktdaten stammen aus öffentlich zugänglichen Quellen, insbesondere:</p>
+                <ul>
+                    <li>Auto-Suisse (Zulassungsstatistiken)</li>
+                    <li>Bundesamt für Statistik (BFS)</li>
+                    <li>European Automobile Manufacturers' Association (ACEA)</li>
+                    <li>Hersteller-Websites (Fahrzeugdaten)</li>
+                    <li>Diverse RSS-Feeds (News)</li>
+                </ul>
+                <p>Wir bemühen uns um Aktualität und Korrektheit, können jedoch keine Garantie für die Richtigkeit der Daten übernehmen.</p>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-copyright">© 2025 EV Technical Insights. Alle Rechte vorbehalten.</p>
+            <div class="footer-links">
+                <a href="impressum.html">Impressum</a>
+                <a href="datenschutz.html">Datenschutz</a>
+                <a href="index.html">Startseite</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+            document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
+        }
+    </script>
+</body>
+</html>
