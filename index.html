@@ -376,8 +376,8 @@
             <ul class="nav-links">
                 <li><a href="dashboard.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">📊 Dashboard</a></li>
                 <li><a href="fahrzeuge.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">🚗 Fahrzeuge</a></li>
+                <li><a href="news.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">📰 News</a></li>
                 <li><a href="#verkaufszahlen">Verkaufszahlen</a></li>
-                <li><a href="#news">News</a></li>
                 <li><a href="#laden">Laden</a></li>
                 <li><a href="#ratgeber">Ratgeber</a></li>
                 <li><a href="#service">Service</a></li>
@@ -474,28 +474,42 @@
                 <h2 class="section-title">Aktuelle News & Artikel</h2>
             </div>
             
+            <!-- News Hub CTA -->
+            <div style="background: linear-gradient(135deg, #ef476f 0%, #d62828 100%); padding: 3rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                <h3 style="color: white; font-size: 2rem; margin-bottom: 1rem;">📺 News & Media Hub</h3>
+                <p style="color: white; opacity: 0.95; font-size: 1.2rem; margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+                    Videos, Artikel & Tests aus der Schweiz, Deutschland, Österreich und dem Balkan. Filtern Sie nach Region und Kategorie.
+                </p>
+                <a href="news.html" class="btn" style="font-size: 1.2rem; padding: 1rem 2.5rem; background: white; color: var(--dark); display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    🎬 Zum News Hub
+                </a>
+            </div>
+            
             <div class="article-list">
                 <h3 style="margin-bottom: 1.5rem;">🔥 Meistgelesene Artikel (7 Tage)</h3>
-                <div class="article-item">
+                <div class="article-item" onclick="window.location.href='news.html'" style="cursor: pointer;">
                     <div class="article-rank">1</div>
                     <div class="article-content">
                         <h4>Tesla Model 3 Highland - Erste Fahreindrücke aus der Schweiz</h4>
                         <p class="article-meta">Veröffentlicht: Vor 2 Tagen • 15.234 Aufrufe • 🇩🇪 🇨🇭</p>
                     </div>
                 </div>
-                <div class="article-item">
+                <div class="article-item" onclick="window.location.href='news.html'" style="cursor: pointer;">
                     <div class="article-rank">2</div>
                     <div class="article-content">
                         <h4>Ladeinfrastruktur 2025: Neue Schnelllade-Hubs in der Schweiz</h4>
                         <p class="article-meta">Veröffentlicht: Vor 5 Tagen • 12.891 Aufrufe • 🇨🇭</p>
                     </div>
                 </div>
-                <div class="article-item">
+                <div class="article-item" onclick="window.location.href='news.html'" style="cursor: pointer;">
                     <div class="article-rank">3</div>
                     <div class="article-content">
                         <h4>BYD Seal im Langzeittest: 30.000 km Erfahrungsbericht</h4>
                         <p class="article-meta">Veröffentlicht: Vor 1 Woche • 10.456 Aufrufe • 🇭🇷</p>
                     </div>
+                </div>
+                <div style="text-align: center; padding: 1.5rem;">
+                    <a href="news.html" style="color: var(--primary); font-weight: bold; text-decoration: none;">→ Alle Artikel & Videos ansehen</a>
                 </div>
             </div>
         </section>
