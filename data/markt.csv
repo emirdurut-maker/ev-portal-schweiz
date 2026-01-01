@@ -1,0 +1,99 @@
+monat,jahr,total,bev,bev_anteil,phev,phev_anteil,hev,hev_anteil,ice,ice_anteil
+01,2024,21456,3200,14.9,1850,8.6,3200,14.9,13206,61.6
+02,2024,22134,3650,16.5,1920,8.7,3350,15.1,13214,59.7
+03,2024,24567,4100,16.7,2100,8.5,3580,14.6,14787,60.2
+04,2024,23890,4300,18.0,2200,9.2,3620,15.2,13770,57.6
+05,2024,25123,4800,19.1,2350,9.4,3750,14.9,14223,56.6
+06,2024,26789,5200,19.4,2480,9.3,3890,14.5,15219,56.8
+07,2024,25456,4900,19.2,2380,9.4,3780,14.9,14396,56.5
+08,2024,26234,5100,19.4,2450,9.3,3850,14.7,14834,56.6
+09,2024,27456,5600,20.4,2520,9.2,3920,14.3,15416,56.1
+10,2024,28123,5800,20.6,2580,9.2,3980,14.2,15765,56.0
+11,2024,29345,6200,21.1,2650,9.0,4050,13.8,16445,56.1
+12,2024,30567,6800,22.3,2720,8.9,4120,13.5,16927,55.3
+```
+
+5. Unten bei **"Commit changes"**:
+   - Commit message: `Add market data CSV`
+   - Klicken Sie auf **"Commit changes"**
+
+---
+
+### **Schritt 2: Marken-CSV erstellen**
+
+1. Klicken Sie auf **"Add file"** → **"Create new file"**
+
+2. Dateiname:
+```
+   data/marken.csv
+rang,marke,verkaeufe,anteil,trend
+1,Tesla,1612,23.7,+12.4
+2,BMW,623,9.2,+8.2
+3,Mercedes,399,5.9,+5.7
+4,VW,533,7.8,-3.2
+5,Hyundai,549,8.1,+15.3
+6,Audi,245,3.6,+2.1
+7,BYD,417,6.1,+45.2
+8,Skoda,241,3.5,+4.8
+9,Porsche,172,2.5,+6.3
+10,Volvo,156,2.3,+3.1
+```
+
+4. Commit message: `Add brands data CSV`
+5. **"Commit changes"**
+
+---
+
+### **Schritt 3: Modelle-CSV erstellen**
+
+1. **"Add file"** → **"Create new file"**
+
+2. Dateiname:
+```
+   data/modelle.csv
+rang,marke,modell,verkaeufe,anteil
+1,Tesla,Model Y,1045,15.4
+2,Tesla,Model 3,567,8.3
+3,Hyundai,Ioniq 5,348,5.1
+4,BMW,iX3,345,5.1
+5,VW,ID.4,328,4.8
+6,Hyundai,Ioniq 6,201,3.0
+7,BMW,i4,278,4.1
+8,Mercedes,EQA,267,3.9
+9,Skoda,Enyaq,241,3.5
+10,BYD,Atto 3,228,3.4
+```
+
+4. Commit message: `Add models data CSV`
+5. **"Commit changes"**
+
+---
+
+### **Schritt 4: Dashboard aktualisieren**
+
+1. Navigieren Sie zur Datei `dashboard.html` in Ihrem Repository
+
+2. Klicken Sie auf das **✏️ Stift-Symbol** (Edit)
+
+3. **Alles markieren** (Strg+A / Cmd+A) und **löschen**
+
+4. Laden Sie die neue `dashboard.html` Datei herunter, die ich erstellt habe, und kopieren Sie den gesamten Inhalt hinein
+
+5. Commit message: `Update dashboard with CSV data loading`
+6. **"Commit changes"**
+
+---
+
+### **Schritt 5: Prüfen ob alles funktioniert**
+
+1. Gehen Sie zu Ihrem Repository
+
+2. Prüfen Sie, dass diese Struktur existiert:
+```
+   📁 ev-portal-schweiz
+   ├── 📄 dashboard.html
+   ├── 📁 data
+   │   ├── 📄 markt.csv
+   │   ├── 📄 marken.csv
+   │   └── 📄 modelle.csv
+   └── ... (andere Dateien)
