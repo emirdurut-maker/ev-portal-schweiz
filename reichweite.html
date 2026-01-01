@@ -3,277 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Elektroauto Reichweiten-Rechner: Berechnen Sie die reale Reichweite basierend auf Temperatur, Geschwindigkeit und Fahrprofil. WLTP vs. Realverbrauch.">
-    <meta name="keywords" content="Elektroauto Reichweite, EV Reichweiten-Rechner, WLTP Reichweite, Realverbrauch Elektroauto, Winter Reichweite">
-    <meta name="author" content="EV Technical Insights">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://emirdurut-maker.github.io/ev-portal-schweiz/reichweite.html">
-    <meta property="og:title" content="EV Reichweiten-Rechner | EV Technical Insights">
-    <meta property="og:description" content="Berechnen Sie die reale Reichweite Ihres Elektroautos.">
-    
-    <link rel="canonical" href="https://emirdurut-maker.github.io/ev-portal-schweiz/reichweite.html">
-    <title>Reichweiten-Rechner | EV Technical Insights</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <title>Reichweiten-Analyse | EV Technical Insights</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        :root{--navy:#002B5B;--navy-dark:#001a38;--cyan:#00F2FF;--cyan-dim:rgba(0,242,255,0.15);--surface:#F9FAFB;--stone:#E5E7EB;--anthracite:#1F2937;--text-secondary:#6B7280;--success:#10B981;--warning:#F59E0B;--danger:#EF4444;--font-headline:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace}
-        body{font-family:var(--font-headline);background:var(--surface);color:var(--anthracite)}
-        .container{max-width:1280px;margin:0 auto;padding:0 24px}
+        /* Basis-Styles (identisch zu den anderen Seiten für Konsistenz) */
+        :root{--navy:#002B5B;--cyan:#00F2FF;--surface:#F9FAFB;--anthracite:#1F2937;}
+        body{font-family:'Inter',sans-serif;background:var(--surface);color:var(--anthracite);margin:0;padding:0;}
+        .container{max-width:1280px;margin:0 auto;padding:0 24px;}
         
-        .header{background:var(--navy);color:white;position:sticky;top:0;z-index:1000}
-        .header-main{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
-        .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:white}
-        .logo-icon{width:44px;height:44px;background:var(--cyan);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px}
-        .logo-text{font-weight:800;font-size:20px}.logo-text span{color:var(--cyan)}
-        .nav-links{display:flex;list-style:none;gap:8px}
-        .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:500;padding:10px 16px;border-radius:6px;transition:all 0.2s}
-        .nav-links a:hover{color:var(--cyan);background:rgba(0,242,255,0.1)}
-        .nav-links a.active{background:var(--cyan);color:var(--navy)}
-        .mobile-menu-btn{display:none;background:none;border:none;color:white;font-size:28px;cursor:pointer;min-width:48px;min-height:48px}
+        /* Header & Nav (Kopie von Dashboard) */
+        .header{background:var(--navy);color:white;position:sticky;top:0;z-index:1000;}
+        .header-main{display:flex;justify-content:space-between;align-items:center;padding:16px 0;}
+        .nav-links{display:flex;list-style:none;gap:24px;}
+        .nav-links a{color:rgba(255,255,255,0.8);text-decoration:none;font-weight:500;}
+        .nav-links a.active{color:var(--cyan);font-weight:700;}
         
-        .mobile-menu{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--navy);z-index:999;display:flex;flex-direction:column;padding:80px 24px 24px;transform:translateX(100%);transition:transform 0.3s}
-        .mobile-menu.active{transform:translateX(0)}
-        .mobile-menu a{color:white;text-decoration:none;font-size:18px;font-weight:600;padding:16px;border-bottom:1px solid rgba(255,255,255,0.1);min-height:56px;display:flex;align-items:center}
-        .mobile-menu a:hover{color:var(--cyan)}
-        .mobile-menu-close{position:absolute;top:16px;right:16px;background:none;border:none;color:white;font-size:32px;cursor:pointer;min-width:48px;min-height:48px;display:flex;align-items:center;justify-content:center}
+        .page-header{background:linear-gradient(135deg,var(--navy),#001a38);color:white;padding:60px 0;}
+        h1{font-size:36px;margin-bottom:10px;}
         
-        .page-header{background:linear-gradient(135deg,var(--navy),var(--navy-dark));color:white;padding:48px 0}
-        .page-header h1{font-size:clamp(28px,5vw,36px);margin-bottom:8px}
-        .page-subtitle{font-family:var(--font-mono);font-size:14px;color:rgba(255,255,255,0.7)}
+        /* Charts Area */
+        .chart-section{padding:60px 0;}
+        .chart-container{background:white;border-radius:16px;padding:24px;border:1px solid #E5E7EB;margin-bottom:40px;height:400px;}
         
-        .section{padding:60px 0}
-        .section:nth-child(even){background:white}
-        .section-title{font-size:clamp(24px,4vw,32px);font-weight:800;color:var(--navy);margin-bottom:16px;text-align:center}
-        .section-subtitle{font-size:16px;color:var(--text-secondary);text-align:center;max-width:600px;margin:0 auto 40px}
+        /* Top List Style */
+        .ranking-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;}
+        .rank-card{background:white;padding:24px;border-radius:12px;border-left:4px solid var(--navy);box-shadow:0 4px 6px rgba(0,0,0,0.05);}
+        .rank-card.winner{border-left-color:var(--cyan);}
+        .rank-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:bold;color:var(--navy);}
+        .rank-label{font-size:14px;color:#666;margin-bottom:8px;}
         
-        /* Calculator */
-        .calculator{max-width:800px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:32px}
-        .calc-inputs{background:white;border-radius:16px;padding:32px;border:1px solid var(--stone)}
-        .calc-result{background:linear-gradient(135deg,var(--navy),var(--navy-dark));border-radius:16px;padding:32px;color:white;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
-        
-        .input-group{margin-bottom:24px}
-        .input-group label{display:block;font-size:14px;font-weight:600;color:var(--navy);margin-bottom:8px}
-        .input-group input,.input-group select{width:100%;padding:14px 16px;border:2px solid var(--stone);border-radius:8px;font-size:16px;font-family:var(--font-headline);min-height:50px}
-        .input-group input:focus,.input-group select:focus{outline:none;border-color:var(--cyan)}
-        .input-hint{font-size:12px;color:var(--text-secondary);margin-top:6px}
-        
-        .range-slider{width:100%;margin:8px 0}
-        .range-value{font-family:var(--font-mono);font-size:14px;color:var(--cyan);font-weight:600}
-        
-        .result-label{font-size:14px;opacity:0.7;margin-bottom:8px}
-        .result-value{font-family:var(--font-mono);font-size:clamp(48px,10vw,72px);font-weight:800;color:var(--cyan);line-height:1}
-        .result-unit{font-size:24px;opacity:0.7;margin-left:8px}
-        .result-info{margin-top:24px;font-size:14px;opacity:0.8;line-height:1.6}
-        .result-badge{display:inline-block;padding:8px 16px;border-radius:20px;font-family:var(--font-mono);font-size:12px;font-weight:600;margin-top:16px}
-        .badge-good{background:rgba(16,185,129,0.2);color:#10B981}
-        .badge-medium{background:rgba(245,158,11,0.2);color:#F59E0B}
-        .badge-low{background:rgba(239,68,68,0.2);color:#EF4444}
-        
-        /* Info Cards */
-        .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:40px}
-        .info-card{background:white;border-radius:12px;padding:24px;border:1px solid var(--stone)}
-        .info-card h4{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:8px}
-        .info-card p{font-size:14px;color:var(--text-secondary);line-height:1.6}
-        
-        /* Factors Table */
-        .factors-table{overflow-x:auto;-webkit-overflow-scrolling:touch}
-        .factors-table table{width:100%;border-collapse:collapse;background:white;border-radius:12px;overflow:hidden;border:1px solid var(--stone);min-width:500px}
-        .factors-table th,.factors-table td{padding:16px 20px;text-align:left;border-bottom:1px solid var(--stone)}
-        .factors-table th{background:var(--navy);color:white;font-family:var(--font-mono);font-size:12px}
-        .impact-high{color:var(--danger);font-weight:600}
-        .impact-medium{color:var(--warning);font-weight:600}
-        .impact-low{color:var(--success);font-weight:600}
-        
-        .footer{background:var(--navy-dark);color:white;padding:40px 0 24px}
-        .footer-content{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px}
-        .footer-links{display:flex;gap:24px}
-        .footer-links a{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;padding:8px 0;min-height:44px;display:inline-flex;align-items:center}
-        .footer-links a:hover{color:var(--cyan)}
-        .footer-copyright{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5)}
-        
-        @media(max-width:1024px){.nav-links{display:none}.mobile-menu-btn{display:flex;align-items:center;justify-content:center}}
-        @media(max-width:768px){.calculator{grid-template-columns:1fr}.footer-content{flex-direction:column;text-align:center}}
+        /* Mobile Menu */
+        .mobile-menu-btn{display:none;background:none;border:none;color:white;font-size:24px;}
+        @media(max-width:768px){.nav-links{display:none}.mobile-menu-btn{display:block}}
     </style>
 </head>
 <body>
-    <div class="mobile-menu" id="mobile-menu">
-        <button class="mobile-menu-close" onclick="toggleMobileMenu()">✕</button>
-        <a href="index.html">🏠 Home</a>
-        <a href="dashboard.html">📊 Dashboard</a>
-        <a href="fahrzeuge.html">🔋 Fahrzeuge</a>
-        <a href="news.html">📰 News</a>
-        <a href="laden.html">⚡ Laden</a>
-        <a href="ratgeber.html">📋 Ratgeber</a>
-        <a href="service.html">🔧 Service</a>
-        <a href="reichweite.html">📏 Reichweite</a>
-    </div>
 
     <header class="header"><div class="container"><div class="header-main">
-        <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
+        <div style="font-weight:800;font-size:20px;">EV Technical <span style="color:var(--cyan)">Insights</span></div>
         <ul class="nav-links">
             <li><a href="dashboard.html">📊 Dashboard</a></li>
             <li><a href="fahrzeuge.html">🔋 Fahrzeuge</a></li>
             <li><a href="news.html">📰 News</a></li>
-            <li><a href="laden.html">⚡ Laden</a></li>
+            <li><a href="laden.html">⚡ Preise</a></li>
             <li><a href="ratgeber.html">📋 Ratgeber</a></li>
-            <li><a href="service.html">🔧 Service</a></li>
-            <li><a href="reichweite.html" class="active">📏 Reichweite</a></li>
+            <li><a href="reichweite.html" class="active">📏 Analyse</a></li>
         </ul>
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <button class="mobile-menu-btn">☰</button>
     </div></div></header>
 
     <section class="page-header"><div class="container">
-        <h1>📏 Reichweiten-Rechner</h1>
-        <p class="page-subtitle">Berechnen Sie die reale Reichweite Ihres Elektroautos</p>
+        <h1>📏 Reichweiten-Analyse</h1>
+        <p>Daten statt Angst: Wie weit kommen E-Autos wirklich und wohin geht der Trend?</p>
     </div></section>
 
-    <section class="section"><div class="container">
-        <h2 class="section-title">🧮 Reichweite berechnen</h2>
-        <p class="section-subtitle">Geben Sie die Parameter ein und sehen Sie die geschätzte Reichweite</p>
+    <section class="chart-section"><div class="container">
         
-        <div class="calculator">
-            <div class="calc-inputs">
-                <div class="input-group">
-                    <label>🔋 Batterie-Kapazität (kWh)</label>
-                    <input type="number" id="battery" value="75" min="20" max="150">
-                    <p class="input-hint">Nutzbare Kapazität Ihres Akkus</p>
-                </div>
-                
-                <div class="input-group">
-                    <label>📊 WLTP-Verbrauch (kWh/100km)</label>
-                    <input type="number" id="consumption" value="17" min="10" max="35" step="0.1">
-                    <p class="input-hint">Herstellerangabe im Datenblatt</p>
-                </div>
-                
-                <div class="input-group">
-                    <label>🌡️ Temperatur: <span class="range-value" id="temp-value">20°C</span></label>
-                    <input type="range" class="range-slider" id="temperature" min="-20" max="35" value="20">
-                    <p class="input-hint">Kälte erhöht den Verbrauch deutlich</p>
-                </div>
-                
-                <div class="input-group">
-                    <label>🚗 Geschwindigkeit: <span class="range-value" id="speed-value">100 km/h</span></label>
-                    <input type="range" class="range-slider" id="speed" min="50" max="160" value="100">
-                    <p class="input-hint">Höhere Geschwindigkeit = mehr Verbrauch</p>
-                </div>
-                
-                <div class="input-group">
-                    <label>🛣️ Fahrprofil</label>
-                    <select id="profile">
-                        <option value="city">Stadt (optimal)</option>
-                        <option value="mixed" selected>Gemischt</option>
-                        <option value="highway">Autobahn</option>
-                        <option value="mountain">Bergfahrt</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="calc-result">
-                <div class="result-label">Geschätzte Reichweite</div>
-                <div><span class="result-value" id="result-km">441</span><span class="result-unit">km</span></div>
-                <div class="result-badge badge-good" id="result-badge">✓ Sehr gut</div>
-                <p class="result-info" id="result-info">Bei optimalen Bedingungen. Realer Verbrauch: ~17.0 kWh/100km</p>
-            </div>
+        <h2>💰 Preis-Leistungs-Matrix</h2>
+        <p style="margin-bottom:20px; color:#666;">Welches Auto bietet die meiste Reichweite fürs Geld? Autos oben links sind die "Preis-Leistungs-Sieger".</p>
+        <div class="chart-container">
+            <canvas id="scatterChart"></canvas>
         </div>
-    </div></section>
 
-    <section class="section"><div class="container">
-        <h2 class="section-title">📉 Was beeinflusst die Reichweite?</h2>
-        <div class="factors-table">
-            <table>
-                <thead><tr><th>Faktor</th><th>Einfluss</th><th>Reichweite-Änderung</th></tr></thead>
-                <tbody>
-                    <tr><td>❄️ Kälte (-10°C)</td><td class="impact-high">Hoch</td><td>-20% bis -35%</td></tr>
-                    <tr><td>🚀 Hohe Geschwindigkeit (140+)</td><td class="impact-high">Hoch</td><td>-25% bis -40%</td></tr>
-                    <tr><td>🏔️ Bergfahrt</td><td class="impact-medium">Mittel</td><td>-15% bis -25%</td></tr>
-                    <tr><td>❄️ Heizung/Klima</td><td class="impact-medium">Mittel</td><td>-10% bis -20%</td></tr>
-                    <tr><td>🛞 Reifendruck niedrig</td><td class="impact-low">Gering</td><td>-5% bis -10%</td></tr>
-                    <tr><td>🎵 Verbraucher (Audio, etc.)</td><td class="impact-low">Gering</td><td>-2% bis -5%</td></tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="info-grid">
-            <div class="info-card"><h4>❄️ Winter-Tipp</h4><p>Vorkonditionieren Sie Ihr Auto während es noch am Ladegerät hängt. So nutzen Sie Netzstrom statt Akkuenergie für die Heizung.</p></div>
-            <div class="info-card"><h4>🚗 Fahrweise</h4><p>Vorausschauendes Fahren und starke Rekuperation können die Reichweite um 10-20% erhöhen.</p></div>
-            <div class="info-card"><h4>🛞 Reifen</h4><p>Spezielle EV-Reifen haben weniger Rollwiderstand. Korrekter Luftdruck spart bis zu 5% Energie.</p></div>
-        </div>
-    </div></section>
+        <h2 style="margin-top:60px;">🏆 Die "Reichweiten-Könige" (Preis pro km)</h2>
+        <div class="ranking-grid" id="efficiency-grid">
+            </div>
 
-    <footer class="footer"><div class="container"><div class="footer-content">
-        <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
-        <div class="footer-links"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a></div>
-        <p class="footer-copyright">© 2025 EV Technical Insights</p>
-    </div></div></footer>
+        <h2 style="margin-top:60px;">📈 Die Reichweiten-Evolution (2014 - 2026)</h2>
+        <p style="margin-bottom:20px; color:#666;">Der technologische Fortschritt im historischen Vergleich.</p>
+        <div class="chart-container">
+            <canvas id="trendChart"></canvas>
+        </div>
+
+    </div></section>
 
     <script>
-        function toggleMobileMenu(){document.getElementById('mobile-menu').classList.toggle('active');document.body.style.overflow=document.getElementById('mobile-menu').classList.contains('active')?'hidden':'';}
-        
-        // Calculator Logic
-        const battery = document.getElementById('battery');
-        const consumption = document.getElementById('consumption');
-        const temperature = document.getElementById('temperature');
-        const speed = document.getElementById('speed');
-        const profile = document.getElementById('profile');
-        
-        function calculate() {
-            const bat = parseFloat(battery.value);
-            const cons = parseFloat(consumption.value);
-            const temp = parseInt(temperature.value);
-            const spd = parseInt(speed.value);
-            const prof = profile.value;
+        // Datenquellen
+        const FILES = {
+            fahrzeuge: './data/fahrzeuge.csv',
+            trends: './data/range_trends.csv'
+        };
+
+        async function init() {
+            const [fahrzeuge, trends] = await Promise.all([
+                loadCSV(FILES.fahrzeuge),
+                loadCSV(FILES.trends)
+            ]);
+
+            renderScatterChart(fahrzeuge);
+            renderEfficiencyRank(fahrzeuge);
             
-            // Update displays
-            document.getElementById('temp-value').textContent = temp + '°C';
-            document.getElementById('speed-value').textContent = spd + ' km/h';
-            
-            // Base consumption adjustment
-            let realCons = cons;
-            
-            // Temperature factor
-            if (temp < 0) realCons *= 1 + (Math.abs(temp) * 0.015);
-            else if (temp < 15) realCons *= 1 + ((15 - temp) * 0.008);
-            else if (temp > 30) realCons *= 1.05;
-            
-            // Speed factor (exponential above 100)
-            if (spd > 100) realCons *= 1 + ((spd - 100) * 0.008);
-            else if (spd < 80) realCons *= 0.9;
-            
-            // Profile factor
-            const profileFactors = { city: 0.85, mixed: 1.0, highway: 1.15, mountain: 1.25 };
-            realCons *= profileFactors[prof];
-            
-            // Calculate range
-            const range = Math.round((bat / realCons) * 100);
-            
-            // Update result
-            document.getElementById('result-km').textContent = range;
-            document.getElementById('result-info').textContent = `Realer Verbrauch: ~${realCons.toFixed(1)} kWh/100km`;
-            
-            // Badge
-            const badge = document.getElementById('result-badge');
-            if (range > 350) {
-                badge.className = 'result-badge badge-good';
-                badge.textContent = '✓ Sehr gut';
-            } else if (range > 250) {
-                badge.className = 'result-badge badge-medium';
-                badge.textContent = '⚠ Ausreichend';
-            } else {
-                badge.className = 'result-badge badge-low';
-                badge.textContent = '✗ Eingeschränkt';
-            }
+            // Falls Trend-Daten existieren (du musst die CSV erst erstellen), zeige sie an
+            if(trends.length > 0) renderTrendChart(trends);
         }
-        
-        // Event listeners
-        [battery, consumption, temperature, speed, profile].forEach(el => el.addEventListener('input', calculate));
-        calculate();
+
+        // 1. Scatter Chart: Preis vs Reichweite
+        function renderScatterChart(data) {
+            const ctx = document.getElementById('scatterChart').getContext('2d');
+            
+            // Daten aufbereiten: Wir wollen {x: Preis, y: Reichweite, label: Modell}
+            const points = data.map(v => ({
+                x: v.preis_chf,
+                y: v.reichweite_wltp,
+                model: `${v.marke} ${v.modell}`
+            }));
+
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Fahrzeuge',
+                        data: points,
+                        backgroundColor: '#00F2FF',
+                        borderColor: '#002B5B',
+                        borderWidth: 1,
+                        pointRadius: 6,
+                        pointHoverRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.raw.model}: ${ctx.raw.y}km für CHF ${ctx.raw.x.toLocaleString()}`
+                            }
+                        },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Preis (CHF)' }, min: 20000 },
+                        y: { title: { display: true, text: 'Reichweite (WLTP km)' }, min: 200 }
+                    }
+                }
+            });
+        }
+
+        // 2. Ranking: Preis pro km Reichweite
+        function renderEfficiencyRank(data) {
+            // Berechne "CHF pro km"
+            const ranked = data.map(v => ({
+                ...v,
+                costPerKm: Math.round(v.preis_chf / v.reichweite_wltp)
+            })).sort((a, b) => a.costPerKm - b.costPerKm).slice(0, 3); // Top 3
+
+            const grid = document.getElementById('efficiency-grid');
+            grid.innerHTML = ranked.map((v, i) => `
+                <div class="rank-card ${i===0?'winner':''}">
+                    <div class="rank-label">Platz #${i+1}</div>
+                    <h3>${v.marke} ${v.modell}</h3>
+                    <div class="rank-value">CHF ${v.costPerKm} / km</div>
+                    <p style="font-size:12px; margin-top:5px;">${v.reichweite_wltp} km für CHF ${v.preis_chf.toLocaleString()}</p>
+                </div>
+            `).join('');
+        }
+
+        // 3. Trend Chart
+        function renderTrendChart(data) {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            
+            // Sortieren nach Jahr
+            data.sort((a,b) => a.jahr - b.jahr);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => d.jahr),
+                    datasets: [{
+                        label: 'Max. Reichweite (km)',
+                        data: data.map(d => d.reichweite),
+                        borderColor: '#002B5B',
+                        backgroundColor: 'rgba(0, 242, 255, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: (ctx) => data[ctx.dataIndex].modell // Zeigt Modellnamen beim Hover
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadCSV(url) {
+            return new Promise(resolve => {
+                Papa.parse(url, {
+                    download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
+                    complete: res => resolve(res.data),
+                    error: () => resolve([]) // Fehler ignorieren, leeres Array zurück
+                });
+            });
+        }
+
+        init();
     </script>
 </body>
 </html>
