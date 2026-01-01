@@ -3,904 +3,441 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News & Media | EV Portal Schweiz</title>
+    <meta name="description" content="EV News - Aktuelle Nachrichten und Analysen zur Elektromobilität">
+    <title>News | EV Technical Insights</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
-            --primary: #00b4d8;
-            --secondary: #0077b6;
-            --accent: #90e0ef;
-            --dark: #03045e;
-            --success: #06d6a0;
-            --warning: #ffd166;
-            --text: #023047;
-            --bg: #f8f9fa;
+            --navy: #002B5B;
+            --navy-dark: #001a38;
+            --cyan: #00F2FF;
+            --cyan-dim: rgba(0, 242, 255, 0.15);
+            --surface: #F9FAFB;
+            --stone: #E5E7EB;
+            --anthracite: #1F2937;
+            --text-secondary: #6B7280;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --font-headline: 'Inter', -apple-system, sans-serif;
+            --font-body: 'Lora', Georgia, serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --content-width: 1280px;
         }
         
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-        }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-body); font-size: 18px; line-height: 1.6; color: var(--anthracite); background: var(--surface); }
+        h1, h2, h3, h4 { font-family: var(--font-headline); font-weight: 700; color: var(--navy); line-height: 1.2; }
+        .container { max-width: var(--content-width); margin: 0 auto; padding: 0 24px; }
         
-        .header {
-            background: linear-gradient(135deg, var(--dark) 0%, var(--secondary) 100%);
-            color: white;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+        /* Ticker */
+        .ticker-bar { background: var(--navy-dark); color: var(--cyan); font-family: var(--font-mono); font-size: 13px; padding: 8px 0; overflow: hidden; }
+        .ticker-content { display: flex; animation: ticker 30s linear infinite; white-space: nowrap; }
+        .ticker-item { padding: 0 48px; display: flex; align-items: center; gap: 12px; }
+        .ticker-item::before { content: "●"; color: var(--cyan); animation: pulse 2s ease-in-out infinite; }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
+        /* Header */
+        .header { background: var(--navy); color: white; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0, 43, 91, 0.3); }
+        .header-main { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: white; }
+        .logo-icon { width: 44px; height: 44px; background: var(--cyan); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .logo-text { font-family: var(--font-headline); font-weight: 800; font-size: 20px; }
+        .logo-text span { color: var(--cyan); }
+        .nav-links { display: flex; list-style: none; gap: 8px; }
+        .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-family: var(--font-headline); font-size: 14px; font-weight: 500; padding: 10px 16px; border-radius: 6px; transition: all 0.2s ease; }
+        .nav-links a:hover { color: var(--cyan); background: rgba(0, 242, 255, 0.1); }
+        .nav-links a.active { background: var(--cyan); color: var(--navy); }
         
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
+        /* Page Header */
+        .page-header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%); color: white; padding: 48px 0; }
+        .page-header h1 { color: white; font-size: clamp(28px, 4vw, 40px); margin-bottom: 8px; }
+        .page-subtitle { font-family: var(--font-mono); font-size: 14px; color: rgba(255,255,255,0.7); }
         
-        .back-btn {
-            color: white;
-            text-decoration: none;
-            padding: 0.8rem 1.5rem;
-            background: rgba(255,255,255,0.2);
-            border-radius: 5px;
-            border: 2px solid white;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
+        /* Category Tabs */
+        .category-tabs { background: white; border-bottom: 1px solid var(--stone); padding: 16px 0; position: sticky; top: 76px; z-index: 100; }
+        .tabs-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+        .tab { font-family: var(--font-headline); font-size: 14px; font-weight: 500; padding: 10px 20px; border-radius: 20px; border: 2px solid var(--stone); background: white; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .tab:hover { border-color: var(--navy); color: var(--navy); }
+        .tab.active { background: var(--navy); border-color: var(--navy); color: white; }
         
-        .back-btn:hover {
-            background: white;
-            color: var(--dark);
-        }
+        /* News Layout */
+        .news-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; padding: 48px 0; }
         
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
+        /* Featured Article */
+        .featured-article { background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--stone); margin-bottom: 32px; }
+        .featured-image { height: 300px; background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%); display: flex; align-items: center; justify-content: center; position: relative; }
+        .featured-image-icon { font-size: 80px; }
+        .featured-badge { position: absolute; top: 20px; left: 20px; background: var(--cyan); color: var(--navy); font-family: var(--font-mono); font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 4px; }
+        .featured-body { padding: 32px; }
+        .featured-category { font-family: var(--font-mono); font-size: 12px; color: var(--cyan); text-transform: uppercase; margin-bottom: 12px; }
+        .featured-title { font-size: 28px; margin-bottom: 16px; line-height: 1.3; }
+        .featured-excerpt { color: var(--text-secondary); font-size: 17px; margin-bottom: 20px; line-height: 1.7; }
+        .featured-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid var(--stone); }
+        .meta-author { display: flex; align-items: center; gap: 12px; }
+        .author-avatar { width: 40px; height: 40px; background: var(--navy); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; }
+        .author-info { font-family: var(--font-headline); font-size: 14px; }
+        .author-name { font-weight: 600; color: var(--navy); }
+        .author-date { color: var(--text-secondary); font-size: 13px; }
+        .meta-reading { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); }
         
-        .filter-bar {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
+        /* Article List */
+        .article-list { display: flex; flex-direction: column; gap: 24px; }
+        .article-item { display: flex; gap: 20px; background: white; border-radius: 12px; padding: 20px; border: 1px solid var(--stone); transition: all 0.3s; cursor: pointer; }
+        .article-item:hover { transform: translateX(4px); border-color: var(--cyan); box-shadow: 0 4px 20px rgba(0, 43, 91, 0.1); }
+        .article-thumb { width: 140px; height: 100px; background: linear-gradient(135deg, var(--navy-dark), var(--navy)); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .article-thumb-icon { font-size: 32px; }
+        .article-content { flex: 1; display: flex; flex-direction: column; }
+        .article-category { font-family: var(--font-mono); font-size: 11px; color: var(--cyan); text-transform: uppercase; margin-bottom: 6px; }
+        .article-title { font-family: var(--font-headline); font-size: 17px; font-weight: 600; color: var(--navy); margin-bottom: 8px; line-height: 1.4; }
+        .article-excerpt { font-size: 14px; color: var(--text-secondary); flex: 1; }
+        .article-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+        .article-source { display: flex; align-items: center; gap: 6px; }
+        .verified-badge { width: 14px; height: 14px; background: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; color: white; }
         
-        .filter-btn {
-            padding: 0.6rem 1.2rem;
-            border: 2px solid var(--primary);
-            background: white;
-            color: var(--primary);
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
+        /* Sidebar */
+        .sidebar { display: flex; flex-direction: column; gap: 32px; }
+        .sidebar-card { background: white; border-radius: 12px; border: 1px solid var(--stone); overflow: hidden; }
+        .sidebar-header { background: var(--navy); color: white; padding: 16px 20px; font-family: var(--font-headline); font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .sidebar-body { padding: 20px; }
         
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: var(--primary);
-            color: white;
-        }
+        /* Trending */
+        .trending-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--stone); }
+        .trending-item:last-child { border-bottom: none; }
+        .trending-rank { font-family: var(--font-mono); font-size: 24px; font-weight: 700; color: var(--cyan); min-width: 40px; }
+        .trending-content { flex: 1; }
+        .trending-title { font-family: var(--font-headline); font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 4px; line-height: 1.4; }
+        .trending-meta { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
         
-        .region-filter {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
+        /* Newsletter */
+        .newsletter-card { background: linear-gradient(135deg, var(--navy-dark), var(--navy)); color: white; border-radius: 12px; padding: 24px; }
+        .newsletter-title { font-family: var(--font-headline); font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+        .newsletter-desc { font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 20px; }
+        .newsletter-input { width: 100%; padding: 12px 16px; border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(255,255,255,0.1); color: white; font-family: var(--font-headline); font-size: 14px; margin-bottom: 12px; }
+        .newsletter-input::placeholder { color: rgba(255,255,255,0.5); }
+        .newsletter-btn { width: 100%; padding: 12px; background: var(--cyan); border: none; border-radius: 8px; font-family: var(--font-headline); font-size: 14px; font-weight: 600; color: var(--navy); cursor: pointer; transition: all 0.2s; }
+        .newsletter-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 242, 255, 0.4); }
         
-        .region-btn {
-            padding: 0.5rem 1rem;
-            border: 2px solid #ddd;
-            background: white;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1.1rem;
-        }
+        /* Tags */
+        .tags-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag { font-family: var(--font-mono); font-size: 12px; padding: 6px 12px; background: var(--surface); border-radius: 4px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
+        .tag:hover { background: var(--cyan-dim); color: var(--navy); }
         
-        .region-btn:hover,
-        .region-btn.active {
-            border-color: var(--primary);
-            background: var(--accent);
-        }
+        /* Footer */
+        .footer { background: var(--navy-dark); color: white; padding: 60px 0 30px; margin-top: 60px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+        .footer-brand p { color: rgba(255,255,255,0.6); font-size: 15px; margin-top: 16px; }
+        .footer-section h4 { color: var(--cyan); font-family: var(--font-headline); font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 20px; }
+        .footer-section ul { list-style: none; }
+        .footer-section a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; display: block; padding: 6px 0; transition: color 0.2s; }
+        .footer-section a:hover { color: var(--cyan); }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+        .footer-copyright { font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.5); }
+        .footer-legal { display: flex; gap: 24px; }
+        .footer-legal a { font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.5); text-decoration: none; }
         
-        .content-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-        }
-        
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-        
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-        
-        .section-title {
-            font-size: 1.8rem;
-            color: var(--dark);
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 3px solid var(--primary);
-        }
-        
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .video-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-        }
-        
-        .video-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-        
-        .video-thumbnail {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%; /* 16:9 aspect ratio */
-            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-            overflow: hidden;
-        }
-        
-        .video-thumbnail img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .play-btn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: rgba(0,0,0,0.7);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
-        }
-        
-        .video-duration {
-            position: absolute;
-            bottom: 0.5rem;
-            right: 0.5rem;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 0.2rem 0.5rem;
-            border-radius: 3px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-        
-        .video-info {
-            padding: 1rem;
-        }
-        
-        .video-title {
-            font-weight: bold;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        
-        .video-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            color: #666;
-        }
-        
-        .channel-badge {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        
-        .article-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .article-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-        
-        .article-image {
-            width: 150px;
-            height: 100px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-        
-        .article-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .article-content {
-            flex: 1;
-        }
-        
-        .article-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-        
-        .article-excerpt {
-            color: #666;
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        
-        .article-meta {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.85rem;
-            color: #999;
-        }
-        
-        .trending-widget {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
-        
-        .trending-item {
-            display: flex;
-            gap: 1rem;
-            padding: 1rem 0;
-            border-bottom: 1px solid #eee;
-            transition: background 0.3s;
-            cursor: pointer;
-        }
-        
-        .trending-item:hover {
-            background: var(--bg);
-        }
-        
-        .trending-item:last-child {
-            border-bottom: none;
-        }
-        
-        .trending-rank {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary);
-            min-width: 40px;
-        }
-        
-        .trending-content h4 {
-            font-size: 0.95rem;
-            color: var(--dark);
-            margin-bottom: 0.3rem;
-        }
-        
-        .trending-stats {
-            font-size: 0.8rem;
-            color: #666;
-        }
-        
-        .category-badge {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-right: 0.5rem;
-        }
-        
-        .badge-news {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .badge-test {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .badge-review {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .badge-tutorial {
-            background: #e2e3e5;
-            color: #383d41;
-        }
-        
-        .sources-widget {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
-        
-        .source-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.8rem;
-            border-radius: 5px;
-            margin-bottom: 0.5rem;
-            transition: background 0.3s;
-        }
-        
-        .source-item:hover {
-            background: var(--bg);
-        }
-        
-        .source-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-        
-        .source-info {
-            flex: 1;
-        }
-        
-        .source-name {
-            font-weight: bold;
-            color: var(--dark);
-            font-size: 0.9rem;
-        }
-        
-        .source-count {
-            font-size: 0.8rem;
-            color: #666;
-        }
-        
-        .video-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .video-modal.active {
-            display: flex;
-        }
-        
-        .video-modal-content {
-            position: relative;
-            width: 90%;
-            max-width: 1000px;
-        }
-        
-        .video-modal iframe {
-            width: 100%;
-            height: 56.25vw;
-            max-height: 562px;
-            border: none;
-            border-radius: 10px;
-        }
-        
-        .close-modal {
-            position: absolute;
-            top: -40px;
-            right: 0;
-            background: white;
-            border: none;
-            color: var(--dark);
-            font-size: 2rem;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
+        /* Responsive */
         @media (max-width: 1024px) {
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .video-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            }
+            .nav-links { display: none; }
+            .news-layout { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .article-card {
-                flex-direction: column;
-            }
-            
-            .article-image {
-                width: 100%;
-                height: 200px;
-            }
-            
-            .video-grid {
-                grid-template-columns: 1fr;
-            }
+            .article-item { flex-direction: column; }
+            .article-thumb { width: 100%; height: 160px; }
+            .footer-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <div>
-                <h1>📰 News & Media Hub</h1>
-                <p>Aktuelle News, Videos & Tests zur Elektromobilität</p>
-            </div>
-            <a href="index.html" class="back-btn">← Zurück zur Startseite</a>
+    <!-- Ticker -->
+    <div class="ticker-bar">
+        <div class="ticker-content">
+            <div class="ticker-item">BREAKING: EU beschliesst Verbrenner-Aus ab 2035</div>
+            <div class="ticker-item">ANALYSE: Neue Batterietechnologie verspricht 1000 km Reichweite</div>
+            <div class="ticker-item">UPDATE: Schweizer Ladeinfrastruktur wächst um 23%</div>
+            <div class="ticker-item">BREAKING: EU beschliesst Verbrenner-Aus ab 2035</div>
+            <div class="ticker-item">ANALYSE: Neue Batterietechnologie verspricht 1000 km Reichweite</div>
         </div>
     </div>
 
-    <div class="container">
-        <!-- Filter Bar -->
-        <div class="filter-bar">
-            <strong style="margin-right: 1rem;">Kategorie:</strong>
-            <button class="filter-btn active" data-category="all">Alle</button>
-            <button class="filter-btn" data-category="news">News</button>
-            <button class="filter-btn" data-category="tests">Tests & Reviews</button>
-            <button class="filter-btn" data-category="videos">Videos</button>
-            <button class="filter-btn" data-category="tutorials">Ratgeber</button>
-            
-            <div style="flex: 1;"></div>
-            
-            <strong style="margin-right: 0.5rem;">Region:</strong>
-            <div class="region-filter">
-                <button class="region-btn active" data-region="all">🌍 Alle</button>
-                <button class="region-btn" data-region="ch">🇨🇭</button>
-                <button class="region-btn" data-region="de">🇩🇪</button>
-                <button class="region-btn" data-region="at">🇦🇹</button>
-                <button class="region-btn" data-region="hr">🇭🇷</button>
-                <button class="region-btn" data-region="rs">🇷🇸</button>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-main">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">⚡</div>
+                    <div class="logo-text">EV Technical <span>Insights</span></div>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="dashboard.html">📊 Dashboard</a></li>
+                    <li><a href="fahrzeuge.html">🔋 Fahrzeuge</a></li>
+                    <li><a href="news.html" class="active">📰 News</a></li>
+                    <li><a href="laden.html">⚡ Laden</a></li>
+                    <li><a href="ratgeber.html">📋 Ratgeber</a></li>
+                    <li><a href="service.html">🔧 Service</a></li>
+                    <li><a href="reichweite.html">📏 Reichweite</a></li>
+                </ul>
             </div>
         </div>
+    </header>
 
-        <div class="content-grid">
-            <!-- Main Content -->
-            <div class="main-content">
-                <!-- YouTube Videos Section -->
-                <section>
-                    <h2 class="section-title">🎥 Neueste Videos</h2>
-                    <div class="video-grid" id="videoGrid">
-                        <!-- Videos will be populated by JavaScript -->
-                    </div>
-                </section>
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>📰 News & Analysen</h1>
+            <p class="page-subtitle">Verifizierte Nachrichten und technische Tiefenanalysen zur Elektromobilität</p>
+        </div>
+    </section>
 
-                <!-- News Articles Section -->
-                <section>
-                    <h2 class="section-title">📰 Aktuelle Artikel</h2>
-                    <div id="articlesContainer">
-                        <!-- Articles will be populated by JavaScript -->
-                    </div>
-                </section>
-            </div>
-
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <!-- Trending Widget -->
-                <div class="trending-widget">
-                    <h3 style="margin-bottom: 1rem; color: var(--dark);">🔥 Top 7 (Letzte 7 Tage)</h3>
-                    <div id="trendingList">
-                        <!-- Trending items will be populated -->
-                    </div>
-                </div>
-
-                <!-- Sources Widget -->
-                <div class="sources-widget">
-                    <h3 style="margin-bottom: 1rem; color: var(--dark);">📡 Unsere Quellen</h3>
-                    <div id="sourcesList">
-                        <!-- Sources will be populated -->
-                    </div>
-                </div>
+    <!-- Category Tabs -->
+    <section class="category-tabs">
+        <div class="container">
+            <div class="tabs-container">
+                <button class="tab active">Alle News</button>
+                <button class="tab">Marktdaten</button>
+                <button class="tab">Technik</button>
+                <button class="tab">Infrastruktur</button>
+                <button class="tab">Politik</button>
+                <button class="tab">Tests</button>
+                <button class="tab">Schweiz</button>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Video Modal -->
-    <div class="video-modal" id="videoModal">
-        <div class="video-modal-content">
-            <button class="close-modal" onclick="closeVideoModal()">×</button>
-            <iframe id="videoFrame" src="" allowfullscreen></iframe>
-        </div>
-    </div>
-
-    <script>
-        // Sample Data - In production, this would come from APIs
-        const sampleVideos = [
-            {
-                id: 'dQw4w9WgXcQ',
-                title: 'Tesla Model 3 Highland - Vollständiger Test 2024',
-                channel: 'Auto Motor Sport CH',
-                region: 'ch',
-                duration: '18:45',
-                views: '125K',
-                published: 'Vor 2 Tagen',
-                category: 'tests'
-            },
-            {
-                id: 'dQw4w9WgXcQ',
-                title: 'BYD Seal vs Tesla Model 3 - Der große Vergleich',
-                channel: 'AutoScout24',
-                region: 'de',
-                duration: '22:30',
-                views: '89K',
-                published: 'Vor 3 Tagen',
-                category: 'tests'
-            },
-            {
-                id: 'dQw4w9WgXcQ',
-                title: 'Elektroauto im Winter - 7 wichtige Tipps',
-                channel: 'Elektroauto Coach',
-                region: 'de',
-                duration: '12:15',
-                views: '156K',
-                published: 'Vor 5 Tagen',
-                category: 'tutorials'
-            },
-            {
-                id: 'dQw4w9WgXcQ',
-                title: 'Hyundai Ioniq 6 - Review aus Zagreb',
-                channel: 'Auto Hrvatska',
-                region: 'hr',
-                duration: '16:20',
-                views: '45K',
-                published: 'Vor 1 Woche',
-                category: 'tests'
-            },
-            {
-                id: 'dQw4w9WgXcQ',
-                title: 'Volkswagen ID.7 - Erste Fahrt in Österreich',
-                channel: 'AutoRevue AT',
-                region: 'at',
-                duration: '14:50',
-                views: '67K',
-                published: 'Vor 1 Woche',
-                category: 'tests'
-            },
-            {
-                id: 'dQw4w9WgXcQ',
-                title: 'Laden in der Schweiz - Der große Guide 2024',
-                channel: 'e-mobile.ch',
-                region: 'ch',
-                duration: '25:10',
-                views: '92K',
-                published: 'Vor 2 Wochen',
-                category: 'tutorials'
-            }
-        ];
-
-        const sampleArticles = [
-            {
-                title: 'Schweiz erreicht 50% EV-Marktanteil im Dezember 2024',
-                excerpt: 'Ein historischer Meilenstein: Erstmals wurden in einem Monat mehr Elektroautos als Verbrenner zugelassen. Die Zahlen zeigen einen klaren Trend.',
-                source: 'Auto-Schweiz',
-                region: 'ch',
-                published: 'Vor 1 Tag',
-                views: '15.2K',
-                category: 'news'
-            },
-            {
-                title: 'Tesla senkt Preise in der Schweiz um bis zu CHF 8\'000',
-                excerpt: 'Überraschende Preisanpassung bei Tesla: Model 3 und Model Y werden deutlich günstiger. Analysten sehen darin eine Reaktion auf chinesische Konkurrenz.',
-                source: 'NZZ',
-                region: 'ch',
-                published: 'Vor 2 Tagen',
-                views: '12.8K',
-                category: 'news'
-            },
-            {
-                title: 'BYD eröffnet größtes Service-Center in Zürich',
-                excerpt: 'Der chinesische Autohersteller investiert massiv in die Schweizer Infrastruktur. Das neue Center bietet Service für alle BYD-Modelle.',
-                source: 'Blick',
-                region: 'ch',
-                published: 'Vor 3 Tagen',
-                views: '8.9K',
-                category: 'news'
-            },
-            {
-                title: 'Porsche Macan Electric im Langzeittest',
-                excerpt: 'Nach 10.000 km ziehen wir Bilanz: Der elektrische Macan überzeugt in fast allen Belangen. Nur beim Preis gibt es Kritik.',
-                source: 'Auto Motor Sport',
-                region: 'de',
-                published: 'Vor 4 Tagen',
-                views: '18.5K',
-                category: 'tests'
-            },
-            {
-                title: 'Neue Schnelllade-Hubs an Schweizer Autobahnen',
-                excerpt: 'Fastned und Ionity bauen ihr Netz massiv aus. Bis Ende 2025 sollen 50 neue Standorte in Betrieb gehen.',
-                source: 'TCS',
-                region: 'ch',
-                published: 'Vor 5 Tagen',
-                views: '11.2K',
-                category: 'news'
-            }
-        ];
-
-        const trendingItems = [
-            { title: 'Tesla Model 3 Highland - Erste Fahreindrücke', views: '15.2K', source: 'Auto Motor Sport CH' },
-            { title: 'Ladeinfrastruktur 2025: Neue Schnelllade-Hubs', views: '12.9K', source: 'TCS' },
-            { title: 'BYD Seal im Langzeittest: 30.000 km', views: '10.5K', source: 'AutoScout24' },
-            { title: 'Schweiz erreicht 50% EV-Marktanteil', views: '9.8K', source: 'Auto-Schweiz' },
-            { title: 'Elektroauto Wintertest 2024', views: '8.7K', source: 'TÜV' },
-            { title: 'MG4 vs. BYD Atto 3 Vergleichstest', views: '7.9K', source: 'Auto Revue' },
-            { title: 'Hyundai Ioniq 6 - Review aus Zagreb', views: '6.5K', source: 'Auto Hrvatska' }
-        ];
-
-        const sources = [
-            { name: 'Auto Motor Sport CH', icon: '🚗', count: '45 Artikel' },
-            { name: 'Auto-Schweiz', icon: '📊', count: '28 Artikel' },
-            { name: 'e-mobile.ch', icon: '⚡', count: '67 Artikel' },
-            { name: 'TCS', icon: '🛡️', count: '34 Artikel' },
-            { name: 'Auto Hrvatska (HR)', icon: '🇭🇷', count: '22 Artikel' },
-            { name: 'AutoScout24', icon: '🔍', count: '89 Artikel' }
-        ];
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            renderVideos(sampleVideos);
-            renderArticles(sampleArticles);
-            renderTrending(trendingItems);
-            renderSources(sources);
-            setupFilters();
-        });
-
-        // Render Videos
-        function renderVideos(videos) {
-            const grid = document.getElementById('videoGrid');
-            grid.innerHTML = videos.map(video => `
-                <div class="video-card" onclick="playVideo('${video.id}')">
-                    <div class="video-thumbnail">
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%); display: flex; align-items: center; justify-content: center; font-size: 3rem;">
-                            🎬
+    <!-- News Layout -->
+    <main>
+        <div class="container">
+            <div class="news-layout">
+                <!-- Main Content -->
+                <div class="main-content">
+                    <!-- Featured Article -->
+                    <article class="featured-article">
+                        <div class="featured-image">
+                            <span class="featured-badge">EXKLUSIV</span>
+                            <span class="featured-image-icon">📊</span>
                         </div>
-                        <div class="play-btn">▶</div>
-                        <div class="video-duration">${video.duration}</div>
-                    </div>
-                    <div class="video-info">
-                        <div class="video-title">${video.title}</div>
-                        <div class="video-meta">
-                            <div class="channel-badge">
-                                <span>${getRegionFlag(video.region)}</span>
-                                <span>${video.channel}</span>
+                        <div class="featured-body">
+                            <span class="featured-category">Marktanalyse</span>
+                            <h2 class="featured-title">Schweizer EV-Markt überschreitet erstmals 50%-Marke</h2>
+                            <p class="featured-excerpt">
+                                Eine detaillierte Analyse der Neuzulassungszahlen im Dezember 2024 zeigt: Erstmals wurden in der Schweiz mehr Elektroautos als Verbrenner verkauft. Wir analysieren die Daten, identifizieren Trends und blicken auf die Prognosen für 2025.
+                            </p>
+                            <div class="featured-meta">
+                                <div class="meta-author">
+                                    <div class="author-avatar">MS</div>
+                                    <div class="author-info">
+                                        <div class="author-name">Marc Schneider</div>
+                                        <div class="author-date">Vor 2 Stunden</div>
+                                    </div>
+                                </div>
+                                <span class="meta-reading">8 Min. Lesezeit</span>
                             </div>
-                            <div>${video.views} • ${video.published}</div>
                         </div>
+                    </article>
+
+                    <!-- Article List -->
+                    <div class="article-list">
+                        <article class="article-item">
+                            <div class="article-thumb">
+                                <span class="article-thumb-icon">🔋</span>
+                            </div>
+                            <div class="article-content">
+                                <span class="article-category">Technik</span>
+                                <h3 class="article-title">BYD Blade Battery: 200'000 km Langzeittest mit überraschenden Ergebnissen</h3>
+                                <p class="article-excerpt">Unabhängige TÜV-Messung zeigt nur 2.3% Kapazitätsverlust nach intensivem Langzeittest.</p>
+                                <div class="article-meta">
+                                    <span class="article-source"><span class="verified-badge">✓</span> TÜV Süd verifiziert</span>
+                                    <span>Vor 1 Tag</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="article-item">
+                            <div class="article-thumb">
+                                <span class="article-thumb-icon">⚡</span>
+                            </div>
+                            <div class="article-content">
+                                <span class="article-category">Infrastruktur</span>
+                                <h3 class="article-title">Tesla öffnet Supercharger-Netzwerk in der Schweiz für alle Marken</h3>
+                                <p class="article-excerpt">Ab sofort können auch Nicht-Tesla-Fahrer an über 50 Standorten laden.</p>
+                                <div class="article-meta">
+                                    <span class="article-source"><span class="verified-badge">✓</span> Tesla Schweiz</span>
+                                    <span>Vor 2 Tagen</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="article-item">
+                            <div class="article-thumb">
+                                <span class="article-thumb-icon">📈</span>
+                            </div>
+                            <div class="article-content">
+                                <span class="article-category">Marktdaten</span>
+                                <h3 class="article-title">Ladeleistung im Vergleich: 2024 vs. 2021 – So viel hat sich verbessert</h3>
+                                <p class="article-excerpt">Die durchschnittliche DC-Ladeleistung hat sich in 3 Jahren verdoppelt.</p>
+                                <div class="article-meta">
+                                    <span class="article-source"><span class="verified-badge">✓</span> Swiss eMobility</span>
+                                    <span>Vor 3 Tagen</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="article-item">
+                            <div class="article-thumb">
+                                <span class="article-thumb-icon">🚗</span>
+                            </div>
+                            <div class="article-content">
+                                <span class="article-category">Test</span>
+                                <h3 class="article-title">Hyundai Ioniq 6 im Schweizer Wintertest: Reichweite bei -10°C</h3>
+                                <p class="article-excerpt">Wir haben den aerodynamischen Koreaner auf Herz und Nieren getestet.</p>
+                                <div class="article-meta">
+                                    <span class="article-source"><span class="verified-badge">✓</span> Redaktionstest</span>
+                                    <span>Vor 4 Tagen</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="article-item">
+                            <div class="article-thumb">
+                                <span class="article-thumb-icon">🏛️</span>
+                            </div>
+                            <div class="article-content">
+                                <span class="article-category">Politik</span>
+                                <h3 class="article-title">Bundesrat erhöht Förderung für Ladeinfrastruktur um 50%</h3>
+                                <p class="article-excerpt">Neue Subventionen sollen den Ausbau privater Ladestationen beschleunigen.</p>
+                                <div class="article-meta">
+                                    <span class="article-source"><span class="verified-badge">✓</span> UVEK</span>
+                                    <span>Vor 5 Tagen</span>
+                                </div>
+                            </div>
+                        </article>
                     </div>
                 </div>
-            `).join('');
-        }
 
-        // Render Articles
-        function renderArticles(articles) {
-            const container = document.getElementById('articlesContainer');
-            container.innerHTML = articles.map(article => `
-                <div class="article-card">
-                    <div class="article-image">
-                        <div style="width: 100%; height: 100%; background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%); display: flex; align-items: center; justify-content: center; font-size: 3rem;">
-                            📰
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <!-- Trending -->
+                    <div class="sidebar-card">
+                        <div class="sidebar-header">🔥 Trending</div>
+                        <div class="sidebar-body">
+                            <div class="trending-item">
+                                <span class="trending-rank">01</span>
+                                <div class="trending-content">
+                                    <h4 class="trending-title">Tesla Model 3 Highland: Alle Neuerungen im Detail</h4>
+                                    <span class="trending-meta">2.4k Views</span>
+                                </div>
+                            </div>
+                            <div class="trending-item">
+                                <span class="trending-rank">02</span>
+                                <div class="trending-content">
+                                    <h4 class="trending-title">LFP vs. NMC Batterien: Der ultimative Vergleich</h4>
+                                    <span class="trending-meta">1.8k Views</span>
+                                </div>
+                            </div>
+                            <div class="trending-item">
+                                <span class="trending-rank">03</span>
+                                <div class="trending-content">
+                                    <h4 class="trending-title">Winterreichweite: So minimieren Sie den Verlust</h4>
+                                    <span class="trending-meta">1.5k Views</span>
+                                </div>
+                            </div>
+                            <div class="trending-item">
+                                <span class="trending-rank">04</span>
+                                <div class="trending-content">
+                                    <h4 class="trending-title">Ionity senkt Preise: Neue Tarife erklärt</h4>
+                                    <span class="trending-meta">1.2k Views</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="article-content">
-                        <div style="margin-bottom: 0.5rem;">
-                            <span class="category-badge badge-${article.category}">${getCategoryName(article.category)}</span>
-                            <span>${getRegionFlag(article.region)}</span>
+
+                    <!-- Newsletter -->
+                    <div class="newsletter-card">
+                        <h3 class="newsletter-title">📧 Newsletter</h3>
+                        <p class="newsletter-desc">Wöchentliche Analysen und exklusive Daten direkt in Ihr Postfach.</p>
+                        <input type="email" class="newsletter-input" placeholder="Ihre E-Mail-Adresse">
+                        <button class="newsletter-btn">Kostenlos abonnieren</button>
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="sidebar-card">
+                        <div class="sidebar-header">🏷️ Themen</div>
+                        <div class="sidebar-body">
+                            <div class="tags-cloud">
+                                <span class="tag">Tesla</span>
+                                <span class="tag">BYD</span>
+                                <span class="tag">Batterietechnik</span>
+                                <span class="tag">Ladeinfrastruktur</span>
+                                <span class="tag">WLTP</span>
+                                <span class="tag">Schweiz</span>
+                                <span class="tag">800V</span>
+                                <span class="tag">Reichweite</span>
+                                <span class="tag">LFP</span>
+                                <span class="tag">NMC</span>
+                            </div>
                         </div>
-                        <div class="article-title">${article.title}</div>
-                        <div class="article-excerpt">${article.excerpt}</div>
-                        <div class="article-meta">
-                            <span>${article.source}</span>
-                            <span>•</span>
-                            <span>${article.published}</span>
-                            <span>•</span>
-                            <span>${article.views} Aufrufe</span>
-                        </div>
                     </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <div class="logo-icon">⚡</div>
+                        <div class="logo-text">EV Technical <span>Insights</span></div>
+                    </a>
+                    <p>Unabhängige, verifizierte und technisch fundierte Berichterstattung zur Elektromobilität in der Schweiz.</p>
                 </div>
-            `).join('');
-        }
-
-        // Render Trending
-        function renderTrending(items) {
-            const list = document.getElementById('trendingList');
-            list.innerHTML = items.map((item, index) => `
-                <div class="trending-item">
-                    <div class="trending-rank">${index + 1}</div>
-                    <div class="trending-content">
-                        <h4>${item.title}</h4>
-                        <div class="trending-stats">${item.views} Aufrufe • ${item.source}</div>
-                    </div>
+                <div class="footer-section">
+                    <h4>Analysen</h4>
+                    <ul>
+                        <li><a href="dashboard.html">Marktdaten</a></li>
+                        <li><a href="fahrzeuge.html">Fahrzeug-Datenbank</a></li>
+                        <li><a href="laden.html">Ladeinfrastruktur</a></li>
+                        <li><a href="reichweite.html">Reichweiten-Analyse</a></li>
+                    </ul>
                 </div>
-            `).join('');
-        }
-
-        // Render Sources
-        function renderSources(sources) {
-            const list = document.getElementById('sourcesList');
-            list.innerHTML = sources.map(source => `
-                <div class="source-item">
-                    <div class="source-icon">${source.icon}</div>
-                    <div class="source-info">
-                        <div class="source-name">${source.name}</div>
-                        <div class="source-count">${source.count}</div>
-                    </div>
+                <div class="footer-section">
+                    <h4>Ratgeber</h4>
+                    <ul>
+                        <li><a href="ratgeber.html">Kaufberatung</a></li>
+                        <li><a href="service.html">Service & Wartung</a></li>
+                        <li><a href="#">TCO-Rechner</a></li>
+                        <li><a href="#">Förderungen</a></li>
+                    </ul>
                 </div>
-            `).join('');
-        }
-
-        // Play Video
-        function playVideo(videoId) {
-            const modal = document.getElementById('videoModal');
-            const frame = document.getElementById('videoFrame');
-            frame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-            modal.classList.add('active');
-        }
-
-        // Close Video Modal
-        function closeVideoModal() {
-            const modal = document.getElementById('videoModal');
-            const frame = document.getElementById('videoFrame');
-            frame.src = '';
-            modal.classList.remove('active');
-        }
-
-        // Setup Filters
-        function setupFilters() {
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    applyFilters();
-                });
-            });
-            
-            document.querySelectorAll('.region-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    applyFilters();
-                });
-            });
-        }
-
-        // Apply Filters
-        function applyFilters() {
-            const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
-            const activeRegion = document.querySelector('.region-btn.active').dataset.region;
-            
-            let filteredVideos = [...sampleVideos];
-            let filteredArticles = [...sampleArticles];
-            
-            if (activeCategory !== 'all') {
-                if (activeCategory === 'videos') {
-                    filteredArticles = [];
-                } else {
-                    filteredVideos = filteredVideos.filter(v => v.category === activeCategory);
-                    filteredArticles = filteredArticles.filter(a => a.category === activeCategory);
-                }
-            }
-            
-            if (activeRegion !== 'all') {
-                filteredVideos = filteredVideos.filter(v => v.region === activeRegion);
-                filteredArticles = filteredArticles.filter(a => a.region === activeRegion);
-            }
-            
-            renderVideos(filteredVideos);
-            renderArticles(filteredArticles);
-        }
-
-        // Helper Functions
-        function getRegionFlag(region) {
-            const flags = {
-                'ch': '🇨🇭',
-                'de': '🇩🇪',
-                'at': '🇦🇹',
-                'hr': '🇭🇷',
-                'rs': '🇷🇸'
-            };
-            return flags[region] || '🌍';
-        }
-
-        function getCategoryName(category) {
-            const names = {
-                'news': 'News',
-                'tests': 'Test',
-                'tutorials': 'Ratgeber',
-                'review': 'Review'
-            };
-            return names[category] || category;
-        }
-
-        // Close modal on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeVideoModal();
-            }
-        });
-
-        // Close modal when clicking outside
-        document.getElementById('videoModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeVideoModal();
-            }
-        });
-    </script>
+                <div class="footer-section">
+                    <h4>Über uns</h4>
+                    <ul>
+                        <li><a href="#">Redaktion</a></li>
+                        <li><a href="#">Methodik</a></li>
+                        <li><a href="#">Quellen</a></li>
+                        <li><a href="#">Kontakt</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2025 EV Technical Insights. Alle Rechte vorbehalten.</p>
+                <div class="footer-legal">
+                    <a href="#">Datenschutz</a>
+                    <a href="#">Impressum</a>
+                    <a href="#">AGB</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
