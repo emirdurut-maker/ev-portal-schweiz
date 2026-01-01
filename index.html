@@ -3,811 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="EV Technical Insights - Die führende technische Informationsquelle für Elektromobilität in der Schweiz">
-    <title>EV Technical Insights | Technische Analysen & Daten zur Elektromobilität</title>
+    <meta name="description" content="EV Technical Insights - Das führende Schweizer Portal für Elektromobilität. Marktdaten, 100+ Fahrzeuge, Live-News aus 25+ Quellen.">
+    <meta name="keywords" content="Elektroauto, EV, Schweiz, Elektromobilität, Ladestationen, Tesla, BYD, BMW, Marktdaten">
+    <meta name="author" content="EV Technical Insights">
+    <meta name="robots" content="index, follow">
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://emirdurut-maker.github.io/ev-portal-schweiz/">
+    <meta property="og:title" content="EV Technical Insights - Elektromobilität Schweiz">
+    <meta property="og:description" content="Das führende Schweizer Portal für Elektromobilität. Marktdaten, Fahrzeugdatenbank, Live-News.">
+    <meta property="og:image" content="https://emirdurut-maker.github.io/ev-portal-schweiz/og-image.png">
     
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="EV Technical Insights - Elektromobilität Schweiz">
+    <meta name="twitter:description" content="Das führende Schweizer Portal für Elektromobilität.">
+    
+    <link rel="canonical" href="https://emirdurut-maker.github.io/ev-portal-schweiz/">
+    
+    <title>EV Technical Insights - Elektromobilität Schweiz</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
     <style>
-        /* ====== CSS RESET & VARIABLES ====== */
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        :root {
-            /* Authority Color System */
-            --navy: #002B5B;
-            --navy-dark: #001a38;
-            --cyan: #00F2FF;
-            --cyan-dim: rgba(0, 242, 255, 0.15);
-            --surface: #F9FAFB;
-            --stone: #E5E7EB;
-            --anthracite: #1F2937;
-            --text-secondary: #6B7280;
-            
-            /* Typography */
-            --font-headline: 'Inter', -apple-system, sans-serif;
-            --font-body: 'Lora', Georgia, serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            
-            /* Spacing */
-            --section-gap: 80px;
-            --content-width: 1280px;
-            --article-width: 700px;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: var(--font-body);
-            font-size: 18px;
-            line-height: 1.6;
-            color: var(--anthracite);
-            background: var(--surface);
-        }
-        
-        /* ====== TYPOGRAPHY ====== */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: var(--font-headline);
-            font-weight: 700;
-            letter-spacing: -0.01em;
-            line-height: 1.2;
-            color: var(--navy);
-        }
-        
-        h1 { font-size: clamp(32px, 5vw, 48px); }
-        h2 { font-size: clamp(24px, 4vw, 36px); }
-        h3 { font-size: clamp(20px, 3vw, 28px); }
-        
-        .mono {
-            font-family: var(--font-mono);
-            font-size: 14px;
-        }
-        
-        /* ====== LAYOUT ====== */
-        .container {
-            max-width: var(--content-width);
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-        
-        .section {
-            padding: var(--section-gap) 0;
-        }
-        
-        .grid-12 {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 24px;
-        }
-        
-        /* ====== BREAKING NEWS TICKER ====== */
-        .ticker-bar {
-            background: var(--navy-dark);
-            color: var(--cyan);
-            font-family: var(--font-mono);
-            font-size: 13px;
-            padding: 8px 0;
-            overflow: hidden;
-            border-bottom: 1px solid rgba(0, 242, 255, 0.2);
-        }
-        
-        .ticker-content {
-            display: flex;
-            animation: ticker 30s linear infinite;
-            white-space: nowrap;
-        }
-        
-        .ticker-item {
-            padding: 0 48px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .ticker-item::before {
-            content: "●";
-            color: var(--cyan);
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes ticker {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        
-        /* ====== HEADER ====== */
-        .header {
-            background: var(--navy);
-            color: white;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0, 43, 91, 0.3);
-        }
-        
-        .header-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .logo-icon {
-            width: 44px;
-            height: 44px;
-            background: var(--cyan);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-        
-        .logo-text {
-            font-family: var(--font-headline);
-            font-weight: 800;
-            font-size: 20px;
-            letter-spacing: -0.02em;
-        }
-        
-        .logo-text span {
-            color: var(--cyan);
-        }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 8px;
-        }
-        
-        .nav-links a {
-            color: rgba(255,255,255,0.85);
-            text-decoration: none;
-            font-family: var(--font-headline);
-            font-size: 14px;
-            font-weight: 500;
-            padding: 10px 16px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .nav-links a:hover {
-            color: var(--cyan);
-            background: rgba(0, 242, 255, 0.1);
-        }
-        
-        .nav-links a.active {
-            background: var(--cyan);
-            color: var(--navy);
-        }
-        
-        /* ====== HERO SECTION ====== */
-        .hero {
-            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
-            color: white;
-            padding: 80px 0 100px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300F2FF' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            opacity: 0.5;
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: var(--article-width);
-        }
-        
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--cyan-dim);
-            border: 1px solid var(--cyan);
-            color: var(--cyan);
-            font-family: var(--font-mono);
-            font-size: 12px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            margin-bottom: 24px;
-        }
-        
-        .hero h1 {
-            color: white;
-            margin-bottom: 20px;
-            font-weight: 800;
-        }
-        
-        .hero-subtitle {
-            font-family: var(--font-body);
-            font-size: 20px;
-            color: rgba(255,255,255,0.8);
-            line-height: 1.6;
-            margin-bottom: 32px;
-        }
-        
-        /* ====== STATS BAR ====== */
-        .stats-bar {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 40px rgba(0, 43, 91, 0.12);
-            padding: 32px 40px;
-            margin-top: -60px;
-            position: relative;
-            z-index: 10;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 32px;
-            border: 1px solid var(--stone);
-        }
-        
-        .stat-item {
-            text-align: center;
-            padding: 0 16px;
-            border-right: 1px solid var(--stone);
-        }
-        
-        .stat-item:last-child {
-            border-right: none;
-        }
-        
-        .stat-value {
-            font-family: var(--font-headline);
-            font-size: 36px;
-            font-weight: 800;
-            color: var(--navy);
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-        
-        .stat-value .unit {
-            font-size: 20px;
-            color: var(--cyan);
-        }
-        
-        .stat-label {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .stat-change {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: #10B981;
-            margin-top: 4px;
-        }
-        
-        /* ====== SECTION HEADERS ====== */
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--navy);
-        }
-        
-        .section-title-group {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        
-        .section-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--navy);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-        
-        .section-title {
-            margin: 0;
-        }
-        
-        .section-subtitle {
-            font-family: var(--font-mono);
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-        
-        .view-all {
-            font-family: var(--font-headline);
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--navy);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border: 2px solid var(--navy);
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-        
-        .view-all:hover {
-            background: var(--navy);
-            color: white;
-        }
-        
-        /* ====== ARTICLE CARDS ====== */
-        .article-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-        
-        .article-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--stone);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .article-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 43, 91, 0.15);
-            border-color: var(--cyan);
-        }
-        
-        .article-image {
-            height: 180px;
-            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        
-        .article-image::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: 
-                linear-gradient(90deg, transparent 49.5%, var(--cyan) 49.5%, var(--cyan) 50.5%, transparent 50.5%),
-                linear-gradient(transparent 49.5%, var(--cyan) 49.5%, var(--cyan) 50.5%, transparent 50.5%);
-            background-size: 40px 40px;
-            opacity: 0.1;
-        }
-        
-        .article-image-icon {
-            font-size: 48px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .article-category {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: var(--cyan);
-            color: var(--navy);
-            font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 500;
-            padding: 4px 10px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-        
-        .article-body {
-            padding: 24px;
-        }
-        
-        .article-title {
-            font-size: 18px;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-        
-        .article-excerpt {
-            color: var(--text-secondary);
-            font-size: 15px;
-            margin-bottom: 16px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        
-        .article-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--text-secondary);
-            padding-top: 16px;
-            border-top: 1px solid var(--stone);
-        }
-        
-        .article-source {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .verified-badge {
-            width: 14px;
-            height: 14px;
-            background: var(--cyan);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-        }
-        
-        /* ====== FACT CHECK MODULE ====== */
-        .fact-check {
-            background: var(--surface);
-            border: 2px solid var(--navy);
-            border-radius: 12px;
-            padding: 32px;
-            margin: 40px 0;
-        }
-        
-        .fact-check-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        
-        .fact-check-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--navy);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--cyan);
-            font-size: 24px;
-        }
-        
-        .fact-check h3 {
-            margin: 0;
-        }
-        
-        .fact-check-content {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-        
-        .fact-item {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid var(--cyan);
-        }
-        
-        .fact-label {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-        
-        .fact-value {
-            font-family: var(--font-headline);
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--navy);
-        }
-        
-        /* ====== CHART CONTAINER ====== */
-        .chart-section {
-            background: white;
-            border-radius: 12px;
-            padding: 32px;
-            border: 1px solid var(--stone);
-            margin-bottom: 40px;
-        }
-        
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-        
-        .chart-title {
-            font-size: 20px;
-        }
-        
-        .chart-source {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-secondary);
-            background: var(--surface);
-            padding: 6px 12px;
-            border-radius: 4px;
-        }
-        
-        .chart-wrapper {
-            height: 350px;
-            position: relative;
-        }
-        
-        /* ====== ISSUE SPOTLIGHT ====== */
-        .spotlight-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-        }
-        
-        .spotlight-card {
-            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
-            border-radius: 12px;
-            padding: 32px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .spotlight-card::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, var(--cyan) 0%, transparent 70%);
-            opacity: 0.1;
-        }
-        
-        .spotlight-category {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--cyan);
-            text-transform: uppercase;
-            margin-bottom: 16px;
-        }
-        
-        .spotlight-title {
-            color: white;
-            font-size: 24px;
-            margin-bottom: 16px;
-        }
-        
-        .spotlight-desc {
-            color: rgba(255,255,255,0.7);
-            font-size: 15px;
-            margin-bottom: 24px;
-        }
-        
-        .spotlight-stats {
-            display: flex;
-            gap: 32px;
-        }
-        
-        .spotlight-stat {
-            text-align: left;
-        }
-        
-        .spotlight-stat-value {
-            font-family: var(--font-mono);
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--cyan);
-        }
-        
-        .spotlight-stat-label {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: rgba(255,255,255,0.6);
-            text-transform: uppercase;
-        }
-        
-        /* ====== FOOTER ====== */
-        .footer {
-            background: var(--navy-dark);
-            color: white;
-            padding: 60px 0 30px;
-            margin-top: var(--section-gap);
-        }
-        
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 48px;
-            margin-bottom: 48px;
-        }
-        
-        .footer-brand p {
-            color: rgba(255,255,255,0.6);
-            font-size: 15px;
-            margin-top: 16px;
-            max-width: 300px;
-        }
-        
-        .footer-section h4 {
-            color: var(--cyan);
-            font-family: var(--font-headline);
-            font-size: 13px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 20px;
-        }
-        
-        .footer-section ul {
-            list-style: none;
-        }
-        
-        .footer-section a {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            font-size: 14px;
-            display: block;
-            padding: 6px 0;
-            transition: color 0.2s;
-        }
-        
-        .footer-section a:hover {
-            color: var(--cyan);
-        }
-        
-        .footer-bottom {
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .footer-copyright {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
-        }
-        
-        .footer-legal {
-            display: flex;
-            gap: 24px;
-        }
-        
-        .footer-legal a {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
-            text-decoration: none;
-        }
-        
-        .footer-legal a:hover {
-            color: var(--cyan);
-        }
-        
-        /* ====== RESPONSIVE ====== */
-        @media (max-width: 1024px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .stats-bar {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .article-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .spotlight-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .stats-bar {
-                grid-template-columns: 1fr;
-                padding: 24px;
-            }
-            
-            .stat-item {
-                border-right: none;
-                border-bottom: 1px solid var(--stone);
-                padding: 16px 0;
-            }
-            
-            .stat-item:last-child {
-                border-bottom: none;
-            }
-            
-            .article-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .fact-check-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 16px;
-            }
-            
-            .footer-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--navy:#002B5B;--navy-dark:#001a38;--cyan:#00F2FF;--cyan-dim:rgba(0,242,255,0.15);--surface:#F9FAFB;--stone:#E5E7EB;--anthracite:#1F2937;--text-secondary:#6B7280;--success:#10B981;--font-headline:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace}
+        html{scroll-behavior:smooth}
+        body{font-family:var(--font-headline);background:var(--surface);color:var(--anthracite)}
+        .container{max-width:1280px;margin:0 auto;padding:0 24px}
+        
+        /* Header */
+        .header{background:var(--navy);color:white;position:fixed;top:0;left:0;right:0;z-index:1000;transition:all 0.3s}
+        .header.scrolled{background:rgba(0,43,91,0.95);backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+        .header-main{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
+        .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:white}
+        .logo-icon{width:44px;height:44px;background:var(--cyan);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px}
+        .logo-text{font-weight:800;font-size:20px}.logo-text span{color:var(--cyan)}
+        .nav-links{display:flex;list-style:none;gap:8px}
+        .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:500;padding:10px 16px;border-radius:6px;transition:all 0.2s}
+        .nav-links a:hover{color:var(--cyan);background:rgba(0,242,255,0.1)}
+        
+        /* Mobile Menu Button */
+        .mobile-menu-btn{display:none;background:none;border:none;color:white;font-size:28px;cursor:pointer;padding:8px}
+        
+        /* Hero Section */
+        .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-dark) 100%);color:white;padding:140px 0 100px;position:relative;overflow:hidden}
+        .hero::before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300F2FF' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+        .hero-content{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:1}
+        .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,242,255,0.15);border:1px solid var(--cyan);padding:8px 16px;border-radius:50px;font-family:var(--font-mono);font-size:12px;color:var(--cyan);margin-bottom:24px}
+        .hero-badge::before{content:"";width:8px;height:8px;background:var(--cyan);border-radius:50%;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+        .hero h1{font-size:clamp(36px,5vw,56px);font-weight:900;line-height:1.1;margin-bottom:24px}
+        .hero h1 span{color:var(--cyan)}
+        .hero-subtitle{font-size:18px;color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:32px;max-width:500px}
+        .hero-cta{display:flex;gap:16px;flex-wrap:wrap}
+        .btn{display:inline-flex;align-items:center;gap:8px;padding:16px 32px;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;transition:all 0.3s;border:2px solid transparent}
+        .btn-primary{background:var(--cyan);color:var(--navy)}
+        .btn-primary:hover{background:white;transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,242,255,0.3)}
+        .btn-secondary{background:transparent;color:white;border-color:rgba(255,255,255,0.3)}
+        .btn-secondary:hover{border-color:var(--cyan);color:var(--cyan)}
+        
+        /* Hero Stats */
+        .hero-visual{display:flex;flex-direction:column;gap:20px}
+        .hero-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+        .hero-stat{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:24px;text-align:center;transition:all 0.3s}
+        .hero-stat:hover{background:rgba(0,242,255,0.1);border-color:var(--cyan);transform:translateY(-4px)}
+        .hero-stat-value{font-family:var(--font-mono);font-size:36px;font-weight:800;color:var(--cyan);line-height:1}
+        .hero-stat-label{font-size:13px;color:rgba(255,255,255,0.6);margin-top:8px}
+        
+        /* Features Section */
+        .features{padding:100px 0;background:white}
+        .section-header{text-align:center;max-width:600px;margin:0 auto 60px}
+        .section-badge{display:inline-block;font-family:var(--font-mono);font-size:12px;color:var(--cyan);background:var(--cyan-dim);padding:6px 16px;border-radius:50px;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.1em}
+        .section-title{font-size:clamp(28px,4vw,40px);font-weight:800;color:var(--navy);margin-bottom:16px}
+        .section-subtitle{font-size:16px;color:var(--text-secondary);line-height:1.6}
+        .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+        .feature-card{background:var(--surface);border-radius:16px;padding:32px;border:2px solid transparent;transition:all 0.3s}
+        .feature-card:hover{border-color:var(--cyan);transform:translateY(-8px);box-shadow:0 20px 40px rgba(0,43,91,0.1)}
+        .feature-icon{width:60px;height:60px;background:var(--cyan-dim);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:20px}
+        .feature-title{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:12px}
+        .feature-desc{font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px}
+        .feature-link{display:inline-flex;align-items:center;gap:6px;color:var(--cyan);font-weight:600;font-size:14px;text-decoration:none}
+        .feature-link:hover{gap:10px}
+        
+        /* Live Data Section */
+        .live-data{padding:100px 0;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-dark) 100%);color:white}
+        .live-data .section-title{color:white}
+        .live-data .section-subtitle{color:rgba(255,255,255,0.7)}
+        .data-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:60px}
+        .data-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:32px;text-align:center;transition:all 0.3s}
+        .data-card:hover{background:rgba(0,242,255,0.1);border-color:var(--cyan);transform:scale(1.05)}
+        .data-icon{font-size:40px;margin-bottom:16px}
+        .data-value{font-family:var(--font-mono);font-size:32px;font-weight:800;color:var(--cyan)}
+        .data-label{font-size:14px;color:rgba(255,255,255,0.6);margin-top:8px}
+        
+        /* News Preview */
+        .news-preview{padding:100px 0;background:var(--surface)}
+        .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px}
+        .news-card{background:white;border-radius:16px;overflow:hidden;border:1px solid var(--stone);transition:all 0.3s}
+        .news-card:hover{transform:translateY(-8px);box-shadow:0 20px 40px rgba(0,43,91,0.1);border-color:var(--cyan)}
+        .news-card-image{height:160px;background:linear-gradient(135deg,var(--navy-dark),var(--navy));display:flex;align-items:center;justify-content:center;font-size:48px;opacity:0.5}
+        .news-card-content{padding:24px}
+        .news-card-source{font-family:var(--font-mono);font-size:11px;color:var(--cyan);text-transform:uppercase;margin-bottom:8px}
+        .news-card-title{font-size:16px;font-weight:700;color:var(--navy);line-height:1.4;margin-bottom:12px}
+        .news-card-date{font-family:var(--font-mono);font-size:12px;color:var(--text-secondary)}
+        
+        /* CTA Section */
+        .cta-section{padding:100px 0;background:white}
+        .cta-box{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-dark) 100%);border-radius:24px;padding:60px;text-align:center;color:white;position:relative;overflow:hidden}
+        .cta-box::before{content:"⚡";position:absolute;right:-20px;bottom:-20px;font-size:200px;opacity:0.05}
+        .cta-title{font-size:32px;font-weight:800;margin-bottom:16px}
+        .cta-subtitle{font-size:16px;color:rgba(255,255,255,0.7);margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
+        
+        /* Footer */
+        .footer{background:var(--navy-dark);color:white;padding:60px 0 30px}
+        .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+        .footer-brand p{color:rgba(255,255,255,0.6);font-size:14px;margin-top:16px;line-height:1.6}
+        .footer-section h4{color:var(--cyan);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:20px}
+        .footer-section ul{list-style:none}
+        .footer-section a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:14px;display:block;padding:6px 0;transition:color 0.2s}
+        .footer-section a:hover{color:var(--cyan)}
+        .footer-bottom{border-top:1px solid rgba(255,255,255,0.1);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+        .footer-copyright{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5)}
+        .footer-legal{display:flex;gap:24px}
+        .footer-legal a{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none}
+        .footer-legal a:hover{color:var(--cyan)}
+        
+        /* Mobile Responsive */
+        @media(max-width:1024px){
+            .nav-links{display:none}
+            .mobile-menu-btn{display:block}
+            .hero-content{grid-template-columns:1fr}
+            .hero-visual{margin-top:40px}
+            .features-grid{grid-template-columns:1fr}
+            .data-cards{grid-template-columns:repeat(2,1fr)}
+            .news-grid{grid-template-columns:1fr}
+            .footer-grid{grid-template-columns:1fr 1fr}
+        }
+        @media(max-width:768px){
+            .hero{padding:120px 0 60px}
+            .hero h1{font-size:32px}
+            .hero-stats{grid-template-columns:1fr 1fr}
+            .hero-cta{flex-direction:column}
+            .btn{width:100%;justify-content:center}
+            .data-cards{grid-template-columns:1fr}
+            .cta-box{padding:40px 24px}
+            .footer-grid{grid-template-columns:1fr}
+            .footer-bottom{flex-direction:column;text-align:center}
+        }
+        
+        /* Mobile Menu Overlay */
+        .mobile-menu{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--navy);z-index:999;display:flex;flex-direction:column;padding:80px 24px 24px;transform:translateX(100%);transition:transform 0.3s}
+        .mobile-menu.active{transform:translateX(0)}
+        .mobile-menu a{color:white;text-decoration:none;font-size:20px;font-weight:600;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.1)}
+        .mobile-menu a:hover{color:var(--cyan)}
+        .mobile-menu-close{position:absolute;top:20px;right:20px;background:none;border:none;color:white;font-size:32px;cursor:pointer}
     </style>
 </head>
 <body>
-    <!-- Breaking News Ticker -->
-    <div class="ticker-bar">
-        <div class="ticker-content">
-            <div class="ticker-item">BREAKING: Tesla Supercharger Netzwerk öffnet für alle Marken in der Schweiz</div>
-            <div class="ticker-item">ANALYSE: BYD Blade Battery zeigt 0% Degradation nach 200'000 km</div>
-            <div class="ticker-item">DATEN: EV-Marktanteil erreicht 52.3% im Dezember 2024</div>
-            <div class="ticker-item">TECHNIK: Neue 800V-Architektur ermöglicht 10-80% in 15 Minuten</div>
-            <div class="ticker-item">BREAKING: Tesla Supercharger Netzwerk öffnet für alle Marken in der Schweiz</div>
-            <div class="ticker-item">ANALYSE: BYD Blade Battery zeigt 0% Degradation nach 200'000 km</div>
-            <div class="ticker-item">DATEN: EV-Marktanteil erreicht 52.3% im Dezember 2024</div>
-            <div class="ticker-item">TECHNIK: Neue 800V-Architektur ermöglicht 10-80% in 15 Minuten</div>
-        </div>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <button class="mobile-menu-close" onclick="toggleMobileMenu()">✕</button>
+        <a href="dashboard.html" onclick="toggleMobileMenu()">📊 Dashboard</a>
+        <a href="fahrzeuge.html" onclick="toggleMobileMenu()">🔋 Fahrzeuge</a>
+        <a href="news.html" onclick="toggleMobileMenu()">📰 News</a>
+        <a href="laden.html" onclick="toggleMobileMenu()">⚡ Laden</a>
+        <a href="ratgeber.html" onclick="toggleMobileMenu()">📋 Ratgeber</a>
+        <a href="service.html" onclick="toggleMobileMenu()">🔧 Service</a>
+        <a href="reichweite.html" onclick="toggleMobileMenu()">📏 Reichweite</a>
     </div>
 
-    <!-- Header -->
-    <header class="header">
+    <header class="header" id="header">
         <div class="container">
             <div class="header-main">
-                <div class="logo">
+                <a href="index.html" class="logo">
                     <div class="logo-icon">⚡</div>
                     <div class="logo-text">EV Technical <span>Insights</span></div>
-                </div>
-                
+                </a>
                 <ul class="nav-links">
                     <li><a href="dashboard.html">📊 Dashboard</a></li>
                     <li><a href="fahrzeuge.html">🔋 Fahrzeuge</a></li>
@@ -817,6 +190,7 @@
                     <li><a href="service.html">🔧 Service</a></li>
                     <li><a href="reichweite.html">📏 Reichweite</a></li>
                 </ul>
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
             </div>
         </div>
     </header>
@@ -825,338 +199,193 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <div class="hero-badge">
-                    <span>●</span> LIVE DATEN
+                <div>
+                    <div class="hero-badge">🇨🇭 Das Schweizer EV-Portal</div>
+                    <h1>Elektromobilität <span>verstehen.</span> Entscheiden. Fahren.</h1>
+                    <p class="hero-subtitle">Unabhängige Daten, Live-News aus 25+ Quellen und 100+ Fahrzeuge im Vergleich. Alles was Sie für den Umstieg auf Elektro brauchen.</p>
+                    <div class="hero-cta">
+                        <a href="fahrzeuge.html" class="btn btn-primary">🔋 Fahrzeuge vergleichen</a>
+                        <a href="dashboard.html" class="btn btn-secondary">📊 Marktdaten ansehen</a>
+                    </div>
                 </div>
-                <h1>Technische Analysen zur Elektromobilität</h1>
-                <p class="hero-subtitle">
-                    Verifizierte Daten, technische Tiefenanalysen und faktenbasierte Berichterstattung 
-                    zur Elektromobilität in der Schweiz und Europa.
-                </p>
+                <div class="hero-visual">
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">100+</div>
+                            <div class="hero-stat-label">Fahrzeuge</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">15</div>
+                            <div class="hero-stat-label">Marken</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">25+</div>
+                            <div class="hero-stat-label">News-Quellen</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">Live</div>
+                            <div class="hero-stat-label">Daten</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Stats Bar -->
-    <div class="container">
-        <div class="stats-bar">
-            <div class="stat-item">
-                <div class="stat-value">52.3<span class="unit">%</span></div>
-                <div class="stat-label">EV-Marktanteil 2024</div>
-                <div class="stat-change">↑ 5.1% vs. Vorjahr</div>
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Features</span>
+                <h2 class="section-title">Alles an einem Ort</h2>
+                <p class="section-subtitle">Von Marktdaten bis Reichweitenrechner - die Tools die Sie brauchen.</p>
             </div>
-            <div class="stat-item">
-                <div class="stat-value">12,458</div>
-                <div class="stat-label">Ladepunkte Schweiz</div>
-                <div class="stat-change">↑ 23% vs. 2023</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">485<span class="unit">km</span></div>
-                <div class="stat-label">Ø Reichweite WLTP</div>
-                <div class="stat-change">↑ 8% vs. 2023</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">156</div>
-                <div class="stat-label">Verfügbare Modelle</div>
-                <div class="stat-change">↑ 12 neue in Q4</div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Live Marktdaten</h3>
+                    <p class="feature-desc">Aktuelle Zulassungszahlen, Marktanteile und Trends der Elektromobilität in der Schweiz. Monatlich aktualisiert.</p>
+                    <a href="dashboard.html" class="feature-link">Dashboard öffnen →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔋</div>
+                    <h3 class="feature-title">Fahrzeug-Datenbank</h3>
+                    <p class="feature-desc">100+ Elektrofahrzeuge mit allen technischen Daten, Preisen und Reichweiten. Filtern, vergleichen, entscheiden.</p>
+                    <a href="fahrzeuge.html" class="feature-link">Fahrzeuge ansehen →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📰</div>
+                    <h3 class="feature-title">News Hub</h3>
+                    <p class="feature-desc">Live-News aus 25+ Quellen weltweit. Von Electrive bis Balkan Green Energy - automatisch aktualisiert.</p>
+                    <a href="news.html" class="feature-link">News lesen →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">Ladeinfrastruktur</h3>
+                    <p class="feature-desc">Ladestationen in der Schweiz, Preisvergleich der Netzwerke und Tipps zur Heimladung.</p>
+                    <a href="laden.html" class="feature-link">Laden erkunden →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📏</div>
+                    <h3 class="feature-title">Reichweiten-Rechner</h3>
+                    <p class="feature-desc">Berechnen Sie die reale Reichweite basierend auf Temperatur, Geschwindigkeit und Fahrprofil.</p>
+                    <a href="reichweite.html" class="feature-link">Reichweite berechnen →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <h3 class="feature-title">Ratgeber & Tipps</h3>
+                    <p class="feature-desc">Kaufberatung, Förderungen, Wartungstipps und alles was Sie über Elektroautos wissen müssen.</p>
+                    <a href="ratgeber.html" class="feature-link">Ratgeber lesen →</a>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Main Content -->
-    <main>
-        <!-- Latest Analysis Section -->
-        <section class="section">
-            <div class="container">
-                <div class="section-header">
-                    <div class="section-title-group">
-                        <div class="section-icon">📊</div>
-                        <div>
-                            <h2 class="section-title">Aktuelle Analysen</h2>
-                            <p class="section-subtitle">Verifizierte technische Daten und Marktanalysen</p>
-                        </div>
-                    </div>
-                    <a href="news.html" class="view-all">Alle Analysen →</a>
+    <!-- Live Data Section -->
+    <section class="live-data">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Live Daten</span>
+                <h2 class="section-title">Der Schweizer EV-Markt</h2>
+                <p class="section-subtitle">Aktuelle Zahlen aus unserem Dashboard - automatisch aktualisiert.</p>
+            </div>
+            <div class="data-cards">
+                <div class="data-card">
+                    <div class="data-icon">📈</div>
+                    <div class="data-value">22.3%</div>
+                    <div class="data-label">BEV-Marktanteil</div>
                 </div>
-
-                <div class="article-grid">
-                    <article class="article-card" onclick="window.location.href='news.html'">
-                        <div class="article-image">
-                            <span class="article-category">Marktdaten</span>
-                            <span class="article-image-icon">📈</span>
-                        </div>
-                        <div class="article-body">
-                            <h3 class="article-title">Schweizer EV-Markt überschreitet 50%-Marke</h3>
-                            <p class="article-excerpt">Detaillierte Analyse der Neuzulassungen im Dezember 2024. Erstmals mehr Elektroautos als Verbrenner verkauft.</p>
-                            <div class="article-meta">
-                                <span class="article-source">
-                                    <span class="verified-badge">✓</span>
-                                    Auto-Suisse
-                                </span>
-                                <span>Vor 2 Stunden</span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="article-card" onclick="window.location.href='news.html'">
-                        <div class="article-image">
-                            <span class="article-category">Technik</span>
-                            <span class="article-image-icon">🔋</span>
-                        </div>
-                        <div class="article-body">
-                            <h3 class="article-title">BYD Blade Battery: 200'000 km Langzeittest</h3>
-                            <p class="article-excerpt">Unabhängige Messung zeigt beeindruckende Ergebnisse: Nur 2.3% Kapazitätsverlust nach 200'000 km.</p>
-                            <div class="article-meta">
-                                <span class="article-source">
-                                    <span class="verified-badge">✓</span>
-                                    TÜV Süd
-                                </span>
-                                <span>Vor 1 Tag</span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="article-card" onclick="window.location.href='news.html'">
-                        <div class="article-image">
-                            <span class="article-category">Infrastruktur</span>
-                            <span class="article-image-icon">⚡</span>
-                        </div>
-                        <div class="article-body">
-                            <h3 class="article-title">Ladeleistung im Vergleich: 2024 vs. 2021</h3>
-                            <p class="article-excerpt">Wie sich die durchschnittliche Ladeleistung in 3 Jahren verdoppelt hat – mit Rohdaten und Methodik.</p>
-                            <div class="article-meta">
-                                <span class="article-source">
-                                    <span class="verified-badge">✓</span>
-                                    Swiss eMobility
-                                </span>
-                                <span>Vor 3 Tagen</span>
-                            </div>
-                        </div>
-                    </article>
+                <div class="data-card">
+                    <div class="data-icon">🚗</div>
+                    <div class="data-value">6'800</div>
+                    <div class="data-label">BEV-Neuzulassungen/Monat</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-icon">⚡</div>
+                    <div class="data-value">12'458</div>
+                    <div class="data-label">Ladepunkte Schweiz</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-icon">🏆</div>
+                    <div class="data-value">Tesla</div>
+                    <div class="data-label">Meistverkaufte Marke</div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Chart Section -->
-        <section class="section" style="padding-top: 0;">
-            <div class="container">
-                <div class="chart-section">
-                    <div class="chart-header">
-                        <h3 class="chart-title">Neuzulassungen nach Antriebsart 2024</h3>
-                        <span class="chart-source">Quelle: Auto-Suisse, verifiziert</span>
-                    </div>
-                    <div class="chart-wrapper">
-                        <canvas id="salesChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Fact Check Module -->
-                <div class="fact-check">
-                    <div class="fact-check-header">
-                        <div class="fact-check-icon">✓</div>
-                        <h3>Verifizierte Kennzahlen Q4 2024</h3>
-                    </div>
-                    <div class="fact-check-content">
-                        <div class="fact-item">
-                            <div class="fact-label">Durchschnittspreis EV</div>
-                            <div class="fact-value">CHF 52'400</div>
-                        </div>
-                        <div class="fact-item">
-                            <div class="fact-label">Ø Ladezeit DC 10-80%</div>
-                            <div class="fact-value">28 Min</div>
-                        </div>
-                        <div class="fact-item">
-                            <div class="fact-label">CO₂-Ersparnis/Jahr</div>
-                            <div class="fact-value">2.4 Tonnen</div>
-                        </div>
-                    </div>
-                </div>
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-box">
+                <h2 class="cta-title">Bereit für die Elektromobilität?</h2>
+                <p class="cta-subtitle">Vergleichen Sie jetzt über 100 Elektrofahrzeuge und finden Sie Ihr perfektes E-Auto.</p>
+                <a href="fahrzeuge.html" class="btn btn-primary">🔋 Fahrzeuge vergleichen</a>
             </div>
-        </section>
-
-        <!-- Issue Spotlight -->
-        <section class="section" style="padding-top: 0;">
-            <div class="container">
-                <div class="section-header">
-                    <div class="section-title-group">
-                        <div class="section-icon">🔬</div>
-                        <div>
-                            <h2 class="section-title">Technische Spotlights</h2>
-                            <p class="section-subtitle">Tiefenanalysen zu kritischen Themen</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="spotlight-grid">
-                    <div class="spotlight-card">
-                        <div class="spotlight-category">Batterie-Technologie</div>
-                        <h3 class="spotlight-title">LFP vs. NMC: Der grosse Vergleich</h3>
-                        <p class="spotlight-desc">Detaillierte Analyse der beiden dominanten Batteriechemien mit Daten aus 50'000 Fahrzeugen.</p>
-                        <div class="spotlight-stats">
-                            <div class="spotlight-stat">
-                                <div class="spotlight-stat-value">3'500</div>
-                                <div class="spotlight-stat-label">Zyklen LFP</div>
-                            </div>
-                            <div class="spotlight-stat">
-                                <div class="spotlight-stat-value">1'500</div>
-                                <div class="spotlight-stat-label">Zyklen NMC</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="spotlight-card">
-                        <div class="spotlight-category">Reichweite</div>
-                        <h3 class="spotlight-title">Winter-Reichweite: Mythos vs. Realität</h3>
-                        <p class="spotlight-desc">Echte Messdaten von 10'000 Fahrten zeigen den tatsächlichen Reichweitenverlust bei Kälte.</p>
-                        <div class="spotlight-stats">
-                            <div class="spotlight-stat">
-                                <div class="spotlight-stat-value">-23%</div>
-                                <div class="spotlight-stat-label">Bei -10°C</div>
-                            </div>
-                            <div class="spotlight-stat">
-                                <div class="spotlight-stat-value">-15%</div>
-                                <div class="spotlight-stat-label">Bei 0°C</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="logo">
+                    <a href="index.html" class="logo">
                         <div class="logo-icon">⚡</div>
                         <div class="logo-text">EV Technical <span>Insights</span></div>
-                    </div>
-                    <p>Unabhängige, verifizierte und technisch fundierte Berichterstattung zur Elektromobilität in der Schweiz.</p>
+                    </a>
+                    <p>Das unabhängige Schweizer Portal für Elektromobilität. Datenbasiert, aktuell, verständlich.</p>
                 </div>
-                
                 <div class="footer-section">
                     <h4>Analysen</h4>
                     <ul>
-                        <li><a href="dashboard.html">Marktdaten</a></li>
+                        <li><a href="dashboard.html">Markt-Dashboard</a></li>
                         <li><a href="fahrzeuge.html">Fahrzeug-Datenbank</a></li>
+                        <li><a href="reichweite.html">Reichweiten-Rechner</a></li>
                         <li><a href="laden.html">Ladeinfrastruktur</a></li>
-                        <li><a href="reichweite.html">Reichweiten-Analyse</a></li>
                     </ul>
                 </div>
-                
                 <div class="footer-section">
-                    <h4>Ratgeber</h4>
+                    <h4>Ressourcen</h4>
                     <ul>
-                        <li><a href="ratgeber.html">Kaufberatung</a></li>
+                        <li><a href="news.html">News Hub</a></li>
+                        <li><a href="ratgeber.html">Ratgeber</a></li>
                         <li><a href="service.html">Service & Wartung</a></li>
-                        <li><a href="#">TCO-Rechner</a></li>
-                        <li><a href="#">Förderungen</a></li>
                     </ul>
                 </div>
-                
                 <div class="footer-section">
-                    <h4>Über uns</h4>
+                    <h4>Rechtliches</h4>
                     <ul>
-                        <li><a href="#">Redaktion</a></li>
-                        <li><a href="#">Methodik</a></li>
-                        <li><a href="#">Quellen</a></li>
-                        <li><a href="#">Kontakt</a></li>
+                        <li><a href="impressum.html">Impressum</a></li>
+                        <li><a href="datenschutz.html">Datenschutz</a></li>
+                        <li><a href="kontakt.html">Kontakt</a></li>
                     </ul>
                 </div>
             </div>
-            
             <div class="footer-bottom">
                 <p class="footer-copyright">© 2025 EV Technical Insights. Alle Rechte vorbehalten.</p>
                 <div class="footer-legal">
-                    <a href="#">Datenschutz</a>
-                    <a href="#">Impressum</a>
-                    <a href="#">AGB</a>
+                    <a href="impressum.html">Impressum</a>
+                    <a href="datenschutz.html">Datenschutz</a>
                 </div>
             </div>
         </div>
     </footer>
 
     <script>
-        // Chart Configuration with new color scheme
-        Chart.defaults.font.family = "'Inter', sans-serif";
-        Chart.defaults.color = '#6B7280';
-        
-        const salesCtx = document.getElementById('salesChart').getContext('2d');
-        new Chart(salesCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
-                datasets: [{
-                    label: 'Elektro (BEV)',
-                    data: [3200, 3450, 4100, 4300, 4800, 5200, 4900, 5100, 5600, 5800, 6200, 6800],
-                    borderColor: '#00F2FF',
-                    backgroundColor: 'rgba(0, 242, 255, 0.1)',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#00F2FF',
-                    pointBorderColor: '#002B5B',
-                    pointBorderWidth: 2,
-                    pointRadius: 4
-                }, {
-                    label: 'Plug-in Hybrid',
-                    data: [2100, 2200, 2500, 2600, 2800, 2900, 2700, 2800, 3000, 3100, 3300, 3500],
-                    borderColor: '#002B5B',
-                    backgroundColor: 'rgba(0, 43, 91, 0.1)',
-                    borderWidth: 2,
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#002B5B',
-                    pointRadius: 3
-                }, {
-                    label: 'Verbrenner',
-                    data: [8500, 8200, 7900, 7600, 7300, 7000, 6800, 6500, 6200, 5900, 5600, 5100],
-                    borderColor: '#9CA3AF',
-                    backgroundColor: 'rgba(156, 163, 175, 0.05)',
-                    borderWidth: 2,
-                    borderDash: [5, 5],
-                    tension: 0.4,
-                    fill: false,
-                    pointRadius: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        align: 'end',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                            font: { size: 12, weight: '500' }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0,0,0,0.05)'
-                        },
-                        ticks: {
-                            font: { family: "'JetBrains Mono', monospace", size: 11 }
-                        }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: {
-                            font: { family: "'JetBrains Mono', monospace", size: 11 }
-                        }
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                }
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+            document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
+        }
+
+        // Header Scroll Effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
             }
         });
     </script>
