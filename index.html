@@ -375,9 +375,9 @@
             <div class="logo">EV Portal CH</div>
             <ul class="nav-links">
                 <li><a href="dashboard.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">📊 Dashboard</a></li>
+                <li><a href="fahrzeuge.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">🚗 Fahrzeuge</a></li>
                 <li><a href="#verkaufszahlen">Verkaufszahlen</a></li>
                 <li><a href="#news">News</a></li>
-                <li><a href="#fahrzeuge">Fahrzeuge</a></li>
                 <li><a href="#laden">Laden</a></li>
                 <li><a href="#ratgeber">Ratgeber</a></li>
                 <li><a href="#service">Service</a></li>
@@ -551,36 +551,53 @@
                 <h2 class="section-title">Fahrzeug-Datenbank</h2>
             </div>
             
+            <!-- Database CTA -->
+            <div style="background: linear-gradient(135deg, var(--success) 0%, #048a81 100%); padding: 3rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                <h3 style="color: white; font-size: 2rem; margin-bottom: 1rem;">🚗 Alle Elektroautos der Schweiz</h3>
+                <p style="color: white; opacity: 0.95; font-size: 1.2rem; margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+                    Durchsuchen Sie 156 verfügbare EV-Modelle. Filtern nach Herkunft, Preis, Reichweite. Vergleichen Sie technische Daten und finden Sie Ihr perfektes Elektroauto.
+                </p>
+                <a href="fahrzeuge.html" class="btn" style="font-size: 1.2rem; padding: 1rem 2.5rem; background: white; color: var(--dark); display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    🔍 Zur Fahrzeug-Datenbank
+                </a>
+            </div>
+            
             <div class="cards-grid">
-                <div class="card">
+                <div class="card" onclick="window.location.href='fahrzeuge.html'" style="cursor: pointer;">
                     <div class="card-icon">🇩🇪</div>
                     <h3>Deutsche Modelle</h3>
                     <p>Volkswagen, BMW, Mercedes, Audi, Porsche - alle in der Schweiz zugelassenen EV-Modelle.</p>
+                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ 45 Modelle anzeigen</div>
                 </div>
-                <div class="card">
+                <div class="card" onclick="window.location.href='fahrzeuge.html'" style="cursor: pointer;">
                     <div class="card-icon">🇨🇳</div>
                     <h3>Chinesische Modelle</h3>
                     <p>BYD, NIO, MG, Xpeng - die neue Generation chinesischer Elektroautos im Schweizer Markt.</p>
+                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ 28 Modelle anzeigen</div>
                 </div>
-                <div class="card">
+                <div class="card" onclick="window.location.href='fahrzeuge.html'" style="cursor: pointer;">
                     <div class="card-icon">🇯🇵</div>
                     <h3>Japanische Modelle</h3>
                     <p>Toyota, Nissan, Honda, Mazda - japanische EV- und Plug-in Hybrid-Technologie.</p>
+                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ 15 Modelle anzeigen</div>
                 </div>
-                <div class="card">
+                <div class="card" onclick="window.location.href='fahrzeuge.html'" style="cursor: pointer;">
                     <div class="card-icon">🇺🇸</div>
                     <h3>Amerikanische Modelle</h3>
                     <p>Tesla, Ford, Chevrolet - amerikanische Innovation im Elektromobilitäts-Sektor.</p>
+                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ 12 Modelle anzeigen</div>
                 </div>
-                <div class="card">
+                <div class="card" onclick="window.location.href='fahrzeuge.html'" style="cursor: pointer;">
                     <div class="card-icon">🇰🇷</div>
                     <h3>Koreanische Modelle</h3>
                     <p>Hyundai, Kia, Genesis - hochmoderne EV-Technologie aus Südkorea.</p>
+                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ 18 Modelle anzeigen</div>
                 </div>
-                <div class="card">
+                <div class="card" onclick="window.location.href='fahrzeuge.html'" style="cursor: pointer;">
                     <div class="card-icon">🔜</div>
                     <h3>Kommende Modelle</h3>
                     <p>Neue EV-Modelle der nächsten 6 Monate - Markteinführungen und Verfügbarkeit.</p>
+                    <div style="margin-top: 1rem; color: var(--warning); font-weight: bold;">→ 23 Modelle anzeigen</div>
                 </div>
             </div>
         </section>
@@ -800,4 +817,4 @@
         });
     </script>
 </body>
-</html>Commit message: Initial website setup
+</html>
