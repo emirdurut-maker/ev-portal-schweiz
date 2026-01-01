@@ -3,819 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service & Wartung | EV Portal Schweiz</title>
+    <meta name="description" content="EV Service - Werkstätten, Wartung und Support für Elektrofahrzeuge">
+    <title>Service | EV Technical Insights</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        :root {
-            --primary: #00b4d8;
-            --secondary: #0077b6;
-            --accent: #90e0ef;
-            --dark: #03045e;
-            --success: #06d6a0;
-            --warning: #ffd166;
-            --danger: #ef476f;
-            --text: #023047;
-            --bg: #f8f9fa;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, var(--dark) 0%, var(--secondary) 100%);
-            color: white;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .back-btn {
-            color: white;
-            text-decoration: none;
-            padding: 0.8rem 1.5rem;
-            background: rgba(255,255,255,0.2);
-            border-radius: 5px;
-            border: 2px solid white;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        
-        .back-btn:hover {
-            background: white;
-            color: var(--dark);
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        .section {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            margin-bottom: 2rem;
-        }
-        
-        .section-title {
-            font-size: 1.8rem;
-            color: var(--dark);
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 3px solid var(--primary);
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .info-card {
-            background: var(--bg);
-            padding: 1.5rem;
-            border-radius: 10px;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .info-card h3 {
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .info-card p {
-            color: #666;
-            font-size: 0.95rem;
-        }
-        
-        .battery-health {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-            color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            margin: 1.5rem 0;
-        }
-        
-        .battery-tips {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-        
-        .battery-tip {
-            background: rgba(255,255,255,0.2);
-            padding: 1rem;
-            border-radius: 5px;
-        }
-        
-        .battery-tip h4 {
-            margin-bottom: 0.5rem;
-        }
-        
-        .workshop-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .workshop-card {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 1.5rem;
-            transition: all 0.3s;
-        }
-        
-        .workshop-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transform: translateY(-3px);
-        }
-        
-        .workshop-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1rem;
-        }
-        
-        .workshop-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--dark);
-        }
-        
-        .workshop-type {
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        .type-official {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .type-independent {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .type-specialist {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .workshop-brands {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.3rem;
-            margin: 1rem 0;
-        }
-        
-        .brand-tag {
-            background: var(--bg);
-            padding: 0.2rem 0.6rem;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            color: #666;
-        }
-        
-        .workshop-info {
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .workshop-rating {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #eee;
-        }
-        
-        .stars {
-            color: #ffd700;
-        }
-        
-        .cost-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1.5rem;
-        }
-        
-        .cost-table th,
-        .cost-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .cost-table th {
-            background: var(--bg);
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        .cost-table tr:hover {
-            background: var(--bg);
-        }
-        
-        .comparison-badge {
-            display: inline-block;
-            padding: 0.2rem 0.6rem;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        .badge-cheaper {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .badge-similar {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .badge-expensive {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .faq-item {
-            background: var(--bg);
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .faq-item:hover {
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .faq-question {
-            font-weight: bold;
-            color: var(--dark);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .faq-answer {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #ddd;
-            color: #666;
-            display: none;
-        }
-        
-        .faq-item.active .faq-answer {
-            display: block;
-        }
-        
-        .alert-box {
-            background: #fff3cd;
-            border-left: 4px solid var(--warning);
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            border-radius: 5px;
-        }
-        
-        .alert-box.info {
-            background: #d1ecf1;
-            border-left-color: var(--primary);
-        }
-        
-        .alert-box.success {
-            background: #d4edda;
-            border-left-color: var(--success);
-        }
-        
-        .alert-box h4 {
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-        
-        .tires-brakes {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-top: 1.5rem;
-        }
-        
-        .tire-card, .brake-card {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 2rem;
-        }
-        
-        .tire-card h3, .brake-card h3 {
-            color: var(--dark);
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-        
-        .feature-list {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .feature-list li {
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            align-items: start;
-            gap: 0.5rem;
-        }
-        
-        .feature-list li:last-child {
-            border-bottom: none;
-        }
-        
-        .check-icon {
-            color: var(--success);
-            font-weight: bold;
-        }
-        
-        .warning-icon {
-            color: var(--warning);
-            font-weight: bold;
-        }
-        
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .tires-brakes {
-                grid-template-columns: 1fr;
-            }
-            
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        :root{--navy:#002B5B;--navy-dark:#001a38;--cyan:#00F2FF;--cyan-dim:rgba(0,242,255,0.15);--surface:#F9FAFB;--stone:#E5E7EB;--anthracite:#1F2937;--text-secondary:#6B7280;--success:#10B981;--warning:#F59E0B;--font-headline:'Inter',sans-serif;--font-body:'Lora',serif;--font-mono:'JetBrains Mono',monospace;--content-width:1280px}
+        html{scroll-behavior:smooth}body{font-family:var(--font-body);font-size:18px;line-height:1.6;color:var(--anthracite);background:var(--surface)}
+        h1,h2,h3,h4{font-family:var(--font-headline);font-weight:700;color:var(--navy);line-height:1.2}
+        .container{max-width:var(--content-width);margin:0 auto;padding:0 24px}
+        .ticker-bar{background:var(--navy-dark);color:var(--cyan);font-family:var(--font-mono);font-size:13px;padding:8px 0;overflow:hidden}
+        .ticker-content{display:flex;animation:ticker 30s linear infinite;white-space:nowrap}
+        .ticker-item{padding:0 48px;display:flex;align-items:center;gap:12px}
+        .ticker-item::before{content:"●";color:var(--cyan);animation:pulse 2s ease-in-out infinite}
+        @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+        .header{background:var(--navy);color:white;position:sticky;top:0;z-index:1000;box-shadow:0 4px 20px rgba(0,43,91,0.3)}
+        .header-main{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
+        .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:white}
+        .logo-icon{width:44px;height:44px;background:var(--cyan);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px}
+        .logo-text{font-family:var(--font-headline);font-weight:800;font-size:20px}.logo-text span{color:var(--cyan)}
+        .nav-links{display:flex;list-style:none;gap:8px}
+        .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-family:var(--font-headline);font-size:14px;font-weight:500;padding:10px 16px;border-radius:6px;transition:all 0.2s}
+        .nav-links a:hover{color:var(--cyan);background:rgba(0,242,255,0.1)}
+        .nav-links a.active{background:var(--cyan);color:var(--navy)}
+        .page-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-dark) 100%);color:white;padding:48px 0}
+        .page-header h1{color:white;font-size:clamp(28px,4vw,40px);margin-bottom:8px}
+        .page-subtitle{font-family:var(--font-mono);font-size:14px;color:rgba(255,255,255,0.7)}
+        .service-section{padding:48px 0}
+        .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:48px}
+        .service-card{background:white;border-radius:12px;padding:32px;border:1px solid var(--stone);text-align:center;transition:all 0.3s}
+        .service-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,43,91,0.15);border-color:var(--cyan)}
+        .service-icon{width:72px;height:72px;background:var(--cyan-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px}
+        .service-title{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:12px}
+        .service-desc{font-size:15px;color:var(--text-secondary);margin-bottom:20px}
+        .service-btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-headline);font-size:14px;font-weight:600;padding:12px 24px;background:var(--navy);color:white;border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;text-decoration:none}
+        .service-btn:hover{background:var(--cyan);color:var(--navy)}
+        .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid var(--navy)}
+        .section-title{font-size:24px;display:flex;align-items:center;gap:12px}
+        .workshop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:48px}
+        .workshop-card{background:white;border-radius:12px;padding:24px;border:1px solid var(--stone);transition:all 0.3s}
+        .workshop-card:hover{border-color:var(--cyan);box-shadow:0 4px 20px rgba(0,43,91,0.1)}
+        .workshop-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+        .workshop-name{font-family:var(--font-headline);font-size:17px;font-weight:700;color:var(--navy)}
+        .workshop-badge{font-family:var(--font-mono);font-size:11px;padding:4px 10px;border-radius:4px;background:var(--success);color:white}
+        .workshop-address{font-size:14px;color:var(--text-secondary);margin-bottom:16px}
+        .workshop-services{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+        .workshop-tag{font-family:var(--font-mono);font-size:11px;padding:4px 10px;background:var(--surface);border:1px solid var(--stone);border-radius:4px}
+        .workshop-footer{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--stone)}
+        .workshop-rating{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:13px}
+        .workshop-stars{color:var(--warning)}
+        .maintenance-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-bottom:48px}
+        .maintenance-card{background:white;border-radius:12px;padding:28px;border:1px solid var(--stone)}
+        .maintenance-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+        .maintenance-icon{width:52px;height:52px;background:var(--navy);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px}
+        .maintenance-title{font-size:18px;font-weight:700;color:var(--navy)}
+        .maintenance-interval{font-family:var(--font-mono);font-size:12px;color:var(--cyan)}
+        .maintenance-list{list-style:none}
+        .maintenance-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--stone);font-size:15px}
+        .maintenance-item:last-child{border-bottom:none}
+        .maintenance-check{color:var(--success);font-size:16px}
+        .maintenance-cost{margin-top:20px;padding-top:16px;border-top:2px solid var(--stone);display:flex;justify-content:space-between;align-items:center}
+        .maintenance-cost-label{font-family:var(--font-mono);font-size:12px;color:var(--text-secondary)}
+        .maintenance-cost-value{font-family:var(--font-headline);font-size:20px;font-weight:700;color:var(--navy)}
+        .contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:48px}
+        .contact-card{background:linear-gradient(135deg,var(--navy-dark),var(--navy));border-radius:12px;padding:32px;color:white;text-align:center}
+        .contact-icon{font-size:40px;margin-bottom:16px}
+        .contact-title{font-size:18px;font-weight:700;margin-bottom:8px}
+        .contact-info{font-family:var(--font-mono);font-size:14px;color:var(--cyan);margin-bottom:16px}
+        .contact-desc{font-size:14px;color:rgba(255,255,255,0.7)}
+        .footer{background:var(--navy-dark);color:white;padding:60px 0 30px}
+        .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+        .footer-brand p{color:rgba(255,255,255,0.6);font-size:15px;margin-top:16px}
+        .footer-section h4{color:var(--cyan);font-family:var(--font-headline);font-size:13px;font-weight:600;text-transform:uppercase;margin-bottom:20px}
+        .footer-section ul{list-style:none}
+        .footer-section a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:14px;display:block;padding:6px 0}
+        .footer-section a:hover{color:var(--cyan)}
+        .footer-bottom{border-top:1px solid rgba(255,255,255,0.1);padding-top:24px;display:flex;justify-content:space-between}
+        .footer-copyright{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5)}
+        .footer-legal{display:flex;gap:24px}
+        .footer-legal a{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none}
+        @media(max-width:1024px){.nav-links{display:none}.service-grid,.workshop-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:768px){.maintenance-grid,.contact-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr}}
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <div>
-                <h1>🔧 Service & Wartung</h1>
-                <p>Alles zu Batterie, Werkstätten, Ersatzteilen und laufenden Kosten</p>
-            </div>
-            <a href="index.html" class="back-btn">← Zurück zur Startseite</a>
-        </div>
-    </div>
+    <div class="ticker-bar"><div class="ticker-content">
+        <div class="ticker-item">SERVICE: EV-Wartung bis zu 35% günstiger als Verbrenner</div>
+        <div class="ticker-item">TIPP: Jetzt Wintercheck für Ihr Elektroauto buchen</div>
+        <div class="ticker-item">NEU: 48 zertifizierte EV-Werkstätten in der Schweiz</div>
+        <div class="ticker-item">SERVICE: EV-Wartung bis zu 35% günstiger als Verbrenner</div>
+        <div class="ticker-item">TIPP: Jetzt Wintercheck für Ihr Elektroauto buchen</div>
+    </div></div>
 
-    <div class="container">
-        <!-- Battery Section -->
-        <div class="section">
-            <h2 class="section-title">🔋 Batterie-Lebensdauer & Pflege</h2>
-            
-            <div class="battery-health">
-                <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">💡 Wichtig zu wissen: EV-Batterien halten länger als gedacht!</h3>
-                <p style="font-size: 1.1rem; margin-bottom: 1rem;">
-                    Moderne Lithium-Ionen-Batterien in Elektroautos sind für <strong>1'500-2'000 Ladezyklen</strong> ausgelegt. 
-                    Das entspricht bei durchschnittlicher Nutzung <strong>300'000-500'000 km</strong> Laufleistung!
-                </p>
-                <p>
-                    Die meisten Hersteller garantieren <strong>70-80% Kapazität nach 8 Jahren oder 160'000 km</strong>.
-                </p>
-                
-                <div class="battery-tips">
-                    <div class="battery-tip">
-                        <h4>✅ Idealbereich: 20-80%</h4>
-                        <p>Vermeiden Sie regelmäßiges Laden auf 100% oder Entladen unter 20%.</p>
-                    </div>
-                    <div class="battery-tip">
-                        <h4>✅ Langsam laden wenn möglich</h4>
-                        <p>AC-Laden (Wallbox) ist schonender als häufiges DC-Schnellladen.</p>
-                    </div>
-                    <div class="battery-tip">
-                        <h4>✅ Extreme Temperaturen vermeiden</h4>
-                        <p>Parken Sie im Sommer im Schatten, im Winter in der Garage.</p>
-                    </div>
-                    <div class="battery-tip">
-                        <h4>✅ Nicht voll geladen stehen lassen</h4>
-                        <p>Vor längerer Standzeit auf 50-60% laden.</p>
-                    </div>
+    <header class="header"><div class="container"><div class="header-main">
+        <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
+        <ul class="nav-links">
+            <li><a href="dashboard.html">📊 Dashboard</a></li>
+            <li><a href="fahrzeuge.html">🔋 Fahrzeuge</a></li>
+            <li><a href="news.html">📰 News</a></li>
+            <li><a href="laden.html">⚡ Laden</a></li>
+            <li><a href="ratgeber.html">📋 Ratgeber</a></li>
+            <li><a href="service.html" class="active">🔧 Service</a></li>
+            <li><a href="reichweite.html">📏 Reichweite</a></li>
+        </ul>
+    </div></div></header>
+
+    <section class="page-header"><div class="container">
+        <h1>🔧 Service & Wartung</h1>
+        <p class="page-subtitle">Werkstätten finden und Wartungskosten im Überblick</p>
+    </div></section>
+
+    <main><div class="container">
+        <section class="service-section">
+            <div class="service-grid">
+                <div class="service-card">
+                    <div class="service-icon">🔍</div>
+                    <h3 class="service-title">Werkstatt finden</h3>
+                    <p class="service-desc">Zertifizierte EV-Werkstätten in Ihrer Nähe mit Bewertungen.</p>
+                    <a href="#" class="service-btn">Werkstatt suchen →</a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📅</div>
+                    <h3 class="service-title">Service buchen</h3>
+                    <p class="service-desc">Online-Terminbuchung für Wartung und Inspektion.</p>
+                    <a href="#" class="service-btn">Termin buchen →</a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">💰</div>
+                    <h3 class="service-title">Kosten-Rechner</h3>
+                    <p class="service-desc">Wartungskosten für Ihr Fahrzeug berechnen und vergleichen.</p>
+                    <a href="#" class="service-btn">Berechnen →</a>
                 </div>
             </div>
-            
-            <div class="alert-box success">
-                <h4>📊 Statistik aus der Praxis</h4>
-                <p>Tesla-Daten zeigen: Nach 320'000 km haben Batterien im Durchschnitt noch <strong>88% ihrer ursprünglichen Kapazität</strong>. Die Technologie ist ausgereift!</p>
+        </section>
+
+        <div class="section-header"><h2 class="section-title">📍 Empfohlene Werkstätten</h2></div>
+        <div class="workshop-grid">
+            <div class="workshop-card">
+                <div class="workshop-header">
+                    <span class="workshop-name">EV Center Zürich</span>
+                    <span class="workshop-badge">Zertifiziert</span>
+                </div>
+                <div class="workshop-address">Badenerstrasse 123, 8004 Zürich</div>
+                <div class="workshop-services">
+                    <span class="workshop-tag">Tesla</span>
+                    <span class="workshop-tag">BMW</span>
+                    <span class="workshop-tag">VW</span>
+                    <span class="workshop-tag">Batterie-Check</span>
+                </div>
+                <div class="workshop-footer">
+                    <span class="workshop-rating"><span class="workshop-stars">★★★★★</span> 4.9 (127)</span>
+                    <a href="#" class="workshop-link">Details →</a>
+                </div>
             </div>
-        </div>
-
-        <!-- Service Comparison -->
-        <div class="section">
-            <h2 class="section-title">💰 Servicekosten: EV vs. Verbrenner</h2>
-            <p style="color: #666; margin-bottom: 1rem;">Durchschnittliche jährliche Wartungskosten in der Schweiz</p>
-            
-            <table class="cost-table">
-                <thead>
-                    <tr>
-                        <th>Serviceart</th>
-                        <th>Elektroauto</th>
-                        <th>Verbrenner</th>
-                        <th>Unterschied</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Jährlicher Service</strong></td>
-                        <td>CHF 150-300</td>
-                        <td>CHF 400-600</td>
-                        <td><span class="comparison-badge badge-cheaper">50-60% günstiger</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Ölwechsel</strong></td>
-                        <td>Nicht nötig ✓</td>
-                        <td>CHF 150-250/Jahr</td>
-                        <td><span class="comparison-badge badge-cheaper">Entfällt komplett</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Bremsen (Lebensdauer)</strong></td>
-                        <td>80'000-150'000 km</td>
-                        <td>30'000-60'000 km</td>
-                        <td><span class="comparison-badge badge-cheaper">2-3x länger</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Reifen</strong></td>
-                        <td>CHF 600-1'200/Satz</td>
-                        <td>CHF 400-800/Satz</td>
-                        <td><span class="comparison-badge badge-expensive">20-40% teurer*</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Zahnriemen</strong></td>
-                        <td>Nicht vorhanden ✓</td>
-                        <td>CHF 600-1'200</td>
-                        <td><span class="comparison-badge badge-cheaper">Entfällt komplett</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Auspuffanlage</strong></td>
-                        <td>Nicht vorhanden ✓</td>
-                        <td>CHF 500-2'000</td>
-                        <td><span class="comparison-badge badge-cheaper">Entfällt komplett</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Getriebe</strong></td>
-                        <td>Wartungsfrei ✓</td>
-                        <td>CHF 200-400</td>
-                        <td><span class="comparison-badge badge-cheaper">Entfällt</span></td>
-                    </tr>
-                    <tr style="background: var(--bg); font-weight: bold;">
-                        <td><strong>TOTAL pro Jahr (Ø)</strong></td>
-                        <td style="color: var(--success);">CHF 300-500</td>
-                        <td style="color: var(--danger);">CHF 800-1'200</td>
-                        <td><span class="comparison-badge badge-cheaper">~60% günstiger</span></td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <p style="font-size: 0.85rem; color: #666; margin-top: 1rem;">
-                *EV-Reifen sind teurer wegen höherem Gewicht und Drehmoment. Spezielle EV-Reifen empfohlen.
-            </p>
-        </div>
-
-        <!-- Workshops -->
-        <div class="section">
-            <h2 class="section-title">🏭 Werkstätten in der Schweiz</h2>
-            <p style="color: #666; margin-bottom: 1.5rem;">Offizielle Servicepartner und unabhängige Spezialisten</p>
-            
-            <div class="alert-box info">
-                <h4>🔍 Wichtig bei der Werkstattwahl</h4>
-                <p>Für Garantieleistungen müssen Sie meist zur offiziellen Markenwerkstatt. Für reguläre Wartung und Verschleissteile können unabhängige Werkstätten oft günstiger sein - achten Sie auf EV-Zertifizierung!</p>
+            <div class="workshop-card">
+                <div class="workshop-header">
+                    <span class="workshop-name">Elektro Garage Bern</span>
+                    <span class="workshop-badge">Zertifiziert</span>
+                </div>
+                <div class="workshop-address">Effingerstrasse 45, 3008 Bern</div>
+                <div class="workshop-services">
+                    <span class="workshop-tag">Alle Marken</span>
+                    <span class="workshop-tag">HV-Spezialist</span>
+                    <span class="workshop-tag">Unfallreparatur</span>
+                </div>
+                <div class="workshop-footer">
+                    <span class="workshop-rating"><span class="workshop-stars">★★★★★</span> 4.8 (89)</span>
+                    <a href="#" class="workshop-link">Details →</a>
+                </div>
             </div>
-            
-            <div class="workshop-grid">
-                <div class="workshop-card">
-                    <div class="workshop-header">
-                        <div class="workshop-name">Tesla Service Center</div>
-                        <span class="workshop-type type-official">Offiziell</span>
-                    </div>
-                    <div class="workshop-brands">
-                        <span class="brand-tag">Tesla</span>
-                    </div>
-                    <div class="workshop-info">
-                        <p>📍 Zürich, Genf, Basel, Bern</p>
-                        <p>📱 Mobile Service verfügbar</p>
-                        <p>⏱️ Online-Terminbuchung</p>
-                    </div>
-                    <div class="workshop-rating">
-                        <span class="stars">★★★★☆</span>
-                        <span>4.3/5</span>
-                        <span style="color: #999;">(890 Bewertungen)</span>
-                    </div>
+            <div class="workshop-card">
+                <div class="workshop-header">
+                    <span class="workshop-name">Swiss eMobility Service</span>
+                    <span class="workshop-badge">Zertifiziert</span>
                 </div>
-
-                <div class="workshop-card">
-                    <div class="workshop-header">
-                        <div class="workshop-name">AMAG (VW/Audi/Skoda)</div>
-                        <span class="workshop-type type-official">Offiziell</span>
-                    </div>
-                    <div class="workshop-brands">
-                        <span class="brand-tag">VW</span>
-                        <span class="brand-tag">Audi</span>
-                        <span class="brand-tag">Skoda</span>
-                        <span class="brand-tag">Cupra</span>
-                    </div>
-                    <div class="workshop-info">
-                        <p>📍 >100 Standorte schweizweit</p>
-                        <p>🔧 EV-zertifizierte Techniker</p>
-                        <p>🚗 Ersatzwagen verfügbar</p>
-                    </div>
-                    <div class="workshop-rating">
-                        <span class="stars">★★★★☆</span>
-                        <span>4.1/5</span>
-                        <span style="color: #999;">(1.2K Bewertungen)</span>
-                    </div>
+                <div class="workshop-address">Route de Genève 88, 1004 Lausanne</div>
+                <div class="workshop-services">
+                    <span class="workshop-tag">Hyundai</span>
+                    <span class="workshop-tag">Kia</span>
+                    <span class="workshop-tag">BYD</span>
+                    <span class="workshop-tag">Software-Update</span>
                 </div>
-
-                <div class="workshop-card">
-                    <div class="workshop-header">
-                        <div class="workshop-name">Emil Frey (Multi-Brand)</div>
-                        <span class="workshop-type type-official">Offiziell</span>
-                    </div>
-                    <div class="workshop-brands">
-                        <span class="brand-tag">BMW</span>
-                        <span class="brand-tag">Mercedes</span>
-                        <span class="brand-tag">Toyota</span>
-                        <span class="brand-tag">Hyundai</span>
-                    </div>
-                    <div class="workshop-info">
-                        <p>📍 >80 Standorte schweizweit</p>
-                        <p>🔧 Alle großen Marken</p>
-                        <p>📞 Hotline verfügbar</p>
-                    </div>
-                    <div class="workshop-rating">
-                        <span class="stars">★★★★☆</span>
-                        <span>4.0/5</span>
-                        <span style="color: #999;">(956 Bewertungen)</span>
-                    </div>
+                <div class="workshop-footer">
+                    <span class="workshop-rating"><span class="workshop-stars">★★★★☆</span> 4.7 (64)</span>
+                    <a href="#" class="workshop-link">Details →</a>
                 </div>
-
-                <div class="workshop-card">
-                    <div class="workshop-header">
-                        <div class="workshop-name">Electrogarage Schweiz</div>
-                        <span class="workshop-type type-specialist">EV-Spezialist</span>
-                    </div>
-                    <div class="workshop-brands">
-                        <span class="brand-tag">Alle Marken</span>
-                        <span class="brand-tag">Unabhängig</span>
-                    </div>
-                    <div class="workshop-info">
-                        <p>📍 Zürich, Bern, Luzern</p>
-                        <p>🔧 Spezialisiert auf EVs</p>
-                        <p>💰 Oft günstiger als Marke</p>
-                    </div>
-                    <div class="workshop-rating">
-                        <span class="stars">★★★★★</span>
-                        <span>4.7/5</span>
-                        <span style="color: #999;">(234 Bewertungen)</span>
-                    </div>
+            </div>
+            <div class="workshop-card">
+                <div class="workshop-header">
+                    <span class="workshop-name">Autohaus Müller EV</span>
+                    <span class="workshop-badge">Zertifiziert</span>
                 </div>
-
-                <div class="workshop-card">
-                    <div class="workshop-header">
-                        <div class="workshop-name">BYD Service Schweiz</div>
-                        <span class="workshop-type type-official">Offiziell</span>
-                    </div>
-                    <div class="workshop-brands">
-                        <span class="brand-tag">BYD</span>
-                    </div>
-                    <div class="workshop-info">
-                        <p>📍 Via Hedin Automotive</p>
-                        <p>🔧 Netzwerk im Aufbau</p>
-                        <p>⚠️ Begrenzte Standorte</p>
-                    </div>
-                    <div class="workshop-rating">
-                        <span class="stars">★★★☆☆</span>
-                        <span>3.8/5</span>
-                        <span style="color: #999;">(89 Bewertungen)</span>
-                    </div>
+                <div class="workshop-address">Industriestrasse 22, 4052 Basel</div>
+                <div class="workshop-services">
+                    <span class="workshop-tag">Mercedes</span>
+                    <span class="workshop-tag">Audi</span>
+                    <span class="workshop-tag">Porsche</span>
+                    <span class="workshop-tag">Reifenservice</span>
                 </div>
-
-                <div class="workshop-card">
-                    <div class="workshop-header">
-                        <div class="workshop-name">MG Service (SAIC)</div>
-                        <span class="workshop-type type-official">Offiziell</span>
-                    </div>
-                    <div class="workshop-brands">
-                        <span class="brand-tag">MG</span>
-                    </div>
-                    <div class="workshop-info">
-                        <p>📍 >30 Partner schweizweit</p>
-                        <p>🔧 Via bestehende Garagen</p>
-                        <p>📞 Zentrale Hotline</p>
-                    </div>
-                    <div class="workshop-rating">
-                        <span class="stars">★★★★☆</span>
-                        <span>4.0/5</span>
-                        <span style="color: #999;">(156 Bewertungen)</span>
-                    </div>
+                <div class="workshop-footer">
+                    <span class="workshop-rating"><span class="workshop-stars">★★★★★</span> 4.9 (156)</span>
+                    <a href="#" class="workshop-link">Details →</a>
                 </div>
             </div>
         </div>
 
-        <!-- Chinese Brands Service -->
-        <div class="section">
-            <h2 class="section-title">🇨🇳 Service bei chinesischen Marken</h2>
-            
-            <div class="alert-box">
-                <h4>⚠️ Wichtig vor dem Kauf</h4>
-                <p>Bei chinesischen Marken (BYD, MG, NIO, Xpeng) sollten Sie VOR dem Kauf prüfen, ob ein Servicepartner in Ihrer Nähe ist. Das Netzwerk wächst, ist aber noch nicht flächendeckend.</p>
+        <div class="section-header"><h2 class="section-title">🛠️ Wartungsübersicht</h2></div>
+        <div class="maintenance-grid">
+            <div class="maintenance-card">
+                <div class="maintenance-header">
+                    <div class="maintenance-icon">📋</div>
+                    <div><h3 class="maintenance-title">Jährliche Inspektion</h3><span class="maintenance-interval">Alle 12 Monate / 15'000 km</span></div>
+                </div>
+                <ul class="maintenance-list">
+                    <li class="maintenance-item"><span class="maintenance-check">✓</span>Bremsen und Bremsflüssigkeit prüfen</li>
+                    <li class="maintenance-item"><span class="maintenance-check">✓</span>Klimaanlage und Innenraumfilter</li>
+                    <li class="maintenance-item"><span class="maintenance-check">✓</span>Fahrwerk und Lenkung</li>
+                    <li class="maintenance-item"><span class="maintenance-check">✓</span>Software-Update prüfen</li>
+                </ul>
+                <div class="maintenance-cost"><span class="maintenance-cost-label">Durchschnittliche Kosten</span><span class="maintenance-cost-value">CHF 180-280</span></div>
             </div>
-            
-            <div class="info-grid" style="margin-top: 1.5rem;">
-                <div class="info-card">
-                    <h3>🔧 BYD</h3>
-                    <p><strong>Servicepartner:</strong> Hedin Automotive</p>
-                    <p><strong>Standorte:</strong> ~20 in der Schweiz</p>
-                    <p><strong>Ersatzteile:</strong> Zentrallager in Europa, 2-5 Tage Lieferzeit</p>
-                    <p><strong>Tipp:</strong> Vor Kauf Servicepartner in Ihrer Region prüfen!</p>
+            <div class="maintenance-card">
+                <div class="maintenance-header">
+                    <div class="maintenance-icon">🔋</div>
+                    <div><h3 class="maintenance-title">Batterie-Check</h3><span class="maintenance-interval">Alle 24 Monate empfohlen</span></div>
                 </div>
-                
-                <div class="info-card">
-                    <h3>🔧 MG (SAIC)</h3>
-                    <p><strong>Servicepartner:</strong> Bestehende Garagen</p>
-                    <p><strong>Standorte:</strong> ~35 in der Schweiz</p>
-                    <p><strong>Ersatzteile:</strong> Gute Verfügbarkeit</p>
-                    <p><strong>Tipp:</strong> Gut etabliertes Netzwerk, weniger Probleme</p>
-                </div>
-                
-                <div class="info-card">
-                    <h3>🔧 NIO</h3>
-                    <p><strong>Servicepartner:</strong> NIO Houses & Service Center</p>
-                    <p><strong>Standorte:</strong> Zürich, weitere geplant</p>
-                    <p><strong>Besonderheit:</strong> Batterie-Tausch Stationen</p>
-                    <p><strong>Tipp:</strong> Premium-Service, aber begrenzte Standorte</p>
-                </div>
+                <ul class="maintenance-list">
+                    <li class="maintenance-item"><span class="maintenance-check">✓</span>State of Health (SoH) messen</li>
+                    <li class="maintenance-item"><span class="maintenance-check">✓</span>Zellbalancierung prüfen</li>
+                    <li class="maintenance-item"><span class="maintenance-check">✓</span>Kühlsystem kontrollieren</li>
+                    <li class="maintenance-item"><span class="maintenance-check">✓</span>Ladeanschluss reinigen</li>
+                </ul>
+                <div class="maintenance-cost"><span class="maintenance-cost-label">Durchschnittliche Kosten</span><span class="maintenance-cost-value">CHF 80-150</span></div>
             </div>
         </div>
 
-        <!-- Tires & Brakes -->
-        <div class="section">
-            <h2 class="section-title">🛞 Reifen & Bremsen bei Elektroautos</h2>
-            
-            <div class="tires-brakes">
-                <div class="tire-card">
-                    <h3>🛞 Reifen</h3>
-                    <ul class="feature-list">
-                        <li><span class="warning-icon">⚠️</span> <strong>Höheres Gewicht:</strong> EVs sind 200-500 kg schwerer → höherer Reifenverschleiss</li>
-                        <li><span class="warning-icon">⚠️</span> <strong>Hohes Drehmoment:</strong> Sofort verfügbar → schnellerer Abrieb</li>
-                        <li><span class="check-icon">✓</span> <strong>EV-spezifische Reifen:</strong> Verstärkte Flanken, geringerer Rollwiderstand</li>
-                        <li><span class="check-icon">✓</span> <strong>Empfohlene Marken:</strong> Michelin Pilot Sport EV, Continental EcoContact 6, Goodyear ElectricDrive</li>
-                        <li><span class="warning-icon">⚠️</span> <strong>Kosten:</strong> 20-40% teurer als normale Reifen</li>
-                        <li><span class="check-icon">✓</span> <strong>Lebensdauer:</strong> ~25'000-40'000 km (weniger als bei Verbrennern)</li>
-                    </ul>
-                </div>
-                
-                <div class="brake-card">
-                    <h3>🛑 Bremsen</h3>
-                    <ul class="feature-list">
-                        <li><span class="check-icon">✓</span> <strong>Rekuperation:</strong> 70-90% der Bremsenergie wird zurückgewonnen</li>
-                        <li><span class="check-icon">✓</span> <strong>Weniger Verschleiss:</strong> Mechanische Bremsen werden selten genutzt</li>
-                        <li><span class="check-icon">✓</span> <strong>Lebensdauer:</strong> 80'000-150'000 km (2-3x länger als Verbrenner!)</li>
-                        <li><span class="warning-icon">⚠️</span> <strong>Korrosion:</strong> Bei wenig Nutzung können Scheiben rosten</li>
-                        <li><span class="check-icon">✓</span> <strong>Tipp:</strong> Regelmässig "normal" bremsen um Rost zu vermeiden</li>
-                        <li><span class="check-icon">✓</span> <strong>Kosten:</strong> Seltener Wechsel = massive Ersparnis</li>
-                    </ul>
-                </div>
+        <div class="section-header"><h2 class="section-title">📞 Kontakt & Support</h2></div>
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-icon">📧</div>
+                <h3 class="contact-title">E-Mail Support</h3>
+                <p class="contact-info">support@ev-insights.ch</p>
+                <p class="contact-desc">Antwort innerhalb von 24 Stunden</p>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon">📱</div>
+                <h3 class="contact-title">Telefon Hotline</h3>
+                <p class="contact-info">0800 123 456</p>
+                <p class="contact-desc">Mo-Fr 8:00-18:00 Uhr</p>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon">💬</div>
+                <h3 class="contact-title">Live Chat</h3>
+                <p class="contact-info">Sofort verfügbar</p>
+                <p class="contact-desc">Direkte Hilfe von Experten</p>
             </div>
         </div>
+    </div></main>
 
-        <!-- Spare Parts -->
-        <div class="section">
-            <h2 class="section-title">🔩 Ersatzteile & Beschaffung</h2>
-            
-            <div class="info-grid">
-                <div class="info-card">
-                    <h3>🇪🇺 Europäische Marken (VW, BMW, Mercedes)</h3>
-                    <p><strong>Verfügbarkeit:</strong> Sehr gut</p>
-                    <p><strong>Lieferzeit:</strong> 1-3 Tage</p>
-                    <p><strong>Bezug:</strong> Über Händler oder freien Teilehandel</p>
-                    <p><strong>Preis:</strong> Vergleichbar mit Verbrenner-Modellen</p>
-                </div>
-                
-                <div class="info-card">
-                    <h3>🇺🇸 Tesla</h3>
-                    <p><strong>Verfügbarkeit:</strong> Gut (verbessert sich stetig)</p>
-                    <p><strong>Lieferzeit:</strong> 2-7 Tage</p>
-                    <p><strong>Bezug:</strong> Nur über Tesla direkt</p>
-                    <p><strong>Preis:</strong> Premium-Preise, keine Alternativen</p>
-                </div>
-                
-                <div class="info-card">
-                    <h3>🇨🇳 Chinesische Marken</h3>
-                    <p><strong>Verfügbarkeit:</strong> Verbesserungswürdig</p>
-                    <p><strong>Lieferzeit:</strong> 3-14 Tage (teils aus China)</p>
-                    <p><strong>Bezug:</strong> Nur über Importeur</p>
-                    <p><strong>Preis:</strong> Oft günstiger, aber längere Wartezeit</p>
-                </div>
-                
-                <div class="info-card">
-                    <h3>🇰🇷 Koreanische Marken (Hyundai, Kia)</h3>
-                    <p><strong>Verfügbarkeit:</strong> Sehr gut</p>
-                    <p><strong>Lieferzeit:</strong> 1-3 Tage</p>
-                    <p><strong>Bezug:</strong> Händler oder freier Teilehandel</p>
-                    <p><strong>Preis:</strong> Fair, gutes Preis-Leistungs-Verhältnis</p>
-                </div>
+    <footer class="footer"><div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
+                <p>Unabhängige, verifizierte Berichterstattung zur Elektromobilität in der Schweiz.</p>
             </div>
+            <div class="footer-section"><h4>Analysen</h4><ul>
+                <li><a href="dashboard.html">Marktdaten</a></li>
+                <li><a href="fahrzeuge.html">Fahrzeug-Datenbank</a></li>
+                <li><a href="laden.html">Ladeinfrastruktur</a></li>
+                <li><a href="reichweite.html">Reichweiten-Analyse</a></li>
+            </ul></div>
+            <div class="footer-section"><h4>Ratgeber</h4><ul>
+                <li><a href="ratgeber.html">Kaufberatung</a></li>
+                <li><a href="service.html">Service & Wartung</a></li>
+                <li><a href="#">TCO-Rechner</a></li>
+                <li><a href="#">Förderungen</a></li>
+            </ul></div>
+            <div class="footer-section"><h4>Über uns</h4><ul>
+                <li><a href="#">Redaktion</a></li>
+                <li><a href="#">Methodik</a></li>
+                <li><a href="#">Quellen</a></li>
+                <li><a href="#">Kontakt</a></li>
+            </ul></div>
         </div>
-
-        <!-- FAQ -->
-        <div class="section">
-            <h2 class="section-title">❓ Häufige Fragen</h2>
-            
-            <div class="faq-item" onclick="this.classList.toggle('active')">
-                <div class="faq-question">
-                    <span>Wie oft muss ein Elektroauto zum Service?</span>
-                    <span>+</span>
-                </div>
-                <div class="faq-answer">
-                    Typischerweise einmal pro Jahr oder alle 15'000-30'000 km (je nach Hersteller). Der Service ist deutlich einfacher als bei Verbrennern: Hauptsächlich Bremsen prüfen, Kühlflüssigkeit checken, Software-Updates und allgemeine Inspektion.
-                </div>
-            </div>
-            
-            <div class="faq-item" onclick="this.classList.toggle('active')">
-                <div class="faq-question">
-                    <span>Was passiert wenn die Batterie kaputt geht?</span>
-                    <span>+</span>
-                </div>
-                <div class="faq-answer">
-                    Ein kompletter Batteriedefekt ist extrem selten. Die meisten Probleme betreffen einzelne Zellen, die getauscht werden können. Kosten für Einzelzellen-Reparatur: CHF 1'000-5'000. Kompletter Batterietausch (selten nötig): CHF 10'000-25'000 je nach Modell. Wichtig: 8 Jahre Garantie nutzen!
-                </div>
-            </div>
-            
-            <div class="faq-item" onclick="this.classList.toggle('active')">
-                <div class="faq-question">
-                    <span>Kann ich zu einer unabhängigen Garage gehen?</span>
-                    <span>+</span>
-                </div>
-                <div class="faq-answer">
-                    Ja, für normale Wartungsarbeiten (Reifen, Bremsen, Fahrwerk) können Sie zu jeder qualifizierten Garage gehen. Für Arbeiten am Hochvolt-System ist eine EV-Zertifizierung nötig. Für Garantieleistungen müssen Sie meist zur Markenwerkstatt.
-                </div>
-            </div>
-            
-            <div class="faq-item" onclick="this.classList.toggle('active')">
-                <div class="faq-question">
-                    <span>Sind Ersatzteile für EVs teurer?</span>
-                    <span>+</span>
-                </div>
-                <div class="faq-answer">
-                    Nicht generell. Viele Verschleissteile (Bremsen, Filter) sind sogar günstiger oder entfallen komplett. Spezifische EV-Teile (Batteriemodule, Elektromotor) sind teuer, werden aber selten benötigt. Reifen sind ca. 20-40% teurer wegen EV-spezifischer Anforderungen.
-                </div>
-            </div>
-            
-            <div class="faq-item" onclick="this.classList.toggle('active')">
-                <div class="faq-question">
-                    <span>Was kostet ein Batterietest?</span>
-                    <span>+</span>
-                </div>
-                <div class="faq-answer">
-                    Ein professioneller Batterietest ("State of Health" Check) kostet CHF 50-150. Einige Hersteller bieten dies kostenlos an. Viele EVs zeigen den Batteriezustand auch in der App an. Empfehlung: Vor Gebrauchtwagenkauf immer einen Test machen lassen!
-                </div>
-            </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2025 EV Technical Insights. Alle Rechte vorbehalten.</p>
+            <div class="footer-legal"><a href="#">Datenschutz</a><a href="#">Impressum</a><a href="#">AGB</a></div>
         </div>
-    </div>
+    </div></footer>
 </body>
 </html>
