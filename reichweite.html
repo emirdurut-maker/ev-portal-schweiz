@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reichweiten-Analyse | EV Portal Schweiz</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00b4d8;
+            --secondary: #0077b6;
+            --accent: #90e0ef;
+            --dark: #03045e;
+            --success: #06d6a0;
+            --warning: #ffd166;
+            --danger: #ef476f;
+            --text: #023047;
+            --bg: #f8f9fa;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem;
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            border: 2px solid white;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: white;
+            color: var(--dark);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .stat-sublabel {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 1.5rem 0;
+        }
+        
+        .calculator {
+            background: var(--bg);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+        }
+        
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .input-group select,
+        .input-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .input-group select:focus,
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .result-box {
+            background: white;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        
+        .result-title {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-value {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .result-unit {
+            font-size: 1.5rem;
+            color: #666;
+        }
+        
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .detail-item {
+            text-align: center;
+        }
+        
+        .detail-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+        
+        .detail-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .vehicle-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .vehicle-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .vehicle-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .vehicle-brand {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .range-bar {
+            background: var(--bg);
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 1rem 0;
+            position: relative;
+        }
+        
+        .range-fill {
+            height: 100%;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 1rem;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: width 0.5s ease;
+        }
+        
+        .range-summer {
+            background: linear-gradient(90deg, var(--success) 0%, #00c896 100%);
+        }
+        
+        .range-winter {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
+        .range-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .season-toggle {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .season-btn {
+            padding: 0.8rem 2rem;
+            border: 2px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .season-btn:hover,
+        .season-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 5px;
+        }
+        
+        .info-box h4 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .tip-card {
+            background: var(--bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--success);
+        }
+        
+        .tip-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tip-title {
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .tip-text {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        .forecast-section {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+        
+        .forecast-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .forecast-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .forecast-item {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .forecast-year {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+        
+        .forecast-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .forecast-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .result-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h1>📏 Reichweiten-Analyse</h1>
+                <p>Realistische Reichweiten, Sommer vs. Winter, Trends & Prognosen</p>
+            </div>
+            <a href="index.html" class="back-btn">← Zurück zur Startseite</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Key Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Ø Reichweite 2024</div>
+                <div class="stat-value">485</div>
+                <div class="stat-sublabel">km (WLTP)</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, var(--success) 0%, #00c896 100%);">
+                <div class="stat-label">Ø Sommer (Real)</div>
+                <div class="stat-value">410</div>
+                <div class="stat-sublabel">km (~85% WLTP)</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, var(--secondary) 0%, var(--dark) 100%);">
+                <div class="stat-label">Ø Winter (Real)</div>
+                <div class="stat-value">340</div>
+                <div class="stat-sublabel">km (~70% WLTP)</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, var(--warning) 0%, #f77f00 100%);">
+                <div class="stat-label">Verbesserung/Jahr</div>
+                <div class="stat-value">+8%</div>
+                <div class="stat-sublabel">seit 2021</div>
+            </div>
+        </div>
+
+        <!-- Historical Development -->
+        <div class="section">
+            <h2 class="section-title">📈 Entwicklung der Reichweiten 2021-2025</h2>
+            <p style="color: #666; margin-bottom: 1rem;">Durchschnittliche Reichweite aller in der Schweiz zugelassenen Elektroautos</p>
+            
+            <div class="chart-container">
+                <canvas id="historicalChart"></canvas>
+            </div>
+            
+            <div class="info-box">
+                <h4>📊 Trend-Analyse</h4>
+                <p>Die durchschnittliche Reichweite ist seit 2021 um <strong>32%</strong> gestiegen. Hauptgründe: Grössere Batterien, effizientere Motoren und verbesserte Wärmepumpen. Bis 2026 erwarten wir einen Durchschnitt von <strong>550+ km</strong>.</p>
+            </div>
+        </div>
+
+        <!-- Summer vs Winter -->
+        <div class="section">
+            <h2 class="section-title">☀️❄️ Sommer vs. Winter Reichweite</h2>
+            
+            <div class="season-toggle">
+                <button class="season-btn active" onclick="setSeason('summer')">☀️ Sommer</button>
+                <button class="season-btn" onclick="setSeason('winter')">❄️ Winter</button>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="seasonChart"></canvas>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                <div style="background: linear-gradient(135deg, rgba(6, 214, 160, 0.1) 0%, rgba(255,255,255,1) 100%); padding: 1.5rem; border-radius: 10px; border: 2px solid var(--success);">
+                    <h4 style="color: var(--success); margin-bottom: 1rem;">☀️ Sommer (15-25°C)</h4>
+                    <ul style="list-style: none; padding: 0; color: #666;">
+                        <li style="padding: 0.3rem 0;">✓ Optimale Batterietemperatur</li>
+                        <li style="padding: 0.3rem 0;">✓ Keine Heizung nötig</li>
+                        <li style="padding: 0.3rem 0;">✓ Effiziente Rekuperation</li>
+                        <li style="padding: 0.3rem 0;">✓ ~85-95% der WLTP-Reichweite</li>
+                    </ul>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, rgba(0, 180, 216, 0.1) 0%, rgba(255,255,255,1) 100%); padding: 1.5rem; border-radius: 10px; border: 2px solid var(--primary);">
+                    <h4 style="color: var(--primary); margin-bottom: 1rem;">❄️ Winter (-10 bis 5°C)</h4>
+                    <ul style="list-style: none; padding: 0; color: #666;">
+                        <li style="padding: 0.3rem 0;">✗ Kalte Batterie = weniger Kapazität</li>
+                        <li style="padding: 0.3rem 0;">✗ Heizung verbraucht Energie</li>
+                        <li style="padding: 0.3rem 0;">✗ Langsameres Laden</li>
+                        <li style="padding: 0.3rem 0;">✗ ~65-80% der WLTP-Reichweite</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Range Calculator -->
+        <div class="section">
+            <h2 class="section-title">🧮 Reichweiten-Rechner</h2>
+            <p style="color: #666; margin-bottom: 1rem;">Berechnen Sie die realistische Reichweite für Ihr Fahrzeug</p>
+            
+            <div class="calculator">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>WLTP-Reichweite (km)</label>
+                        <input type="number" id="wltpRange" value="500" min="100" max="800">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Jahreszeit</label>
+                        <select id="season">
+                            <option value="summer">Sommer (15-25°C)</option>
+                            <option value="spring">Frühling/Herbst (5-15°C)</option>
+                            <option value="winter">Winter (-10 bis 5°C)</option>
+                            <option value="extreme">Extremer Winter (< -10°C)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Fahrweise</label>
+                        <select id="drivingStyle">
+                            <option value="eco">Eco (sparsam)</option>
+                            <option value="normal" selected>Normal</option>
+                            <option value="sport">Sport (dynamisch)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Streckentyp</label>
+                        <select id="roadType">
+                            <option value="city">Stadt</option>
+                            <option value="mixed" selected>Gemischt</option>
+                            <option value="highway">Autobahn</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="result-box">
+                    <div class="result-title">Realistische Reichweite</div>
+                    <div class="result-value" id="calculatedRange">425</div>
+                    <div class="result-unit">km</div>
+                    
+                    <div class="result-details">
+                        <div class="detail-item">
+                            <div class="detail-value" id="percentWLTP">85%</div>
+                            <div class="detail-label">der WLTP-Reichweite</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-value" id="consumption">17.5</div>
+                            <div class="detail-label">kWh/100km Verbrauch</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-value" id="chargingStops">1-2</div>
+                            <div class="detail-label">Ladestopps bei 500km Fahrt</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Comparison -->
+        <div class="section">
+            <h2 class="section-title">🚗 Reichweiten-Vergleich Top-Modelle</h2>
+            <p style="color: #666; margin-bottom: 1rem;">Realistische Reichweiten der beliebtesten EVs in der Schweiz</p>
+            
+            <div class="comparison-grid">
+                <div class="vehicle-card">
+                    <div class="vehicle-name">Mercedes EQS</div>
+                    <div class="vehicle-brand">Mercedes-Benz • Premium</div>
+                    <div class="range-bar">
+                        <div class="range-fill range-summer" style="width: 95%;">782 km</div>
+                    </div>
+                    <div class="range-bar">
+                        <div class="range-fill range-winter" style="width: 75%;">585 km</div>
+                    </div>
+                    <div class="range-details">
+                        <span>☀️ Sommer: 665 km</span>
+                        <span>❄️ Winter: 510 km</span>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="vehicle-name">Tesla Model 3 LR</div>
+                    <div class="vehicle-brand">Tesla • Mittelklasse</div>
+                    <div class="range-bar">
+                        <div class="range-fill range-summer" style="width: 82%;">629 km</div>
+                    </div>
+                    <div class="range-bar">
+                        <div class="range-fill range-winter" style="width: 62%;">470 km</div>
+                    </div>
+                    <div class="range-details">
+                        <span>☀️ Sommer: 535 km</span>
+                        <span>❄️ Winter: 410 km</span>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="vehicle-name">Hyundai Ioniq 6</div>
+                    <div class="vehicle-brand">Hyundai • Mittelklasse</div>
+                    <div class="range-bar">
+                        <div class="range-fill range-summer" style="width: 80%;">614 km</div>
+                    </div>
+                    <div class="range-bar">
+                        <div class="range-fill range-winter" style="width: 60%;">460 km</div>
+                    </div>
+                    <div class="range-details">
+                        <span>☀️ Sommer: 520 km</span>
+                        <span>❄️ Winter: 400 km</span>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="vehicle-name">BMW iX xDrive50</div>
+                    <div class="vehicle-brand">BMW • SUV Premium</div>
+                    <div class="range-bar">
+                        <div class="range-fill range-summer" style="width: 82%;">630 km</div>
+                    </div>
+                    <div class="range-bar">
+                        <div class="range-fill range-winter" style="width: 62%;">475 km</div>
+                    </div>
+                    <div class="range-details">
+                        <span>☀️ Sommer: 535 km</span>
+                        <span>❄️ Winter: 410 km</span>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="vehicle-name">VW ID.4 Pro</div>
+                    <div class="vehicle-brand">Volkswagen • SUV Kompakt</div>
+                    <div class="range-bar">
+                        <div class="range-fill range-summer" style="width: 68%;">520 km</div>
+                    </div>
+                    <div class="range-bar">
+                        <div class="range-fill range-winter" style="width: 50%;">385 km</div>
+                    </div>
+                    <div class="range-details">
+                        <span>☀️ Sommer: 440 km</span>
+                        <span>❄️ Winter: 340 km</span>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="vehicle-name">BYD Seal</div>
+                    <div class="vehicle-brand">BYD • Mittelklasse</div>
+                    <div class="range-bar">
+                        <div class="range-fill range-summer" style="width: 74%;">570 km</div>
+                    </div>
+                    <div class="range-bar">
+                        <div class="range-fill range-winter" style="width: 55%;">420 km</div>
+                    </div>
+                    <div class="range-details">
+                        <span>☀️ Sommer: 485 km</span>
+                        <span>❄️ Winter: 370 km</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips for Maximizing Range -->
+        <div class="section">
+            <h2 class="section-title">💡 Tipps für maximale Reichweite</h2>
+            
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-icon">🌡️</div>
+                    <div class="tip-title">Vorklimatisieren</div>
+                    <div class="tip-text">Heizen/Kühlen Sie das Auto während des Ladens vor. Das spart unterwegs bis zu 15% Reichweite.</div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon">🚗</div>
+                    <div class="tip-title">Eco-Modus nutzen</div>
+                    <div class="tip-text">Der Eco-Modus begrenzt Leistung und optimiert Klimatisierung. Bis zu 20% mehr Reichweite möglich.</div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon">🛞</div>
+                    <div class="tip-title">Reifendruck prüfen</div>
+                    <div class="tip-text">0.3 bar mehr als empfohlen reduziert den Rollwiderstand. Spart bis zu 5% Energie.</div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon">🏎️</div>
+                    <div class="tip-title">Gleichmässig fahren</div>
+                    <div class="tip-text">Vermeiden Sie starkes Beschleunigen und Bremsen. Nutzen Sie Rekuperation optimal aus.</div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon">🛣️</div>
+                    <div class="tip-title">Tempo reduzieren</div>
+                    <div class="tip-text">120 statt 140 km/h auf der Autobahn kann bis zu 25% Reichweite sparen!</div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon">❄️</div>
+                    <div class="tip-title">Sitzheizung statt Luftheizung</div>
+                    <div class="tip-text">Sitzheizung verbraucht nur 50-100W, Luftheizung 3-5kW. Grosser Unterschied!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forecast -->
+        <div class="section">
+            <div class="forecast-section">
+                <h3 class="forecast-title">🔮 Prognose: Reichweiten-Entwicklung bis 2027</h3>
+                <p style="opacity: 0.9;">Erwartete durchschnittliche Reichweite neuer Elektroautos (WLTP)</p>
+                
+                <div class="forecast-items">
+                    <div class="forecast-item">
+                        <div class="forecast-year">2024</div>
+                        <div class="forecast-value">485 km</div>
+                        <div class="forecast-label">Aktuell</div>
+                    </div>
+                    <div class="forecast-item">
+                        <div class="forecast-year">2025</div>
+                        <div class="forecast-value">520 km</div>
+                        <div class="forecast-label">+7%</div>
+                    </div>
+                    <div class="forecast-item">
+                        <div class="forecast-year">2026</div>
+                        <div class="forecast-value">565 km</div>
+                        <div class="forecast-label">+9%</div>
+                    </div>
+                    <div class="forecast-item">
+                        <div class="forecast-year">2027</div>
+                        <div class="forecast-value">620 km</div>
+                        <div class="forecast-label">+10%</div>
+                    </div>
+                </div>
+                
+                <p style="margin-top: 1.5rem; font-size: 0.9rem; opacity: 0.8;">
+                    * Prognose basiert auf angekündigten Modellen und Technologie-Trends. Solid-State-Batterien könnten ab 2026/27 nochmals einen Sprung bringen.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Historical Chart
+        const historicalCtx = document.getElementById('historicalChart').getContext('2d');
+        new Chart(historicalCtx, {
+            type: 'line',
+            data: {
+                labels: ['2021', '2022', '2023', '2024', '2025 (Prognose)'],
+                datasets: [{
+                    label: 'WLTP-Reichweite',
+                    data: [368, 405, 445, 485, 520],
+                    borderColor: '#00b4d8',
+                    backgroundColor: 'rgba(0, 180, 216, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#00b4d8'
+                }, {
+                    label: 'Real Sommer',
+                    data: [310, 345, 380, 410, 440],
+                    borderColor: '#06d6a0',
+                    backgroundColor: 'rgba(6, 214, 160, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#06d6a0'
+                }, {
+                    label: 'Real Winter',
+                    data: [255, 285, 315, 340, 365],
+                    borderColor: '#0077b6',
+                    backgroundColor: 'rgba(0, 119, 182, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#0077b6'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 200,
+                        title: { display: true, text: 'Reichweite (km)' }
+                    }
+                }
+            }
+        });
+
+        // Season Chart
+        const seasonCtx = document.getElementById('seasonChart').getContext('2d');
+        const seasonChart = new Chart(seasonCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Kompakt', 'Mittelklasse', 'SUV', 'Premium', 'Sportwagen'],
+                datasets: [{
+                    label: 'Sommer (Real)',
+                    data: [320, 450, 400, 550, 420],
+                    backgroundColor: '#06d6a0'
+                }, {
+                    label: 'Winter (Real)',
+                    data: [240, 350, 310, 420, 320],
+                    backgroundColor: '#0077b6'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Reichweite (km)' }
+                    }
+                }
+            }
+        });
+
+        // Season Toggle
+        function setSeason(season) {
+            document.querySelectorAll('.season-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // Range Calculator
+        function calculateRange() {
+            const wltp = parseFloat(document.getElementById('wltpRange').value);
+            const season = document.getElementById('season').value;
+            const style = document.getElementById('drivingStyle').value;
+            const road = document.getElementById('roadType').value;
+            
+            // Season factors
+            const seasonFactors = {
+                summer: 0.85,
+                spring: 0.78,
+                winter: 0.68,
+                extreme: 0.55
+            };
+            
+            // Driving style factors
+            const styleFactors = {
+                eco: 1.1,
+                normal: 1.0,
+                sport: 0.85
+            };
+            
+            // Road type factors
+            const roadFactors = {
+                city: 1.05,
+                mixed: 1.0,
+                highway: 0.85
+            };
+            
+            const realRange = Math.round(wltp * seasonFactors[season] * styleFactors[style] * roadFactors[road]);
+            const percent = Math.round((realRange / wltp) * 100);
+            const consumption = (75 / (realRange / 100)).toFixed(1); // Assuming 75 kWh battery
+            const stops = realRange > 400 ? '0-1' : realRange > 300 ? '1-2' : '2-3';
+            
+            document.getElementById('calculatedRange').textContent = realRange;
+            document.getElementById('percentWLTP').textContent = percent + '%';
+            document.getElementById('consumption').textContent = consumption;
+            document.getElementById('chargingStops').textContent = stops;
+        }
+
+        // Event listeners
+        ['wltpRange', 'season', 'drivingStyle', 'roadType'].forEach(id => {
+            document.getElementById(id).addEventListener('change', calculateRange);
+            document.getElementById(id).addEventListener('input', calculateRange);
+        });
+
+        // Initial calculation
+        calculateRange();
+    </script>
+</body>
+</html>
