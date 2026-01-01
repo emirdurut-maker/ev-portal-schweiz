@@ -377,8 +377,8 @@
                 <li><a href="dashboard.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">📊 Dashboard</a></li>
                 <li><a href="fahrzeuge.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">🚗 Fahrzeuge</a></li>
                 <li><a href="news.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">📰 News</a></li>
+                <li><a href="laden.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">🔌 Laden</a></li>
                 <li><a href="#verkaufszahlen">Verkaufszahlen</a></li>
-                <li><a href="#laden">Laden</a></li>
                 <li><a href="#ratgeber">Ratgeber</a></li>
                 <li><a href="#service">Service</a></li>
             </ul>
@@ -521,21 +521,35 @@
                 <h2 class="section-title">Ladeinfrastruktur Schweiz</h2>
             </div>
             
+            <!-- Charging Hub CTA -->
+            <div style="background: linear-gradient(135deg, #06d6a0 0%, #048a81 100%); padding: 3rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                <h3 style="color: white; font-size: 2rem; margin-bottom: 1rem;">⚡ Alles über Laden in der Schweiz</h3>
+                <p style="color: white; opacity: 0.95; font-size: 1.2rem; margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+                    12,458 Ladestationen im Vergleich. Preise, Apps, Tipps & Tricks. Finden Sie die günstigste Lademöglichkeit.
+                </p>
+                <a href="laden.html" class="btn" style="font-size: 1.2rem; padding: 1rem 2.5rem; background: white; color: var(--dark); display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    🔍 Zur Ladeinfrastruktur
+                </a>
+            </div>
+            
             <div class="cards-grid">
-                <div class="card">
+                <div class="card" onclick="window.location.href='laden.html'" style="cursor: pointer;">
                     <div class="card-icon">🗺️</div>
                     <h3>Ladenetzwerk</h3>
                     <p>Aktuelle Übersicht aller Ladestationen, Schnelllade-Hubs und deren Verfügbarkeit in Echtzeit.</p>
+                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ 12,458 Stationen anzeigen</div>
                 </div>
-                <div class="card">
+                <div class="card" onclick="window.location.href='laden.html'" style="cursor: pointer;">
                     <div class="card-icon">💰</div>
                     <h3>Preise & Apps</h3>
                     <p>Vergleich der Ladekosten, beste Lade-Apps und Tipps für günstigeres Laden in der Schweiz.</p>
+                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ Preise vergleichen</div>
                 </div>
-                <div class="card">
+                <div class="card" onclick="window.location.href='laden.html'" style="cursor: pointer;">
                     <div class="card-icon">⚙️</div>
                     <h3>Anschlüsse & Systeme</h3>
                     <p>CCS, CHAdeMO, Tesla Supercharger - alle Steckertypen, Ladeleistungen und Kompatibilität erklärt.</p>
+                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ Mehr erfahren</div>
                 </div>
             </div>
         </section>
