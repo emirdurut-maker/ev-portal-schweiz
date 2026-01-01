@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verkaufsdaten Dashboard | EV Portal Schweiz</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00b4d8;
+            --secondary: #0077b6;
+            --accent: #90e0ef;
+            --dark: #03045e;
+            --success: #06d6a0;
+            --warning: #ffd166;
+            --danger: #ef476f;
+            --text: #023047;
+            --bg: #f8f9fa;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .controls {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .upload-section {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn-secondary {
+            background: var(--accent);
+            color: var(--dark);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .sample-data-info {
+            background: #e3f2fd;
+            padding: 1rem;
+            border-radius: 5px;
+            border-left: 4px solid var(--primary);
+            margin-top: 1rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-change {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        
+        .stat-change.positive {
+            color: var(--success);
+        }
+        
+        .stat-change.negative {
+            color: var(--danger);
+        }
+        
+        .chart-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .chart-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+        
+        .chart-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chart-controls button {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .chart-controls button.active,
+        .chart-controls button:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+        
+        .table-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: var(--bg);
+            font-weight: 600;
+            color: var(--dark);
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .badge-ev {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-phev {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .badge-ice {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .trend-indicator {
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-wrapper {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>📊 Verkaufsdaten Dashboard</h1>
+            <p>Elektromobilität Schweiz - Neuzulassungen & Marktanalyse</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Upload & Controls -->
+        <div class="controls">
+            <h2 style="margin-bottom: 1rem;">Daten importieren</h2>
+            <div class="upload-section">
+                <div class="file-input-wrapper">
+                    <button class="btn btn-primary">📁 CSV/Excel hochladen</button>
+                    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
+                </div>
+                <button class="btn btn-secondary" onclick="loadSampleData()">📊 Beispieldaten laden</button>
+                <button class="btn btn-success" onclick="exportData()">💾 Daten exportieren</button>
+            </div>
+            <div class="sample-data-info">
+                <strong>💡 Tipp:</strong> Laden Sie die Beispieldaten um zu sehen, wie das Dashboard funktioniert. 
+                Später können Sie echte Auto-Suisse Daten als CSV/Excel hochladen.
+            </div>
+        </div>
+
+        <!-- Key Statistics -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-label">Total Neuzulassungen</div>
+                <div class="stat-value" id="totalSales">-</div>
+                <div class="stat-change positive" id="totalChange">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Elektro (BEV)</div>
+                <div class="stat-value" id="evSales">-</div>
+                <div class="stat-change positive" id="evChange">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Plug-in Hybrid</div>
+                <div class="stat-value" id="phevSales">-</div>
+                <div class="stat-change" id="phevChange">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">EV Marktanteil</div>
+                <div class="stat-value" id="evShare">-</div>
+                <div class="stat-change positive" id="shareChange">-</div>
+            </div>
+        </div>
+
+        <!-- Monthly Sales Chart -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <h3 class="chart-title">Monatliche Verkaufsentwicklung 2024</h3>
+                <div class="chart-controls">
+                    <button class="active" onclick="changeView('monthly')">Monatlich</button>
+                    <button onclick="changeView('cumulative')">Kumuliert</button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Market Share Chart -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <h3 class="chart-title">Marktanteile nach Antriebsart</h3>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="marketShareChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Top Brands -->
+        <div class="table-section">
+            <h3 style="margin-bottom: 1rem;">Top 5 Marken (2024)</h3>
+            <table id="topBrandsTable">
+                <thead>
+                    <tr>
+                        <th>Rang</th>
+                        <th>Marke</th>
+                        <th>Verkäufe</th>
+                        <th>Marktanteil</th>
+                        <th>Trend</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5" style="text-align: center; color: #999;">Keine Daten geladen</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Top Models -->
+        <div class="table-section">
+            <h3 style="margin-bottom: 1rem;">Top 15 Modelle (Alle Antriebsarten)</h3>
+            <table id="topModelsTable">
+                <thead>
+                    <tr>
+                        <th>Rang</th>
+                        <th>Modell</th>
+                        <th>Marke</th>
+                        <th>Antrieb</th>
+                        <th>Verkäufe</th>
+                        <th>Trend</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="6" style="text-align: center; color: #999;">Keine Daten geladen</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Top EV Models -->
+        <div class="table-section">
+            <h3 style="margin-bottom: 1rem;">Top 15 Elektro & Plug-in Modelle</h3>
+            <table id="topEVModelsTable">
+                <thead>
+                    <tr>
+                        <th>Rang</th>
+                        <th>Modell</th>
+                        <th>Marke</th>
+                        <th>Typ</th>
+                        <th>Verkäufe</th>
+                        <th>Trend</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="6" style="text-align: center; color: #999;">Keine Daten geladen</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let salesData = null;
+        let currentChart = null;
+        let marketShareChart = null;
+
+        // Sample Data
+        const sampleData = {
+            monthly: [
+                {month: 'Jan', bev: 3200, phev: 2100, ice: 8500},
+                {month: 'Feb', bev: 3450, phev: 2200, ice: 8200},
+                {month: 'Mär', bev: 4100, phev: 2500, ice: 7900},
+                {month: 'Apr', bev: 4300, phev: 2600, ice: 7600},
+                {month: 'Mai', bev: 4800, phev: 2800, ice: 7300},
+                {month: 'Jun', bev: 5200, phev: 2900, ice: 7000},
+                {month: 'Jul', bev: 4900, phev: 2700, ice: 6800},
+                {month: 'Aug', bev: 5100, phev: 2800, ice: 6500},
+                {month: 'Sep', bev: 5600, phev: 3000, ice: 6200},
+                {month: 'Okt', bev: 5800, phev: 3100, ice: 5900},
+                {month: 'Nov', bev: 6200, phev: 3300, ice: 5600},
+                {month: 'Dez', bev: 6500, phev: 3400, ice: 5300}
+            ],
+            brands: [
+                {name: 'Tesla', sales: 18500, share: 12.8, trend: 15.2},
+                {name: 'Volkswagen', sales: 15200, share: 10.5, trend: -3.1},
+                {name: 'BMW', sales: 12800, share: 8.9, trend: 8.5},
+                {name: 'Mercedes-Benz', sales: 11500, share: 8.0, trend: 2.3},
+                {name: 'Audi', sales: 10200, share: 7.1, trend: -1.5}
+            ],
+            models: [
+                {rank: 1, model: 'Model 3', brand: 'Tesla', type: 'BEV', sales: 8500, trend: 12.3},
+                {rank: 2, model: 'Model Y', brand: 'Tesla', type: 'BEV', sales: 7200, trend: 25.8},
+                {rank: 3, model: 'ID.4', brand: 'VW', type: 'BEV', sales: 5800, trend: 8.2},
+                {rank: 4, model: 'Golf', brand: 'VW', type: 'ICE', sales: 5200, trend: -12.5},
+                {rank: 5, model: 'i4', brand: 'BMW', type: 'BEV', sales: 4800, trend: 15.6},
+                {rank: 6, model: 'EQE', brand: 'Mercedes', type: 'BEV', sales: 4200, trend: 18.9},
+                {rank: 7, model: 'Taycan', brand: 'Porsche', type: 'BEV', sales: 3900, trend: 5.4},
+                {rank: 8, model: 'e-tron GT', brand: 'Audi', type: 'BEV', sales: 3500, trend: 9.2},
+                {rank: 9, model: 'Polestar 2', brand: 'Polestar', type: 'BEV', sales: 3200, trend: 22.1},
+                {rank: 10, model: 'Seal', brand: 'BYD', type: 'BEV', sales: 2900, trend: 142.5},
+                {rank: 11, model: 'Enyaq', brand: 'Skoda', type: 'BEV', sales: 2700, trend: 11.3},
+                {rank: 12, model: '3 Series', brand: 'BMW', type: 'ICE', sales: 2500, trend: -8.7},
+                {rank: 13, model: 'Q4 e-tron', brand: 'Audi', type: 'BEV', sales: 2400, trend: 16.8},
+                {rank: 14, model: 'Born', brand: 'Cupra', type: 'BEV', sales: 2200, trend: 28.4},
+                {rank: 15, model: 'MG4', brand: 'MG', type: 'BEV', sales: 2100, trend: 95.6}
+            ]
+        };
+
+        // Load Sample Data
+        function loadSampleData() {
+            salesData = sampleData;
+            updateDashboard();
+            alert('✅ Beispieldaten erfolgreich geladen!');
+        }
+
+        // Update Dashboard
+        function updateDashboard() {
+            updateStats();
+            updateSalesChart();
+            updateMarketShareChart();
+            updateTables();
+        }
+
+        // Update Statistics
+        function updateStats() {
+            const total = salesData.monthly.reduce((sum, m) => sum + m.bev + m.phev + m.ice, 0);
+            const totalBEV = salesData.monthly.reduce((sum, m) => sum + m.bev, 0);
+            const totalPHEV = salesData.monthly.reduce((sum, m) => sum + m.phev, 0);
+            const evShare = ((totalBEV + totalPHEV) / total * 100).toFixed(1);
+
+            document.getElementById('totalSales').textContent = total.toLocaleString('de-CH');
+            document.getElementById('evSales').textContent = totalBEV.toLocaleString('de-CH');
+            document.getElementById('phevSales').textContent = totalPHEV.toLocaleString('de-CH');
+            document.getElementById('evShare').textContent = evShare + '%';
+
+            document.getElementById('totalChange').textContent = '↑ 5.2% vs 2023';
+            document.getElementById('evChange').textContent = '↑ 18.5% vs 2023';
+            document.getElementById('phevChange').textContent = '↑ 8.3% vs 2023';
+            document.getElementById('shareChange').textContent = '↑ 6.8pp vs 2023';
+        }
+
+        // Update Sales Chart
+        function updateSalesChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            
+            if (currentChart) currentChart.destroy();
+
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: salesData.monthly.map(m => m.month),
+                    datasets: [{
+                        label: 'Elektro (BEV)',
+                        data: salesData.monthly.map(m => m.bev),
+                        borderColor: '#00b4d8',
+                        backgroundColor: 'rgba(0, 180, 216, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Plug-in Hybrid',
+                        data: salesData.monthly.map(m => m.phev),
+                        borderColor: '#90e0ef',
+                        backgroundColor: 'rgba(144, 224, 239, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Verbrenner',
+                        data: salesData.monthly.map(m => m.ice),
+                        borderColor: '#999',
+                        backgroundColor: 'rgba(153, 153, 153, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update Market Share Chart
+        function updateMarketShareChart() {
+            const ctx = document.getElementById('marketShareChart').getContext('2d');
+            
+            if (marketShareChart) marketShareChart.destroy();
+
+            const total = salesData.monthly.reduce((sum, m) => sum + m.bev + m.phev + m.ice, 0);
+            const totalBEV = salesData.monthly.reduce((sum, m) => sum + m.bev, 0);
+            const totalPHEV = salesData.monthly.reduce((sum, m) => sum + m.phev, 0);
+            const totalICE = salesData.monthly.reduce((sum, m) => sum + m.ice, 0);
+
+            marketShareChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Elektro (BEV)', 'Plug-in Hybrid', 'Verbrenner'],
+                    datasets: [{
+                        data: [totalBEV, totalPHEV, totalICE],
+                        backgroundColor: ['#00b4d8', '#90e0ef', '#999']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update Tables
+        function updateTables() {
+            // Top Brands
+            const brandsTable = document.getElementById('topBrandsTable').getElementsByTagName('tbody')[0];
+            brandsTable.innerHTML = salesData.brands.map((brand, i) => `
+                <tr>
+                    <td><strong>${i + 1}</strong></td>
+                    <td>${brand.name}</td>
+                    <td>${brand.sales.toLocaleString('de-CH')}</td>
+                    <td>${brand.share}%</td>
+                    <td class="trend-indicator">${brand.trend > 0 ? '↑' : '↓'} ${Math.abs(brand.trend)}%</td>
+                </tr>
+            `).join('');
+
+            // Top Models (All)
+            const modelsTable = document.getElementById('topModelsTable').getElementsByTagName('tbody')[0];
+            modelsTable.innerHTML = salesData.models.map(model => `
+                <tr>
+                    <td><strong>${model.rank}</strong></td>
+                    <td>${model.model}</td>
+                    <td>${model.brand}</td>
+                    <td><span class="badge badge-${model.type.toLowerCase()}">${model.type}</span></td>
+                    <td>${model.sales.toLocaleString('de-CH')}</td>
+                    <td class="trend-indicator">${model.trend > 0 ? '↑' : '↓'} ${Math.abs(model.trend)}%</td>
+                </tr>
+            `).join('');
+
+            // Top EV Models
+            const evModels = salesData.models.filter(m => m.type === 'BEV' || m.type === 'PHEV');
+            const evModelsTable = document.getElementById('topEVModelsTable').getElementsByTagName('tbody')[0];
+            evModelsTable.innerHTML = evModels.map((model, i) => `
+                <tr>
+                    <td><strong>${i + 1}</strong></td>
+                    <td>${model.model}</td>
+                    <td>${model.brand}</td>
+                    <td><span class="badge badge-${model.type.toLowerCase()}">${model.type}</span></td>
+                    <td>${model.sales.toLocaleString('de-CH')}</td>
+                    <td class="trend-indicator">${model.trend > 0 ? '↑' : '↑'} ${Math.abs(model.trend)}%</td>
+                </tr>
+            `).join('');
+        }
+
+        // Change View
+        function changeView(view) {
+            document.querySelectorAll('.chart-controls button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (view === 'cumulative') {
+                alert('Kumulierte Ansicht wird in der nächsten Version implementiert!');
+            }
+        }
+
+        // Export Data
+        function exportData() {
+            if (!salesData) {
+                alert('Bitte laden Sie zuerst Daten!');
+                return;
+            }
+            alert('📊 Export-Funktion wird implementiert!\n\nFormate:\n- CSV\n- Excel\n- PDF Report');
+        }
+
+        // File Upload Handler
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                Papa.parse(content, {
+                    header: true,
+                    complete: function(results) {
+                        console.log('Parsed CSV:', results.data);
+                        alert('✅ CSV erfolgreich eingelesen!\n\nNächster Schritt: Datenvalidierung & Mapping');
+                        // TODO: Map CSV data to salesData structure
+                    }
+                });
+            };
+            reader.readAsText(file);
+        });
+
+        // Initial Message
+        setTimeout(() => {
+            alert('👋 Willkommen im Verkaufsdaten-Dashboard!\n\n💡 Klicken Sie auf "Beispieldaten laden" um zu starten.');
+        }, 500);
+    </script>
+</body>
+</html>
