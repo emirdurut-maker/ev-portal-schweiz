@@ -4,20 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- SEO Meta Tags -->
     <meta name="description" content="Elektroauto-Datenbank Schweiz: 100+ Modelle mit Preisen, Reichweite, Batterie und technischen Daten. Vergleichen Sie Tesla, BMW, VW, Hyundai und mehr.">
     <meta name="keywords" content="Elektroauto Vergleich, EV Datenbank, Elektroauto Preise Schweiz, Tesla Model 3, BMW iX, VW ID.4, Reichweite Elektroauto">
     <meta name="author" content="EV Technical Insights">
     <meta name="robots" content="index, follow">
     
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://emirdurut-maker.github.io/ev-portal-schweiz/fahrzeuge.html">
     <meta property="og:title" content="Elektroauto-Datenbank Schweiz | 100+ Modelle vergleichen">
     <meta property="og:description" content="Vergleichen Sie 100+ Elektroautos mit Preisen, Reichweite und technischen Daten.">
     <meta property="og:image" content="https://emirdurut-maker.github.io/ev-portal-schweiz/og-image.png">
-    
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Elektroauto-Datenbank Schweiz">
-    <meta name="twitter:description" content="100+ Elektroautos vergleichen - Preise, Reichweite, Specs">
     
     <link rel="canonical" href="https://emirdurut-maker.github.io/ev-portal-schweiz/fahrzeuge.html">
     
@@ -31,8 +29,6 @@
         :root{--navy:#002B5B;--navy-dark:#001a38;--cyan:#00F2FF;--cyan-dim:rgba(0,242,255,0.15);--surface:#F9FAFB;--stone:#E5E7EB;--anthracite:#1F2937;--text-secondary:#6B7280;--font-headline:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace}
         body{font-family:var(--font-headline);background:var(--surface);color:var(--anthracite)}
         .container{max-width:1400px;margin:0 auto;padding:0 24px}
-        
-        /* Header */
         .header{background:var(--navy);color:white;position:sticky;top:0;z-index:1000}
         .header-main{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
         .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:white}
@@ -43,15 +39,10 @@
         .nav-links a:hover{color:var(--cyan);background:rgba(0,242,255,0.1)}
         .nav-links a.active{background:var(--cyan);color:var(--navy)}
         .mobile-menu-btn{display:none;background:none;border:none;color:white;font-size:28px;cursor:pointer;padding:8px}
-        
-        /* Mobile Menu */
         .mobile-menu{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--navy);z-index:999;display:flex;flex-direction:column;padding:80px 24px 24px;transform:translateX(100%);transition:transform 0.3s}
         .mobile-menu.active{transform:translateX(0)}
         .mobile-menu a{color:white;text-decoration:none;font-size:20px;font-weight:600;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.1)}
-        .mobile-menu a:hover{color:var(--cyan)}
         .mobile-menu-close{position:absolute;top:20px;right:20px;background:none;border:none;color:white;font-size:32px;cursor:pointer}
-        
-        /* Page Header */
         .page-header{background:linear-gradient(135deg,var(--navy),var(--navy-dark));color:white;padding:48px 0}
         .page-header h1{font-size:36px;margin-bottom:8px}
         .page-subtitle{font-family:var(--font-mono);font-size:14px;color:rgba(255,255,255,0.7)}
@@ -59,8 +50,6 @@
         .stat-item{display:flex;align-items:center;gap:8px}
         .stat-value{font-family:var(--font-mono);font-size:24px;font-weight:700;color:var(--cyan)}
         .stat-label{font-size:13px;color:rgba(255,255,255,0.6)}
-        
-        /* Filters */
         .filters-section{background:white;border-bottom:1px solid var(--stone);padding:20px 0;position:sticky;top:76px;z-index:100}
         .filters-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
         .search-box{flex:1;min-width:200px;position:relative}
@@ -68,20 +57,15 @@
         .search-box input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-dim)}
         .search-box::before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px}
         .filter-select{padding:12px 16px;border:2px solid var(--stone);border-radius:8px;font-size:14px;background:white;cursor:pointer;min-width:140px}
-        .filter-select:focus{outline:none;border-color:var(--cyan)}
         .results-count{font-family:var(--font-mono);font-size:13px;color:var(--text-secondary)}
-        
-        /* Vehicles Grid */
         .vehicles-section{padding:40px 0 60px}
         .vehicles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
-        
-        /* Vehicle Card */
-        .vehicle-card{background:white;border-radius:12px;border:1px solid var(--stone);overflow:hidden;transition:all 0.3s; display: flex; flex-direction: column;}
+        .vehicle-card{background:white;border-radius:12px;border:1px solid var(--stone);overflow:hidden;transition:all 0.3s}
         .vehicle-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,43,91,0.15);border-color:var(--cyan)}
-        .vehicle-image{height:200px; background:linear-gradient(135deg,var(--navy-dark),var(--navy));display:flex;align-items:center;justify-content:center;position:relative; overflow: hidden;}
+        .vehicle-image{height:180px;background:linear-gradient(135deg,var(--navy-dark),#001021);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
         .vehicle-image-placeholder{font-size:56px;opacity:0.4}
         .vehicle-badge{position:absolute;top:12px;right:12px;background:var(--cyan);color:var(--navy);font-family:var(--font-mono);font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px}
-        .vehicle-content{padding:20px; flex: 1; display: flex; flex-direction: column;}
+        .vehicle-content{padding:20px}
         .vehicle-brand{font-family:var(--font-mono);font-size:12px;color:var(--cyan);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
         .vehicle-name{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:4px}
         .vehicle-variant{font-size:14px;color:var(--text-secondary);margin-bottom:16px}
@@ -89,40 +73,23 @@
         .spec-item{display:flex;flex-direction:column;gap:2px}
         .spec-label{font-family:var(--font-mono);font-size:10px;color:var(--text-secondary);text-transform:uppercase}
         .spec-value{font-family:var(--font-mono);font-size:14px;font-weight:600;color:var(--anthracite)}
-        .spec-value.highlight{color:var(--cyan)}
-        .vehicle-footer{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--stone); margin-top: auto;}
+        .spec-value.highlight{color:var(--navy)}
+        .vehicle-footer{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--stone)}
         .vehicle-price{font-size:22px;font-weight:800;color:var(--navy)}
         .vehicle-cta{padding:10px 20px;background:var(--navy);color:white;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s}
         .vehicle-cta:hover{background:var(--cyan);color:var(--navy)}
-        
-        /* Loading & No Results */
-        .loading,.no-results{text-align:center;padding:80px 20px}
+        .loading,.no-results{text-align:center;padding:80px 20px;grid-column: 1 / -1;}
         .loading-spinner{width:50px;height:50px;border:4px solid var(--stone);border-top-color:var(--cyan);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
         @keyframes spin{to{transform:rotate(360deg)}}
         .no-results-icon{font-size:64px;margin-bottom:16px}
-        
-        /* Footer */
         .footer{background:var(--navy-dark);color:white;padding:40px 0 24px}
         .footer-content{display:flex;justify-content:space-between;align-items:center}
         .footer-links{display:flex;gap:24px}
         .footer-links a{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none}
         .footer-links a:hover{color:var(--cyan)}
         .footer-copyright{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5)}
-        
-        /* Responsive */
-        @media(max-width:1024px){
-            .nav-links{display:none}
-            .mobile-menu-btn{display:block}
-            .filters-row{flex-direction:column;align-items:stretch}
-            .search-box{min-width:100%}
-            .filter-select{width:100%}
-        }
-        @media(max-width:768px){
-            .stats-bar{gap:16px}
-            .vehicles-grid{grid-template-columns:1fr}
-            .page-header h1{font-size:28px}
-            .footer-content{flex-direction:column;gap:16px;text-align:center}
-        }
+        @media(max-width:1024px){.nav-links{display:none}.mobile-menu-btn{display:block}.filters-row{flex-direction:column;align-items:stretch}.search-box{min-width:100%}.filter-select{width:100%}}
+        @media(max-width:768px){.stats-bar{gap:16px}.vehicles-grid{grid-template-columns:1fr}.page-header h1{font-size:28px}.footer-content{flex-direction:column;gap:16px;text-align:center}}
     </style>
 </head>
 <body>
@@ -134,8 +101,7 @@
         <a href="news.html">📰 News</a>
         <a href="laden.html">⚡ Laden</a>
         <a href="ratgeber.html">📋 Ratgeber</a>
-        <a href="service.html">🔧 Service</a>
-        <a href="reichweite.html">📏 Reichweite</a>
+        <a href="reichweite.html">📏 Analyse</a>
     </div>
 
     <header class="header"><div class="container"><div class="header-main">
@@ -146,8 +112,7 @@
             <li><a href="news.html">📰 News</a></li>
             <li><a href="laden.html">⚡ Laden</a></li>
             <li><a href="ratgeber.html">📋 Ratgeber</a></li>
-            <li><a href="service.html">🔧 Service</a></li>
-            <li><a href="reichweite.html">📏 Reichweite</a></li>
+            <li><a href="reichweite.html">📏 Analyse</a></li>
         </ul>
         <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
     </div></div></header>
@@ -187,13 +152,14 @@
     </div></div></footer>
 
     <script>
-        // Mobile Menu
         function toggleMobileMenu() {
-            document.getElementById('mobile-menu').classList.toggle('active');
-            document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('active');
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
         }
 
-        const DATA_URL = 'https://raw.githubusercontent.com/emirdurut-maker/ev-portal-schweiz/main/data/fahrzeuge.csv';
+        // KORREKTE URL ZUR CSV-DATEI
+        const DATA_URL = 'https://raw.githubusercontent.com/emirdurut-maker/ev-portal-schweiz/refs/heads/main/data/fahrzeuge.csv';
         let allVehicles = [], filteredVehicles = [];
         
         async function loadVehicles() {
@@ -211,19 +177,17 @@
                 renderVehicles();
                 setupEventListeners();
             } catch(e) {
-                console.error(e);
-                document.getElementById('vehicles-grid').innerHTML = '<div class="no-results"><div class="no-results-icon">❌</div><h3>Fehler beim Laden</h3><p>Die Fahrzeugdaten konnten nicht geladen werden.</p></div>';
+                console.error("Fehler beim Laden der CSV:", e);
+                document.getElementById('vehicles-grid').innerHTML = '<div class="no-results"><div class="no-results-icon">❌</div><h3>Fehler beim Laden der Daten</h3><p>Die Fahrzeugdaten konnten nicht von GitHub geladen werden. Bitte prüfen Sie die URL in der Konsole.</p></div>';
             }
         }
         
         function updateStats() {
             const brands = [...new Set(allVehicles.map(v => v.marke))];
-            if(allVehicles.length > 0) {
-                document.getElementById('stat-total').textContent = allVehicles.length;
-                document.getElementById('stat-brands').textContent = brands.length;
-                document.getElementById('stat-cheapest').textContent = Math.min(...allVehicles.map(v => v.preis_chf)).toLocaleString('de-CH');
-                document.getElementById('stat-range').textContent = Math.max(...allVehicles.map(v => v.reichweite_wltp));
-            }
+            document.getElementById('stat-total').textContent = allVehicles.length;
+            document.getElementById('stat-brands').textContent = brands.length;
+            document.getElementById('stat-cheapest').textContent = Math.min(...allVehicles.map(v => v.preis_chf)).toLocaleString('de-CH');
+            document.getElementById('stat-range').textContent = Math.max(...allVehicles.map(v => v.reichweite_wltp));
         }
         
         function populateBrandFilter() {
@@ -241,6 +205,7 @@
             const sortBy = document.getElementById('sort-by').value;
             
             filteredVehicles = allVehicles.filter(v => {
+                if (!v || typeof v.marke === 'undefined') return false; // Sicherheits-Check
                 if (search && !`${v.marke} ${v.modell} ${v.variante}`.toLowerCase().includes(search)) return false;
                 if (brand && v.marke !== brand) return false;
                 if (category && v.kategorie !== category) return false;
@@ -263,28 +228,24 @@
             document.getElementById('results-count').textContent = `${filteredVehicles.length} Fahrzeuge`;
             
             if (filteredVehicles.length === 0) {
-                grid.innerHTML = '<div class="no-results"><div class="no-results-icon">🔍</div><h3>Keine Fahrzeuge gefunden</h3><p>Versuchen Sie andere Filtereinstellungen.</p></div>';
+                grid.innerHTML = '<div class="no-results"><div class="no-results-icon">🔍</div><h3>Keine Fahrzeuge gefunden</h3><p>Versuchen Sie, Ihre Filtereinstellungen anzupassen.</p></div>';
                 return;
             }
             
-            grid.innerHTML = filteredVehicles.map(v => {
-                // HIER IST DIE REPARATUR:
-                // Wir suchen automatisch nach dem richtigen Namen für das Bild
-                const imageSrc = v.image || v.bild || v.img || v.url || v.src || v.photo;
-
-                return `
+            grid.innerHTML = filteredVehicles.map(v => `
                 <article class="vehicle-card">
                     <div class="vehicle-image">
-                        ${imageSrc 
-                            ? `<img src="${imageSrc}" alt="${v.marke} ${v.modell}" style="width:100%; height:100%; object-fit:cover; display:block;">` 
-                            : `<span class="vehicle-image-placeholder">🚗</span>`
+                        ${v.bild_url ? 
+                            `<img src="./images/${v.bild_url}" alt="${v.marke} ${v.modell}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                             <div class="vehicle-image-placeholder" style="display:none; flex-direction:column;">🚗<span style="font-size:12px; margin-top:8px;">Bild fehlt</span></div>` : 
+                            `<div class="vehicle-image-placeholder">🚗</div>`
                         }
                         <span class="vehicle-badge">${v.kategorie}</span>
                     </div>
                     <div class="vehicle-content">
                         <div class="vehicle-brand">${v.marke}</div>
                         <h2 class="vehicle-name">${v.modell}</h2>
-                        <div class="vehicle-variant">${v.variante} · ${v.antrieb}</div>
+                        <div class="vehicle-variant">${v.variante || ''} · ${v.antrieb}</div>
                         <div class="vehicle-specs">
                             <div class="spec-item"><span class="spec-label">Reichweite</span><span class="spec-value highlight">${v.reichweite_wltp} km</span></div>
                             <div class="spec-item"><span class="spec-label">Batterie</span><span class="spec-value">${v.batterie_kwh} kWh</span></div>
@@ -299,7 +260,7 @@
                         </div>
                     </div>
                 </article>
-            `}).join('');
+            `).join('');
         }
         
         function showDetails(id) {
