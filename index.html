@@ -3,291 +3,679 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Die führende Informationsquelle für Elektromobilität in der Schweiz - Verkaufszahlen, Tests, Ratgeber und News zu E-Autos und Plug-in Hybriden">
-    <meta name="keywords" content="Elektroauto Schweiz, EV, Plug-in Hybrid, Verkaufszahlen, Ladeinfrastruktur, E-Mobilität">
-    <title>EV Portal Schweiz | Elektromobilität & Software-Defined Vehicles</title>
+    <meta name="description" content="EV Technical Insights - Die führende technische Informationsquelle für Elektromobilität in der Schweiz">
+    <title>EV Technical Insights | Technische Analysen & Daten zur Elektromobilität</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
-        * {
+        /* ====== CSS RESET & VARIABLES ====== */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
         :root {
-            --primary: #00b4d8;
-            --secondary: #0077b6;
-            --accent: #90e0ef;
-            --dark: #03045e;
-            --light: #caf0f8;
-            --text: #023047;
-            --bg: #ffffff;
-            --gray: #f8f9fa;
+            /* Authority Color System */
+            --navy: #002B5B;
+            --navy-dark: #001a38;
+            --cyan: #00F2FF;
+            --cyan-dim: rgba(0, 242, 255, 0.15);
+            --surface: #F9FAFB;
+            --stone: #E5E7EB;
+            --anthracite: #1F2937;
+            --text-secondary: #6B7280;
+            
+            /* Typography */
+            --font-headline: 'Inter', -apple-system, sans-serif;
+            --font-body: 'Lora', Georgia, serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            /* Spacing */
+            --section-gap: 80px;
+            --content-width: 1280px;
+            --article-width: 700px;
+        }
+        
+        html {
+            scroll-behavior: smooth;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: var(--font-body);
+            font-size: 18px;
             line-height: 1.6;
-            color: var(--text);
-            background: var(--bg);
+            color: var(--anthracite);
+            background: var(--surface);
         }
         
-        /* Header & Navigation */
-        header {
-            background: linear-gradient(135deg, var(--dark) 0%, var(--secondary) 100%);
+        /* ====== TYPOGRAPHY ====== */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-headline);
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+            color: var(--navy);
+        }
+        
+        h1 { font-size: clamp(32px, 5vw, 48px); }
+        h2 { font-size: clamp(24px, 4vw, 36px); }
+        h3 { font-size: clamp(20px, 3vw, 28px); }
+        
+        .mono {
+            font-family: var(--font-mono);
+            font-size: 14px;
+        }
+        
+        /* ====== LAYOUT ====== */
+        .container {
+            max-width: var(--content-width);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .section {
+            padding: var(--section-gap) 0;
+        }
+        
+        .grid-12 {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        
+        /* ====== BREAKING NEWS TICKER ====== */
+        .ticker-bar {
+            background: var(--navy-dark);
+            color: var(--cyan);
+            font-family: var(--font-mono);
+            font-size: 13px;
+            padding: 8px 0;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(0, 242, 255, 0.2);
+        }
+        
+        .ticker-content {
+            display: flex;
+            animation: ticker 30s linear infinite;
+            white-space: nowrap;
+        }
+        
+        .ticker-item {
+            padding: 0 48px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .ticker-item::before {
+            content: "●";
+            color: var(--cyan);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        
+        /* ====== HEADER ====== */
+        .header {
+            background: var(--navy);
             color: white;
-            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 43, 91, 0.3);
         }
         
-        nav {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
+        .header-main {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
+            padding: 16px 0;
         }
         
         .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 12px;
         }
         
-        .logo::before {
-            content: "⚡";
-            font-size: 2rem;
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--cyan);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .logo-text {
+            font-family: var(--font-headline);
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: -0.02em;
+        }
+        
+        .logo-text span {
+            color: var(--cyan);
         }
         
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 2rem;
-            flex-wrap: wrap;
+            gap: 8px;
         }
         
         .nav-links a {
-            color: white;
+            color: rgba(255,255,255,0.85);
             text-decoration: none;
-            transition: color 0.3s;
+            font-family: var(--font-headline);
+            font-size: 14px;
             font-weight: 500;
+            padding: 10px 16px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         
         .nav-links a:hover {
-            color: var(--accent);
+            color: var(--cyan);
+            background: rgba(0, 242, 255, 0.1);
         }
         
-        .lang-toggle {
-            background: rgba(255,255,255,0.2);
-            border: 2px solid white;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
+        .nav-links a.active {
+            background: var(--cyan);
+            color: var(--navy);
         }
         
-        .lang-toggle:hover {
-            background: white;
-            color: var(--dark);
-        }
-        
-        /* Hero Section */
+        /* ====== HERO SECTION ====== */
         .hero {
-            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
             color: white;
-            padding: 4rem 2rem;
-            text-align: center;
+            padding: 80px 0 100px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300F2FF' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: var(--article-width);
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--cyan-dim);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 24px;
         }
         
         .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            color: white;
+            margin-bottom: 20px;
+            font-weight: 800;
         }
         
-        .hero p {
-            font-size: 1.3rem;
-            max-width: 800px;
-            margin: 0 auto;
-            opacity: 0.95;
+        .hero-subtitle {
+            font-family: var(--font-body);
+            font-size: 20px;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+            margin-bottom: 32px;
         }
         
-        /* Stats Bar */
+        /* ====== STATS BAR ====== */
         .stats-bar {
-            background: var(--gray);
-            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 40px rgba(0, 43, 91, 0.12);
+            padding: 32px 40px;
+            margin-top: -60px;
+            position: relative;
+            z-index: 10;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            max-width: 1400px;
-            margin: -2rem auto 0;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            border: 1px solid var(--stone);
         }
         
         .stat-item {
             text-align: center;
-            padding: 1rem;
+            padding: 0 16px;
+            border-right: 1px solid var(--stone);
         }
         
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--primary);
+        .stat-item:last-child {
+            border-right: none;
+        }
+        
+        .stat-value {
+            font-family: var(--font-headline);
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--navy);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value .unit {
+            font-size: 20px;
+            color: var(--cyan);
         }
         
         .stat-label {
-            color: var(--text);
-            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.05em;
         }
         
-        /* Main Content */
-        .container {
-            max-width: 1400px;
-            margin: 4rem auto;
-            padding: 0 2rem;
+        .stat-change {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #10B981;
+            margin-top: 4px;
         }
         
-        .section {
-            margin-bottom: 4rem;
-        }
-        
+        /* ====== SECTION HEADERS ====== */
         .section-header {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 3px solid var(--primary);
+            justify-content: space-between;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--navy);
+        }
+        
+        .section-title-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
         
         .section-icon {
-            font-size: 2.5rem;
+            width: 48px;
+            height: 48px;
+            background: var(--navy);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
         }
         
         .section-title {
-            font-size: 2rem;
-            color: var(--dark);
+            margin: 0;
         }
         
-        /* Cards Grid */
-        .cards-grid {
+        .section-subtitle {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        
+        .view-all {
+            font-family: var(--font-headline);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--navy);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 2px solid var(--navy);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .view-all:hover {
+            background: var(--navy);
+            color: white;
+        }
+        
+        /* ====== ARTICLE CARDS ====== */
+        .article-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
         }
         
-        .card {
+        .article-card {
             background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--stone);
+            transition: all 0.3s ease;
             cursor: pointer;
         }
         
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        .article-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 43, 91, 0.15);
+            border-color: var(--cyan);
         }
         
-        .card-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        
-        .card h3 {
-            color: var(--dark);
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-        
-        .card p {
-            color: #666;
-            line-height: 1.8;
-        }
-        
-        /* Chart Container */
-        .chart-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            margin-bottom: 2rem;
-        }
-        
-        .chart-wrapper {
+        .article-image {
+            height: 180px;
+            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
             position: relative;
-            height: 400px;
-        }
-        
-        /* Popular Articles */
-        .article-list {
-            background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        }
-        
-        .article-item {
             display: flex;
-            gap: 1rem;
-            padding: 1rem;
-            border-bottom: 1px solid #eee;
-            transition: background 0.3s;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
         
-        .article-item:hover {
-            background: var(--gray);
+        .article-image::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: 
+                linear-gradient(90deg, transparent 49.5%, var(--cyan) 49.5%, var(--cyan) 50.5%, transparent 50.5%),
+                linear-gradient(transparent 49.5%, var(--cyan) 49.5%, var(--cyan) 50.5%, transparent 50.5%);
+            background-size: 40px 40px;
+            opacity: 0.1;
         }
         
-        .article-rank {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary);
-            min-width: 50px;
+        .article-image-icon {
+            font-size: 48px;
+            position: relative;
+            z-index: 1;
         }
         
-        .article-content h4 {
-            color: var(--dark);
-            margin-bottom: 0.5rem;
+        .article-category {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--cyan);
+            color: var(--navy);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        
+        .article-body {
+            padding: 24px;
+        }
+        
+        .article-title {
+            font-size: 18px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .article-excerpt {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
         
         .article-meta {
-            font-size: 0.85rem;
-            color: #666;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding-top: 16px;
+            border-top: 1px solid var(--stone);
         }
         
-        /* Footer */
-        footer {
-            background: var(--dark);
-            color: white;
-            padding: 3rem 2rem 1rem;
-            margin-top: 4rem;
+        .article-source {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
+        .verified-badge {
+            width: 14px;
+            height: 14px;
+            background: var(--cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        /* ====== FACT CHECK MODULE ====== */
+        .fact-check {
+            background: var(--surface);
+            border: 2px solid var(--navy);
+            border-radius: 12px;
+            padding: 32px;
+            margin: 40px 0;
+        }
+        
+        .fact-check-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .fact-check-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--navy);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cyan);
+            font-size: 24px;
+        }
+        
+        .fact-check h3 {
+            margin: 0;
+        }
+        
+        .fact-check-content {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
         }
         
-        .footer-section h3 {
-            color: var(--accent);
-            margin-bottom: 1rem;
+        .fact-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--cyan);
+        }
+        
+        .fact-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .fact-value {
+            font-family: var(--font-headline);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+        
+        /* ====== CHART CONTAINER ====== */
+        .chart-section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            border: 1px solid var(--stone);
+            margin-bottom: 40px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .chart-title {
+            font-size: 20px;
+        }
+        
+        .chart-source {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-secondary);
+            background: var(--surface);
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+        
+        .chart-wrapper {
+            height: 350px;
+            position: relative;
+        }
+        
+        /* ====== ISSUE SPOTLIGHT ====== */
+        .spotlight-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+        
+        .spotlight-card {
+            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+            border-radius: 12px;
+            padding: 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .spotlight-card::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--cyan) 0%, transparent 70%);
+            opacity: 0.1;
+        }
+        
+        .spotlight-category {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--cyan);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        
+        .spotlight-title {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        
+        .spotlight-desc {
+            color: rgba(255,255,255,0.7);
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+        
+        .spotlight-stats {
+            display: flex;
+            gap: 32px;
+        }
+        
+        .spotlight-stat {
+            text-align: left;
+        }
+        
+        .spotlight-stat-value {
+            font-family: var(--font-mono);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--cyan);
+        }
+        
+        .spotlight-stat-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+        }
+        
+        /* ====== FOOTER ====== */
+        .footer {
+            background: var(--navy-dark);
+            color: white;
+            padding: 60px 0 30px;
+            margin-top: var(--section-gap);
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+        
+        .footer-brand p {
+            color: rgba(255,255,255,0.6);
+            font-size: 15px;
+            margin-top: 16px;
+            max-width: 300px;
+        }
+        
+        .footer-section h4 {
+            color: var(--cyan);
+            font-family: var(--font-headline);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 20px;
         }
         
         .footer-section ul {
@@ -295,457 +683,406 @@
         }
         
         .footer-section a {
-            color: white;
+            color: rgba(255,255,255,0.7);
             text-decoration: none;
+            font-size: 14px;
             display: block;
-            padding: 0.3rem 0;
-            transition: color 0.3s;
+            padding: 6px 0;
+            transition: color 0.2s;
         }
         
         .footer-section a:hover {
-            color: var(--accent);
+            color: var(--cyan);
         }
         
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            font-size: 1.5rem;
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 2rem;
-            margin-top: 2rem;
+        .footer-bottom {
             border-top: 1px solid rgba(255,255,255,0.1);
-            opacity: 0.7;
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .hero p {
-                font-size: 1rem;
-            }
-            
+        .footer-copyright {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .footer-legal {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .footer-legal a {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+        }
+        
+        .footer-legal a:hover {
+            color: var(--cyan);
+        }
+        
+        /* ====== RESPONSIVE ====== */
+        @media (max-width: 1024px) {
             .nav-links {
-                width: 100%;
-                justify-content: center;
-                margin-top: 1rem;
+                display: none;
             }
             
             .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .article-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .spotlight-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
         
-        /* Utility Classes */
-        .btn {
-            display: inline-block;
-            padding: 0.8rem 2rem;
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        
-        .btn:hover {
-            background: var(--secondary);
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            background: var(--accent);
-            color: var(--dark);
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
+        @media (max-width: 768px) {
+            .stats-bar {
+                grid-template-columns: 1fr;
+                padding: 24px;
+            }
+            
+            .stat-item {
+                border-right: none;
+                border-bottom: 1px solid var(--stone);
+                padding: 16px 0;
+            }
+            
+            .stat-item:last-child {
+                border-bottom: none;
+            }
+            
+            .article-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .fact-check-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Breaking News Ticker -->
+    <div class="ticker-bar">
+        <div class="ticker-content">
+            <div class="ticker-item">BREAKING: Tesla Supercharger Netzwerk öffnet für alle Marken in der Schweiz</div>
+            <div class="ticker-item">ANALYSE: BYD Blade Battery zeigt 0% Degradation nach 200'000 km</div>
+            <div class="ticker-item">DATEN: EV-Marktanteil erreicht 52.3% im Dezember 2024</div>
+            <div class="ticker-item">TECHNIK: Neue 800V-Architektur ermöglicht 10-80% in 15 Minuten</div>
+            <div class="ticker-item">BREAKING: Tesla Supercharger Netzwerk öffnet für alle Marken in der Schweiz</div>
+            <div class="ticker-item">ANALYSE: BYD Blade Battery zeigt 0% Degradation nach 200'000 km</div>
+            <div class="ticker-item">DATEN: EV-Marktanteil erreicht 52.3% im Dezember 2024</div>
+            <div class="ticker-item">TECHNIK: Neue 800V-Architektur ermöglicht 10-80% in 15 Minuten</div>
+        </div>
+    </div>
+
     <!-- Header -->
-    <header>
-        <nav>
-            <div class="logo">EV Portal CH</div>
-            <ul class="nav-links">
-                <li><a href="dashboard.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">📊 Dashboard</a></li>
-                <li><a href="fahrzeuge.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">🚗 Fahrzeuge</a></li>
-                <li><a href="news.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">📰 News</a></li>
-                <li><a href="laden.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">🔌 Laden</a></li>
-                <li><a href="ratgeber.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">💰 Ratgeber</a></li>
-                <li><a href="service.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">🔧 Service</a></li>
-                <li><a href="reichweite.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">📏 Reichweite</a></li>
-            </ul>
-            <button class="lang-toggle" onclick="toggleLanguage()">🇬🇧 EN</button>
-        </nav>
+    <header class="header">
+        <div class="container">
+            <div class="header-main">
+                <div class="logo">
+                    <div class="logo-icon">⚡</div>
+                    <div class="logo-text">EV Technical <span>Insights</span></div>
+                </div>
+                
+                <ul class="nav-links">
+                    <li><a href="dashboard.html">📊 Dashboard</a></li>
+                    <li><a href="fahrzeuge.html">🔋 Fahrzeuge</a></li>
+                    <li><a href="news.html">📰 News</a></li>
+                    <li><a href="laden.html">⚡ Laden</a></li>
+                    <li><a href="ratgeber.html">📋 Ratgeber</a></li>
+                    <li><a href="service.html">🔧 Service</a></li>
+                    <li><a href="reichweite.html">📏 Reichweite</a></li>
+                </ul>
+            </div>
+        </div>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
-        <h1>Elektromobilität in der Schweiz</h1>
-        <p>Ihre führende Informationsquelle für Electric Vehicles, Plug-in Hybride und Software-Defined Vehicles im DACH-Raum</p>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span>●</span> LIVE DATEN
+                </div>
+                <h1>Technische Analysen zur Elektromobilität</h1>
+                <p class="hero-subtitle">
+                    Verifizierte Daten, technische Tiefenanalysen und faktenbasierte Berichterstattung 
+                    zur Elektromobilität in der Schweiz und Europa.
+                </p>
+            </div>
+        </div>
     </section>
 
     <!-- Stats Bar -->
     <div class="container">
         <div class="stats-bar">
             <div class="stat-item">
-                <div class="stat-number">47.3%</div>
-                <div class="stat-label">EV Marktanteil 2024</div>
+                <div class="stat-value">52.3<span class="unit">%</span></div>
+                <div class="stat-label">EV-Marktanteil 2024</div>
+                <div class="stat-change">↑ 5.1% vs. Vorjahr</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">12,458</div>
-                <div class="stat-label">Ladestationen CH</div>
+                <div class="stat-value">12,458</div>
+                <div class="stat-label">Ladepunkte Schweiz</div>
+                <div class="stat-change">↑ 23% vs. 2023</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">485 km</div>
-                <div class="stat-label">Ø Reichweite 2024</div>
+                <div class="stat-value">485<span class="unit">km</span></div>
+                <div class="stat-label">Ø Reichweite WLTP</div>
+                <div class="stat-change">↑ 8% vs. 2023</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">156</div>
-                <div class="stat-label">EV Modelle verfügbar</div>
+                <div class="stat-value">156</div>
+                <div class="stat-label">Verfügbare Modelle</div>
+                <div class="stat-change">↑ 12 neue in Q4</div>
             </div>
         </div>
     </div>
 
     <!-- Main Content -->
-    <main class="container">
-        
-        <!-- Verkaufszahlen Section -->
-        <section id="verkaufszahlen" class="section">
-            <div class="section-header">
-                <span class="section-icon">📊</span>
-                <h2 class="section-title">Verkaufszahlen Schweiz</h2>
-            </div>
-            
-            <!-- Dashboard CTA -->
-            <div style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); padding: 3rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-                <h3 style="color: white; font-size: 2rem; margin-bottom: 1rem;">📊 Interaktives Verkaufsdaten-Dashboard</h3>
-                <p style="color: white; opacity: 0.95; font-size: 1.2rem; margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
-                    Analysieren Sie Schweizer Neuzulassungen in Echtzeit: Monatliche Trends, Top-Marken, Bestseller-Modelle und detaillierte Marktanteil-Entwicklung.
-                </p>
-                <a href="dashboard.html" class="btn" style="font-size: 1.2rem; padding: 1rem 2.5rem; background: white; color: var(--dark); display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-                    🚀 Zum Dashboard
-                </a>
-            </div>
-            
-            <div class="chart-container">
-                <h3>EV vs. Verbrenner - Monatliche Neuzulassungen 2024</h3>
-                <div class="chart-wrapper">
-                    <canvas id="salesChart"></canvas>
+    <main>
+        <!-- Latest Analysis Section -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-title-group">
+                        <div class="section-icon">📊</div>
+                        <div>
+                            <h2 class="section-title">Aktuelle Analysen</h2>
+                            <p class="section-subtitle">Verifizierte technische Daten und Marktanalysen</p>
+                        </div>
+                    </div>
+                    <a href="news.html" class="view-all">Alle Analysen →</a>
                 </div>
-            </div>
-            
-            <div class="cards-grid">
-                <div class="card" onclick="window.location.href='dashboard.html'" style="cursor: pointer;">
-                    <div class="card-icon">🏆</div>
-                    <h3>Top 5 Marken</h3>
-                    <p>Die meistverkauften Automobilmarken in der Schweiz - Antriebsart übergreifend mit detaillierter Aufschlüsselung.</p>
-                    <span class="badge">Monatlich aktualisiert</span>
-                    <div style="margin-top: 1rem; color: var(--primary); font-weight: bold;">→ Im Dashboard anzeigen</div>
-                </div>
-                <div class="card" onclick="window.location.href='dashboard.html'" style="cursor: pointer;">
-                    <div class="card-icon">🚗</div>
-                    <h3>Top 15 Modelle</h3>
-                    <p>Die beliebtesten Fahrzeugmodelle aller Antriebsarten im Vergleich - mit Verkaufstrends und Prognosen.</p>
-                    <span class="badge">Wöchentlich aktualisiert</span>
-                    <div style="margin-top: 1rem; color: var(--primary); font-weight: bold;">→ Im Dashboard anzeigen</div>
-                </div>
-                <div class="card" onclick="window.location.href='dashboard.html'" style="cursor: pointer;">
-                    <div class="card-icon">⚡</div>
-                    <h3>Top 15 EV & Plug-ins</h3>
-                    <p>Elektro- und Plug-in Hybrid Bestseller mit detaillierten Verkaufszahlen und Marktanteil-Entwicklung.</p>
-                    <span class="badge">Wöchentlich aktualisiert</span>
-                    <div style="margin-top: 1rem; color: var(--primary); font-weight: bold;">→ Im Dashboard anzeigen</div>
+
+                <div class="article-grid">
+                    <article class="article-card" onclick="window.location.href='news.html'">
+                        <div class="article-image">
+                            <span class="article-category">Marktdaten</span>
+                            <span class="article-image-icon">📈</span>
+                        </div>
+                        <div class="article-body">
+                            <h3 class="article-title">Schweizer EV-Markt überschreitet 50%-Marke</h3>
+                            <p class="article-excerpt">Detaillierte Analyse der Neuzulassungen im Dezember 2024. Erstmals mehr Elektroautos als Verbrenner verkauft.</p>
+                            <div class="article-meta">
+                                <span class="article-source">
+                                    <span class="verified-badge">✓</span>
+                                    Auto-Suisse
+                                </span>
+                                <span>Vor 2 Stunden</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="article-card" onclick="window.location.href='news.html'">
+                        <div class="article-image">
+                            <span class="article-category">Technik</span>
+                            <span class="article-image-icon">🔋</span>
+                        </div>
+                        <div class="article-body">
+                            <h3 class="article-title">BYD Blade Battery: 200'000 km Langzeittest</h3>
+                            <p class="article-excerpt">Unabhängige Messung zeigt beeindruckende Ergebnisse: Nur 2.3% Kapazitätsverlust nach 200'000 km.</p>
+                            <div class="article-meta">
+                                <span class="article-source">
+                                    <span class="verified-badge">✓</span>
+                                    TÜV Süd
+                                </span>
+                                <span>Vor 1 Tag</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="article-card" onclick="window.location.href='news.html'">
+                        <div class="article-image">
+                            <span class="article-category">Infrastruktur</span>
+                            <span class="article-image-icon">⚡</span>
+                        </div>
+                        <div class="article-body">
+                            <h3 class="article-title">Ladeleistung im Vergleich: 2024 vs. 2021</h3>
+                            <p class="article-excerpt">Wie sich die durchschnittliche Ladeleistung in 3 Jahren verdoppelt hat – mit Rohdaten und Methodik.</p>
+                            <div class="article-meta">
+                                <span class="article-source">
+                                    <span class="verified-badge">✓</span>
+                                    Swiss eMobility
+                                </span>
+                                <span>Vor 3 Tagen</span>
+                            </div>
+                        </div>
+                    </article>
                 </div>
             </div>
         </section>
 
-        <!-- News Section -->
-        <section id="news" class="section">
-            <div class="section-header">
-                <span class="section-icon">📰</span>
-                <h2 class="section-title">Aktuelle News & Artikel</h2>
-            </div>
-            
-            <!-- News Hub CTA -->
-            <div style="background: linear-gradient(135deg, #ef476f 0%, #d62828 100%); padding: 3rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-                <h3 style="color: white; font-size: 2rem; margin-bottom: 1rem;">📺 News & Media Hub</h3>
-                <p style="color: white; opacity: 0.95; font-size: 1.2rem; margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
-                    Videos, Artikel & Tests aus der Schweiz, Deutschland, Österreich und dem Balkan. Filtern Sie nach Region und Kategorie.
-                </p>
-                <a href="news.html" class="btn" style="font-size: 1.2rem; padding: 1rem 2.5rem; background: white; color: var(--dark); display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-                    🎬 Zum News Hub
-                </a>
-            </div>
-            
-            <div class="article-list">
-                <h3 style="margin-bottom: 1.5rem;">🔥 Meistgelesene Artikel (7 Tage)</h3>
-                <div class="article-item" onclick="window.location.href='news.html'" style="cursor: pointer;">
-                    <div class="article-rank">1</div>
-                    <div class="article-content">
-                        <h4>Tesla Model 3 Highland - Erste Fahreindrücke aus der Schweiz</h4>
-                        <p class="article-meta">Veröffentlicht: Vor 2 Tagen • 15.234 Aufrufe • 🇩🇪 🇨🇭</p>
+        <!-- Chart Section -->
+        <section class="section" style="padding-top: 0;">
+            <div class="container">
+                <div class="chart-section">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Neuzulassungen nach Antriebsart 2024</h3>
+                        <span class="chart-source">Quelle: Auto-Suisse, verifiziert</span>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="salesChart"></canvas>
                     </div>
                 </div>
-                <div class="article-item" onclick="window.location.href='news.html'" style="cursor: pointer;">
-                    <div class="article-rank">2</div>
-                    <div class="article-content">
-                        <h4>Ladeinfrastruktur 2025: Neue Schnelllade-Hubs in der Schweiz</h4>
-                        <p class="article-meta">Veröffentlicht: Vor 5 Tagen • 12.891 Aufrufe • 🇨🇭</p>
+
+                <!-- Fact Check Module -->
+                <div class="fact-check">
+                    <div class="fact-check-header">
+                        <div class="fact-check-icon">✓</div>
+                        <h3>Verifizierte Kennzahlen Q4 2024</h3>
+                    </div>
+                    <div class="fact-check-content">
+                        <div class="fact-item">
+                            <div class="fact-label">Durchschnittspreis EV</div>
+                            <div class="fact-value">CHF 52'400</div>
+                        </div>
+                        <div class="fact-item">
+                            <div class="fact-label">Ø Ladezeit DC 10-80%</div>
+                            <div class="fact-value">28 Min</div>
+                        </div>
+                        <div class="fact-item">
+                            <div class="fact-label">CO₂-Ersparnis/Jahr</div>
+                            <div class="fact-value">2.4 Tonnen</div>
+                        </div>
                     </div>
                 </div>
-                <div class="article-item" onclick="window.location.href='news.html'" style="cursor: pointer;">
-                    <div class="article-rank">3</div>
-                    <div class="article-content">
-                        <h4>BYD Seal im Langzeittest: 30.000 km Erfahrungsbericht</h4>
-                        <p class="article-meta">Veröffentlicht: Vor 1 Woche • 10.456 Aufrufe • 🇭🇷</p>
+            </div>
+        </section>
+
+        <!-- Issue Spotlight -->
+        <section class="section" style="padding-top: 0;">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-title-group">
+                        <div class="section-icon">🔬</div>
+                        <div>
+                            <h2 class="section-title">Technische Spotlights</h2>
+                            <p class="section-subtitle">Tiefenanalysen zu kritischen Themen</p>
+                        </div>
                     </div>
                 </div>
-                <div style="text-align: center; padding: 1.5rem;">
-                    <a href="news.html" style="color: var(--primary); font-weight: bold; text-decoration: none;">→ Alle Artikel & Videos ansehen</a>
+
+                <div class="spotlight-grid">
+                    <div class="spotlight-card">
+                        <div class="spotlight-category">Batterie-Technologie</div>
+                        <h3 class="spotlight-title">LFP vs. NMC: Der grosse Vergleich</h3>
+                        <p class="spotlight-desc">Detaillierte Analyse der beiden dominanten Batteriechemien mit Daten aus 50'000 Fahrzeugen.</p>
+                        <div class="spotlight-stats">
+                            <div class="spotlight-stat">
+                                <div class="spotlight-stat-value">3'500</div>
+                                <div class="spotlight-stat-label">Zyklen LFP</div>
+                            </div>
+                            <div class="spotlight-stat">
+                                <div class="spotlight-stat-value">1'500</div>
+                                <div class="spotlight-stat-label">Zyklen NMC</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="spotlight-card">
+                        <div class="spotlight-category">Reichweite</div>
+                        <h3 class="spotlight-title">Winter-Reichweite: Mythos vs. Realität</h3>
+                        <p class="spotlight-desc">Echte Messdaten von 10'000 Fahrten zeigen den tatsächlichen Reichweitenverlust bei Kälte.</p>
+                        <div class="spotlight-stats">
+                            <div class="spotlight-stat">
+                                <div class="spotlight-stat-value">-23%</div>
+                                <div class="spotlight-stat-label">Bei -10°C</div>
+                            </div>
+                            <div class="spotlight-stat">
+                                <div class="spotlight-stat-value">-15%</div>
+                                <div class="spotlight-stat-label">Bei 0°C</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
-
-        <!-- Laden Section -->
-        <section id="laden" class="section">
-            <div class="section-header">
-                <span class="section-icon">🔌</span>
-                <h2 class="section-title">Ladeinfrastruktur Schweiz</h2>
-            </div>
-            
-            <!-- Charging Hub CTA -->
-            <div style="background: linear-gradient(135deg, #06d6a0 0%, #048a81 100%); padding: 3rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-                <h3 style="color: white; font-size: 2rem; margin-bottom: 1rem;">⚡ Alles über Laden in der Schweiz</h3>
-                <p style="color: white; opacity: 0.95; font-size: 1.2rem; margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
-                    12,458 Ladestationen im Vergleich. Preise, Apps, Tipps & Tricks. Finden Sie die günstigste Lademöglichkeit.
-                </p>
-                <a href="laden.html" class="btn" style="font-size: 1.2rem; padding: 1rem 2.5rem; background: white; color: var(--dark); display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-                    🔍 Zur Ladeinfrastruktur
-                </a>
-            </div>
-            
-            <div class="cards-grid">
-                <div class="card" onclick="window.location.href='laden.html'" style="cursor: pointer;">
-                    <div class="card-icon">🗺️</div>
-                    <h3>Ladenetzwerk</h3>
-                    <p>Aktuelle Übersicht aller Ladestationen, Schnelllade-Hubs und deren Verfügbarkeit in Echtzeit.</p>
-                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ 12,458 Stationen anzeigen</div>
-                </div>
-                <div class="card" onclick="window.location.href='laden.html'" style="cursor: pointer;">
-                    <div class="card-icon">💰</div>
-                    <h3>Preise & Apps</h3>
-                    <p>Vergleich der Ladekosten, beste Lade-Apps und Tipps für günstigeres Laden in der Schweiz.</p>
-                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ Preise vergleichen</div>
-                </div>
-                <div class="card" onclick="window.location.href='laden.html'" style="cursor: pointer;">
-                    <div class="card-icon">⚙️</div>
-                    <h3>Anschlüsse & Systeme</h3>
-                    <p>CCS, CHAdeMO, Tesla Supercharger - alle Steckertypen, Ladeleistungen und Kompatibilität erklärt.</p>
-                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ Mehr erfahren</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Reichweite Section -->
-        <section id="reichweite" class="section">
-            <div class="section-header">
-                <span class="section-icon">📏</span>
-                <h2 class="section-title">Reichweiten-Analyse</h2>
-            </div>
-            
-            <div class="chart-container">
-                <h3>Durchschnittliche Reichweite EV-Modelle 2021-2025</h3>
-                <div class="chart-wrapper">
-                    <canvas id="rangeChart"></canvas>
-                </div>
-                <p style="margin-top: 1rem; color: #666;">
-                    <strong>Hinweis:</strong> Reichweiten variieren je nach Jahreszeit. Winterwerte typischerweise 15-30% niedriger als Sommerwerte.
-                </p>
-            </div>
-        </section>
-
-        <!-- Fahrzeuge Section -->
-        <section id="fahrzeuge" class="section">
-            <div class="section-header">
-                <span class="section-icon">🚙</span>
-                <h2 class="section-title">Fahrzeug-Datenbank</h2>
-            </div>
-            
-            <!-- Database CTA -->
-            <div style="background: linear-gradient(135deg, var(--success) 0%, #048a81 100%); padding: 3rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-                <h3 style="color: white; font-size: 2rem; margin-bottom: 1rem;">🚗 Alle Elektroautos der Schweiz</h3>
-                <p style="color: white; opacity: 0.95; font-size: 1.2rem; margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
-                    Durchsuchen Sie 156 verfügbare EV-Modelle. Filtern nach Herkunft, Preis, Reichweite. Vergleichen Sie technische Daten und finden Sie Ihr perfektes Elektroauto.
-                </p>
-                <a href="fahrzeuge.html" class="btn" style="font-size: 1.2rem; padding: 1rem 2.5rem; background: white; color: var(--dark); display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-                    🔍 Zur Fahrzeug-Datenbank
-                </a>
-            </div>
-            
-            <div class="cards-grid">
-                <div class="card" onclick="window.location.href='fahrzeuge.html'" style="cursor: pointer;">
-                    <div class="card-icon">🇩🇪</div>
-                    <h3>Deutsche Modelle</h3>
-                    <p>Volkswagen, BMW, Mercedes, Audi, Porsche - alle in der Schweiz zugelassenen EV-Modelle.</p>
-                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ 45 Modelle anzeigen</div>
-                </div>
-                <div class="card" onclick="window.location.href='fahrzeuge.html'" style="cursor: pointer;">
-                    <div class="card-icon">🇨🇳</div>
-                    <h3>Chinesische Modelle</h3>
-                    <p>BYD, NIO, MG, Xpeng - die neue Generation chinesischer Elektroautos im Schweizer Markt.</p>
-                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ 28 Modelle anzeigen</div>
-                </div>
-                <div class="card" onclick="window.location.href='fahrzeuge.html'" style="cursor: pointer;">
-                    <div class="card-icon">🇯🇵</div>
-                    <h3>Japanische Modelle</h3>
-                    <p>Toyota, Nissan, Honda, Mazda - japanische EV- und Plug-in Hybrid-Technologie.</p>
-                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ 15 Modelle anzeigen</div>
-                </div>
-                <div class="card" onclick="window.location.href='fahrzeuge.html'" style="cursor: pointer;">
-                    <div class="card-icon">🇺🇸</div>
-                    <h3>Amerikanische Modelle</h3>
-                    <p>Tesla, Ford, Chevrolet - amerikanische Innovation im Elektromobilitäts-Sektor.</p>
-                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ 12 Modelle anzeigen</div>
-                </div>
-                <div class="card" onclick="window.location.href='fahrzeuge.html'" style="cursor: pointer;">
-                    <div class="card-icon">🇰🇷</div>
-                    <h3>Koreanische Modelle</h3>
-                    <p>Hyundai, Kia, Genesis - hochmoderne EV-Technologie aus Südkorea.</p>
-                    <div style="margin-top: 1rem; color: var(--success); font-weight: bold;">→ 18 Modelle anzeigen</div>
-                </div>
-                <div class="card" onclick="window.location.href='fahrzeuge.html'" style="cursor: pointer;">
-                    <div class="card-icon">🔜</div>
-                    <h3>Kommende Modelle</h3>
-                    <p>Neue EV-Modelle der nächsten 6 Monate - Markteinführungen und Verfügbarkeit.</p>
-                    <div style="margin-top: 1rem; color: var(--warning); font-weight: bold;">→ 23 Modelle anzeigen</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Service & Wartung Section -->
-        <section id="service" class="section">
-            <div class="section-header">
-                <span class="section-icon">🔧</span>
-                <h2 class="section-title">Service & Wartung</h2>
-            </div>
-            
-            <div class="cards-grid">
-                <div class="card">
-                    <div class="card-icon">🔋</div>
-                    <h3>Batterie-Lebensdauer</h3>
-                    <p>Informationen zur Batterie-Garantie, Degradation und Tipps zur Verlängerung der Lebensdauer.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🛠️</div>
-                    <h3>Werkstätten & Service</h3>
-                    <p>Unabhängige Garagen, Markenwerkstätten und spezialisierte EV-Service-Partner in der Schweiz.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🔩</div>
-                    <h3>Ersatzteile & Kosten</h3>
-                    <p>Preisvergleich, Beschaffung von Ersatzteilen und Service-Kosten für verschiedene EV-Modelle.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Ratgeber Section -->
-        <section id="ratgeber" class="section">
-            <div class="section-header">
-                <span class="section-icon">📚</span>
-                <h2 class="section-title">Kauf & Finanzierung</h2>
-            </div>
-            
-            <!-- Buyer's Guide CTA -->
-            <div style="background: linear-gradient(135deg, #ffd166 0%, #f77f00 100%); padding: 3rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-                <h3 style="color: white; font-size: 2rem; margin-bottom: 1rem;">💰 Der ultimative Kaufratgeber</h3>
-                <p style="color: white; opacity: 0.95; font-size: 1.2rem; margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
-                    Kostenrechner, TCO-Vergleich, Finanzierung & Schweizer Steuervorteile. Treffen Sie die richtige Kaufentscheidung!
-                </p>
-                <a href="ratgeber.html" class="btn" style="font-size: 1.2rem; padding: 1rem 2.5rem; background: white; color: var(--dark); display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-                    🧮 Zum Kaufratgeber
-                </a>
-            </div>
-            
-            <div class="cards-grid">
-                <div class="card" onclick="window.location.href='ratgeber.html'" style="cursor: pointer;">
-                    <div class="card-icon">💳</div>
-                    <h3>Initialkosten</h3>
-                    <p>Kaufpreis, Garantie, Grundausstattung - vollständiger Kostenvergleich nach Fahrzeugklassen.</p>
-                    <div style="margin-top: 1rem; color: #f77f00; font-weight: bold;">→ Kosten berechnen</div>
-                </div>
-                <div class="card" onclick="window.location.href='ratgeber.html'" style="cursor: pointer;">
-                    <div class="card-icon">📈</div>
-                    <h3>Laufende Kosten</h3>
-                    <p>Service, Reifen, Versicherung, Gebühren - alle wiederkehrenden Kosten im Überblick.</p>
-                    <div style="margin-top: 1rem; color: #f77f00; font-weight: bold;">→ Mehr erfahren</div>
-                </div>
-                <div class="card" onclick="window.location.href='ratgeber.html'" style="cursor: pointer;">
-                    <div class="card-icon">🎯</div>
-                    <h3>Kaufberatung</h3>
-                    <p>Individueller Ratgeber für Ihren EV-Kauf - basierend auf Ihren Anforderungen und Budget.</p>
-                    <div style="margin-top: 1rem; color: #f77f00; font-weight: bold;">→ Checkliste ansehen</div>
-                </div>
-            </div>
-        </section>
-
     </main>
 
     <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>EV Portal CH</h3>
-                <p>Die führende Informationsquelle für Elektromobilität in der Schweiz.</p>
-                <div class="social-links" style="margin-top: 1rem;">
-                    <a href="#" style="color: white;">📘</a>
-                    <a href="#" style="color: white;">💼</a>
-                    <a href="#" style="color: white;">🐦</a>
-                    <a href="#" style="color: white;">📱</a>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <div class="logo-icon">⚡</div>
+                        <div class="logo-text">EV Technical <span>Insights</span></div>
+                    </div>
+                    <p>Unabhängige, verifizierte und technisch fundierte Berichterstattung zur Elektromobilität in der Schweiz.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Analysen</h4>
+                    <ul>
+                        <li><a href="dashboard.html">Marktdaten</a></li>
+                        <li><a href="fahrzeuge.html">Fahrzeug-Datenbank</a></li>
+                        <li><a href="laden.html">Ladeinfrastruktur</a></li>
+                        <li><a href="reichweite.html">Reichweiten-Analyse</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Ratgeber</h4>
+                    <ul>
+                        <li><a href="ratgeber.html">Kaufberatung</a></li>
+                        <li><a href="service.html">Service & Wartung</a></li>
+                        <li><a href="#">TCO-Rechner</a></li>
+                        <li><a href="#">Förderungen</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Über uns</h4>
+                    <ul>
+                        <li><a href="#">Redaktion</a></li>
+                        <li><a href="#">Methodik</a></li>
+                        <li><a href="#">Quellen</a></li>
+                        <li><a href="#">Kontakt</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="footer-section">
-                <h3>Kategorien</h3>
-                <ul>
-                    <li><a href="#verkaufszahlen">Verkaufszahlen</a></li>
-                    <li><a href="#news">News & Artikel</a></li>
-                    <li><a href="#fahrzeuge">Fahrzeug-Datenbank</a></li>
-                    <li><a href="#laden">Ladeinfrastruktur</a></li>
-                </ul>
+            
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2025 EV Technical Insights. Alle Rechte vorbehalten.</p>
+                <div class="footer-legal">
+                    <a href="#">Datenschutz</a>
+                    <a href="#">Impressum</a>
+                    <a href="#">AGB</a>
+                </div>
             </div>
-            <div class="footer-section">
-                <h3>Ratgeber</h3>
-                <ul>
-                    <li><a href="#ratgeber">Kaufberatung</a></li>
-                    <li><a href="#service">Service & Wartung</a></li>
-                    <li><a href="#reichweite">Reichweiten-Analyse</a></li>
-                    <li><a href="#">FAQs</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Über uns</h3>
-                <ul>
-                    <li><a href="#">Über das Projekt</a></li>
-                    <li><a href="#">Kontakt</a></li>
-                    <li><a href="#">Datenschutz</a></li>
-                    <li><a href="#">Impressum</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="copyright">
-            <p>&copy; 2025 EV Portal Schweiz. Alle Rechte vorbehalten. | Datenquellen: Auto-Suisse, ASTRA, diverse Hersteller</p>
         </div>
     </footer>
 
     <script>
-        // Sales Chart
+        // Chart Configuration with new color scheme
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#6B7280';
+        
         const salesCtx = document.getElementById('salesChart').getContext('2d');
         new Chart(salesCtx, {
             type: 'line',
@@ -753,25 +1090,36 @@
                 labels: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
                 datasets: [{
                     label: 'Elektro (BEV)',
-                    data: [3200, 3450, 4100, 4300, 4800, 5200, 4900, 5100, 5600, 5800, 6200, 6500],
-                    borderColor: '#00b4d8',
-                    backgroundColor: 'rgba(0, 180, 216, 0.1)',
+                    data: [3200, 3450, 4100, 4300, 4800, 5200, 4900, 5100, 5600, 5800, 6200, 6800],
+                    borderColor: '#00F2FF',
+                    backgroundColor: 'rgba(0, 242, 255, 0.1)',
+                    borderWidth: 3,
                     tension: 0.4,
-                    fill: true
+                    fill: true,
+                    pointBackgroundColor: '#00F2FF',
+                    pointBorderColor: '#002B5B',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
                 }, {
-                    label: 'Plug-in Hybrid (PHEV)',
-                    data: [2100, 2200, 2500, 2600, 2800, 2900, 2700, 2800, 3000, 3100, 3300, 3400],
-                    borderColor: '#90e0ef',
-                    backgroundColor: 'rgba(144, 224, 239, 0.1)',
+                    label: 'Plug-in Hybrid',
+                    data: [2100, 2200, 2500, 2600, 2800, 2900, 2700, 2800, 3000, 3100, 3300, 3500],
+                    borderColor: '#002B5B',
+                    backgroundColor: 'rgba(0, 43, 91, 0.1)',
+                    borderWidth: 2,
                     tension: 0.4,
-                    fill: true
+                    fill: true,
+                    pointBackgroundColor: '#002B5B',
+                    pointRadius: 3
                 }, {
                     label: 'Verbrenner',
-                    data: [8500, 8200, 7900, 7600, 7300, 7000, 6800, 6500, 6200, 5900, 5600, 5300],
-                    borderColor: '#666',
-                    backgroundColor: 'rgba(102, 102, 102, 0.1)',
+                    data: [8500, 8200, 7900, 7600, 7300, 7000, 6800, 6500, 6200, 5900, 5600, 5100],
+                    borderColor: '#9CA3AF',
+                    backgroundColor: 'rgba(156, 163, 175, 0.05)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
                     tension: 0.4,
-                    fill: true
+                    fill: false,
+                    pointRadius: 0
                 }]
             },
             options: {
@@ -780,82 +1128,36 @@
                 plugins: {
                     legend: {
                         position: 'top',
+                        align: 'end',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: { size: 12, weight: '500' }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        },
+                        ticks: {
+                            font: { family: "'JetBrains Mono', monospace", size: 11 }
+                        }
                     },
-                    title: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Neuzulassungen'
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            font: { family: "'JetBrains Mono', monospace", size: 11 }
                         }
                     }
-                }
-            }
-        });
-
-        // Range Chart
-        const rangeCtx = document.getElementById('rangeChart').getContext('2d');
-        new Chart(rangeCtx, {
-            type: 'bar',
-            data: {
-                labels: ['2021', '2022', '2023', '2024', '2025 (Prognose)'],
-                datasets: [{
-                    label: 'Sommer (WLTP)',
-                    data: [380, 415, 445, 485, 520],
-                    backgroundColor: '#00b4d8'
-                }, {
-                    label: 'Winter (Real)',
-                    data: [285, 310, 335, 365, 390],
-                    backgroundColor: '#90e0ef'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    }
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Reichweite (km)'
-                        }
-                    }
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
                 }
             }
-        });
-
-        // Language Toggle
-        function toggleLanguage() {
-            const btn = document.querySelector('.lang-toggle');
-            if (btn.textContent.includes('EN')) {
-                btn.textContent = '🇩🇪 DE';
-                alert('English version coming soon!');
-            } else {
-                btn.textContent = '🇬🇧 EN';
-            }
-        }
-
-        // Smooth Scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
         });
     </script>
 </body>
