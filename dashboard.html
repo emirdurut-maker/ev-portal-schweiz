@@ -3,1596 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="EV Technical Insights Dashboard - Echtzeit-Marktdaten und Analysen zur Elektromobilität">
     <title>Dashboard | EV Technical Insights</title>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <style>
-        /* ====== CSS RESET & VARIABLES ====== */
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        :root {
-            /* Authority Color System */
-            --navy: #002B5B;
-            --navy-dark: #001a38;
-            --cyan: #00F2FF;
-            --cyan-dim: rgba(0, 242, 255, 0.15);
-            --surface: #F9FAFB;
-            --stone: #E5E7EB;
-            --anthracite: #1F2937;
-            --text-secondary: #6B7280;
-            
-            /* Status Colors */
-            --success: #10B981;
-            --success-dim: rgba(16, 185, 129, 0.1);
-            --warning: #F59E0B;
-            --warning-dim: rgba(245, 158, 11, 0.1);
-            --danger: #EF4444;
-            --danger-dim: rgba(239, 68, 68, 0.1);
-            
-            /* Typography */
-            --font-headline: 'Inter', -apple-system, sans-serif;
-            --font-body: 'Lora', Georgia, serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            
-            /* Spacing */
-            --section-gap: 60px;
-            --content-width: 1280px;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: var(--font-body);
-            font-size: 18px;
-            line-height: 1.6;
-            color: var(--anthracite);
-            background: var(--surface);
-        }
-        
-        /* ====== TYPOGRAPHY ====== */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: var(--font-headline);
-            font-weight: 700;
-            letter-spacing: -0.01em;
-            line-height: 1.2;
-            color: var(--navy);
-        }
-        
-        h1 { font-size: clamp(28px, 4vw, 40px); }
-        h2 { font-size: clamp(22px, 3vw, 32px); }
-        h3 { font-size: clamp(18px, 2.5vw, 24px); }
-        h4 { font-size: clamp(16px, 2vw, 20px); }
-        
-        .mono {
-            font-family: var(--font-mono);
-            font-size: 14px;
-        }
-        
-        /* ====== LAYOUT ====== */
-        .container {
-            max-width: var(--content-width);
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-        
-        .section {
-            padding: var(--section-gap) 0;
-        }
-        
-        /* ====== BREAKING NEWS TICKER ====== */
-        .ticker-bar {
-            background: var(--navy-dark);
-            color: var(--cyan);
-            font-family: var(--font-mono);
-            font-size: 13px;
-            padding: 8px 0;
-            overflow: hidden;
-            border-bottom: 1px solid rgba(0, 242, 255, 0.2);
-        }
-        
-        .ticker-content {
-            display: flex;
-            animation: ticker 30s linear infinite;
-            white-space: nowrap;
-        }
-        
-        .ticker-item {
-            padding: 0 48px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .ticker-item::before {
-            content: "●";
-            color: var(--cyan);
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes ticker {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        
-        /* ====== HEADER ====== */
-        .header {
-            background: var(--navy);
-            color: white;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0, 43, 91, 0.3);
-        }
-        
-        .header-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: white;
-        }
-        
-        .logo-icon {
-            width: 44px;
-            height: 44px;
-            background: var(--cyan);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-        
-        .logo-text {
-            font-family: var(--font-headline);
-            font-weight: 800;
-            font-size: 20px;
-            letter-spacing: -0.02em;
-        }
-        
-        .logo-text span {
-            color: var(--cyan);
-        }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 8px;
-        }
-        
-        .nav-links a {
-            color: rgba(255,255,255,0.85);
-            text-decoration: none;
-            font-family: var(--font-headline);
-            font-size: 14px;
-            font-weight: 500;
-            padding: 10px 16px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .nav-links a:hover {
-            color: var(--cyan);
-            background: rgba(0, 242, 255, 0.1);
-        }
-        
-        .nav-links a.active {
-            background: var(--cyan);
-            color: var(--navy);
-        }
-        
-        /* ====== PAGE HEADER ====== */
-        .page-header {
-            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
-            color: white;
-            padding: 48px 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .page-header::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300F2FF' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            opacity: 0.5;
-        }
-        
-        .page-header-content {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .page-title-group h1 {
-            color: white;
-            margin-bottom: 8px;
-        }
-        
-        .page-subtitle {
-            font-family: var(--font-mono);
-            font-size: 14px;
-            color: rgba(255,255,255,0.7);
-        }
-        
-        .live-indicator {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--cyan-dim);
-            border: 1px solid var(--cyan);
-            padding: 12px 20px;
-            border-radius: 8px;
-        }
-        
-        .live-dot {
-            width: 10px;
-            height: 10px;
-            background: var(--cyan);
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        .live-text {
-            font-family: var(--font-mono);
-            font-size: 13px;
-            color: var(--cyan);
-        }
-        
-        .live-time {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: rgba(255,255,255,0.6);
-        }
-        
-        /* ====== KPI GRID ====== */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-top: -40px;
-            position: relative;
-            z-index: 10;
-        }
-        
-        .kpi-card {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            border: 1px solid var(--stone);
-            box-shadow: 0 4px 20px rgba(0, 43, 91, 0.08);
-            transition: all 0.3s ease;
-        }
-        
-        .kpi-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 43, 91, 0.12);
-            border-color: var(--cyan);
-        }
-        
-        .kpi-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
-        }
-        
-        .kpi-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--cyan-dim);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-        
-        .kpi-trend {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: 500;
-        }
-        
-        .kpi-trend.up {
-            background: var(--success-dim);
-            color: var(--success);
-        }
-        
-        .kpi-trend.down {
-            background: var(--danger-dim);
-            color: var(--danger);
-        }
-        
-        .kpi-trend.neutral {
-            background: var(--stone);
-            color: var(--text-secondary);
-        }
-        
-        .kpi-value {
-            font-family: var(--font-headline);
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--navy);
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-        
-        .kpi-value .unit {
-            font-size: 18px;
-            color: var(--cyan);
-            font-weight: 600;
-        }
-        
-        .kpi-label {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .kpi-sparkline {
-            margin-top: 16px;
-            height: 40px;
-        }
-        
-        /* ====== DASHBOARD GRID ====== */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 24px;
-            margin-top: 40px;
-        }
-        
-        .dashboard-card {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid var(--stone);
-            overflow: hidden;
-        }
-        
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--stone);
-        }
-        
-        .card-title {
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .card-title-icon {
-            font-size: 20px;
-        }
-        
-        .card-actions {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .card-action {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--stone);
-            background: white;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .card-action:hover,
-        .card-action.active {
-            background: var(--navy);
-            color: white;
-            border-color: var(--navy);
-        }
-        
-        .card-body {
-            padding: 24px;
-        }
-        
-        .chart-container {
-            height: 300px;
-            position: relative;
-        }
-        
-        /* ====== MARKET SHARE DONUT ====== */
-        .market-share-container {
-            display: flex;
-            align-items: center;
-            gap: 32px;
-        }
-        
-        .donut-chart {
-            width: 200px;
-            height: 200px;
-            position: relative;
-        }
-        
-        .donut-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-        
-        .donut-value {
-            font-family: var(--font-headline);
-            font-size: 36px;
-            font-weight: 800;
-            color: var(--navy);
-            line-height: 1;
-        }
-        
-        .donut-label {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-        }
-        
-        .market-legend {
-            flex: 1;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--stone);
-        }
-        
-        .legend-item:last-child {
-            border-bottom: none;
-        }
-        
-        .legend-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 3px;
-        }
-        
-        .legend-text {
-            font-family: var(--font-headline);
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        .legend-value {
-            font-family: var(--font-mono);
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--navy);
-        }
-        
-        /* ====== DATA TABLE ====== */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .data-table th {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-secondary);
-            text-align: left;
-            padding: 12px 16px;
-            background: var(--surface);
-            border-bottom: 2px solid var(--navy);
-        }
-        
-        .data-table td {
-            font-family: var(--font-headline);
-            font-size: 14px;
-            padding: 16px;
-            border-bottom: 1px solid var(--stone);
-            vertical-align: middle;
-        }
-        
-        .data-table tr:hover td {
-            background: var(--cyan-dim);
-        }
-        
-        .table-rank {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--navy);
-            width: 40px;
-        }
-        
-        .table-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .brand-logo {
-            width: 36px;
-            height: 36px;
-            background: var(--navy);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: white;
-        }
-        
-        .brand-name {
-            font-weight: 600;
-        }
-        
-        .table-value {
-            font-family: var(--font-mono);
-            font-weight: 500;
-        }
-        
-        .table-change {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-        
-        .table-change.positive {
-            background: var(--success-dim);
-            color: var(--success);
-        }
-        
-        .table-change.negative {
-            background: var(--danger-dim);
-            color: var(--danger);
-        }
-        
-        .table-bar {
-            width: 100px;
-            height: 8px;
-            background: var(--stone);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .table-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--navy), var(--cyan));
-            border-radius: 4px;
-        }
-        
-        /* ====== REGIONAL DATA ====== */
-        .regional-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-        
-        .regional-card {
-            background: var(--surface);
-            border-radius: 8px;
-            padding: 20px;
-            border: 1px solid var(--stone);
-        }
-        
-        .regional-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        
-        .regional-name {
-            font-family: var(--font-headline);
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .regional-flag {
-            font-size: 20px;
-        }
-        
-        .regional-value {
-            font-family: var(--font-headline);
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--navy);
-            margin-bottom: 4px;
-        }
-        
-        .regional-label {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-        
-        .regional-bar {
-            margin-top: 12px;
-            height: 6px;
-            background: var(--stone);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .regional-bar-fill {
-            height: 100%;
-            background: var(--cyan);
-            border-radius: 3px;
-        }
-        
-        /* ====== LIVE FEED ====== */
-        .live-feed {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        .feed-item {
-            display: flex;
-            gap: 16px;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--stone);
-        }
-        
-        .feed-item:last-child {
-            border-bottom: none;
-        }
-        
-        .feed-time {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-secondary);
-            min-width: 60px;
-        }
-        
-        .feed-content {
-            flex: 1;
-        }
-        
-        .feed-title {
-            font-family: var(--font-headline);
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--navy);
-            margin-bottom: 4px;
-        }
-        
-        .feed-desc {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-        
-        .feed-tag {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            padding: 3px 8px;
-            border-radius: 4px;
-            background: var(--cyan-dim);
-            color: var(--navy);
-            margin-top: 8px;
-            display: inline-block;
-        }
-        
-        /* ====== CHARGING STATS ====== */
-        .charging-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-        
-        .charging-stat {
-            text-align: center;
-            padding: 20px;
-            background: var(--surface);
-            border-radius: 8px;
-        }
-        
-        .charging-icon {
-            font-size: 32px;
-            margin-bottom: 12px;
-        }
-        
-        .charging-value {
-            font-family: var(--font-headline);
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--navy);
-        }
-        
-        .charging-label {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-        
-        /* ====== FULL WIDTH SECTION ====== */
-        .full-width-section {
-            margin-top: 40px;
-        }
-        
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-        
-        .comparison-card {
-            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
-            border-radius: 12px;
-            padding: 24px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .comparison-card::before {
-            content: "";
-            position: absolute;
-            top: -30%;
-            right: -30%;
-            width: 100px;
-            height: 100px;
-            background: var(--cyan);
-            opacity: 0.1;
-            border-radius: 50%;
-        }
-        
-        .comparison-label {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: rgba(255,255,255,0.6);
-            text-transform: uppercase;
-            margin-bottom: 12px;
-        }
-        
-        .comparison-value {
-            font-family: var(--font-headline);
-            font-size: 36px;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 8px;
-        }
-        
-        .comparison-value .highlight {
-            color: var(--cyan);
-        }
-        
-        .comparison-detail {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: rgba(255,255,255,0.7);
-        }
-        
-        .comparison-trend {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 12px;
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--cyan);
-        }
-        
-        /* ====== FOOTER ====== */
-        .footer {
-            background: var(--navy-dark);
-            color: white;
-            padding: 60px 0 30px;
-            margin-top: var(--section-gap);
-        }
-        
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 48px;
-            margin-bottom: 48px;
-        }
-        
-        .footer-brand p {
-            color: rgba(255,255,255,0.6);
-            font-size: 15px;
-            margin-top: 16px;
-            max-width: 300px;
-        }
-        
-        .footer-section h4 {
-            color: var(--cyan);
-            font-family: var(--font-headline);
-            font-size: 13px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 20px;
-        }
-        
-        .footer-section ul {
-            list-style: none;
-        }
-        
-        .footer-section a {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            font-size: 14px;
-            display: block;
-            padding: 6px 0;
-            transition: color 0.2s;
-        }
-        
-        .footer-section a:hover {
-            color: var(--cyan);
-        }
-        
-        .footer-bottom {
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .footer-copyright {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
-        }
-        
-        .footer-legal {
-            display: flex;
-            gap: 24px;
-        }
-        
-        .footer-legal a {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
-            text-decoration: none;
-        }
-        
-        .footer-legal a:hover {
-            color: var(--cyan);
-        }
-        
-        /* ====== RESPONSIVE ====== */
-        @media (max-width: 1200px) {
-            .kpi-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .comparison-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 1024px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .kpi-grid {
-                grid-template-columns: 1fr;
-                margin-top: -20px;
-            }
-            
-            .page-header-content {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 20px;
-            }
-            
-            .market-share-container {
-                flex-direction: column;
-            }
-            
-            .regional-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .charging-stats {
-                grid-template-columns: 1fr;
-            }
-            
-            .comparison-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--navy:#002B5B;--navy-dark:#001a38;--cyan:#00F2FF;--cyan-dim:rgba(0,242,255,0.15);--surface:#F9FAFB;--stone:#E5E7EB;--anthracite:#1F2937;--text-secondary:#6B7280;--success:#10B981;--success-dim:rgba(16,185,129,0.1);--danger:#EF4444;--danger-dim:rgba(239,68,68,0.1);--font-headline:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace}
+        body{font-family:var(--font-headline);background:var(--surface);color:var(--anthracite)}
+        .container{max-width:1280px;margin:0 auto;padding:0 24px}
+        .header{background:var(--navy);color:white;position:sticky;top:0;z-index:1000}
+        .header-main{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
+        .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:white}
+        .logo-icon{width:44px;height:44px;background:var(--cyan);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px}
+        .logo-text{font-weight:800;font-size:20px}.logo-text span{color:var(--cyan)}
+        .nav-links{display:flex;list-style:none;gap:8px}
+        .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:500;padding:10px 16px;border-radius:6px;transition:all 0.2s}
+        .nav-links a:hover{color:var(--cyan);background:rgba(0,242,255,0.1)}
+        .nav-links a.active{background:var(--cyan);color:var(--navy)}
+        .page-header{background:linear-gradient(135deg,var(--navy),var(--navy-dark));color:white;padding:48px 0}
+        .page-header-content{display:flex;justify-content:space-between;align-items:center}
+        .page-header h1{font-size:36px;margin-bottom:8px}
+        .page-subtitle{font-family:var(--font-mono);font-size:14px;color:rgba(255,255,255,0.7)}
+        .live-indicator{display:flex;align-items:center;gap:12px;background:var(--cyan-dim);border:1px solid var(--cyan);padding:12px 20px;border-radius:8px}
+        .live-dot{width:10px;height:10px;background:var(--cyan);border-radius:50%;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+        .live-text{font-family:var(--font-mono);font-size:13px;color:var(--cyan)}
+        .live-time{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.6)}
+        .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:-40px;position:relative;z-index:10}
+        .kpi-card{background:white;border-radius:12px;padding:24px;border:1px solid var(--stone);box-shadow:0 4px 20px rgba(0,43,91,0.08)}
+        .kpi-header{display:flex;justify-content:space-between;margin-bottom:16px}
+        .kpi-icon{width:40px;height:40px;background:var(--cyan-dim);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+        .kpi-trend{font-family:var(--font-mono);font-size:12px;padding:4px 8px;border-radius:4px}
+        .kpi-trend.up{background:var(--success-dim);color:var(--success)}
+        .kpi-trend.down{background:var(--danger-dim);color:var(--danger)}
+        .kpi-value{font-size:32px;font-weight:800;color:var(--navy);margin-bottom:8px}
+        .kpi-value .unit{font-size:18px;color:var(--cyan)}
+        .kpi-label{font-family:var(--font-mono);font-size:12px;color:var(--text-secondary);text-transform:uppercase}
+        .dashboard-grid{display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-top:40px;margin-bottom:60px}
+        .dashboard-card{background:white;border-radius:12px;border:1px solid var(--stone);overflow:hidden}
+        .card-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--stone)}
+        .card-title{font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px}
+        .card-body{padding:24px}
+        .chart-container{height:300px}
+        .market-share-container{display:flex;align-items:center;gap:32px}
+        .donut-chart{width:180px;height:180px;position:relative}
+        .donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+        .donut-value{font-size:28px;font-weight:800;color:var(--navy)}
+        .donut-label{font-family:var(--font-mono);font-size:10px;color:var(--text-secondary);text-transform:uppercase}
+        .market-legend{flex:1}
+        .legend-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--stone)}
+        .legend-item:last-child{border-bottom:none}
+        .legend-label{display:flex;align-items:center;gap:10px}
+        .legend-color{width:12px;height:12px;border-radius:3px}
+        .legend-text{font-size:14px;font-weight:500}
+        .legend-value{font-family:var(--font-mono);font-size:14px;font-weight:500;color:var(--navy)}
+        .data-table{width:100%;border-collapse:collapse}
+        .data-table th{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:var(--text-secondary);text-align:left;padding:12px 16px;background:var(--surface);border-bottom:2px solid var(--navy)}
+        .data-table td{font-size:14px;padding:14px 16px;border-bottom:1px solid var(--stone)}
+        .data-table tr:hover td{background:var(--cyan-dim)}
+        .table-rank{font-family:var(--font-mono);font-weight:600;color:var(--navy);width:40px}
+        .table-brand{display:flex;align-items:center;gap:12px}
+        .brand-logo{width:32px;height:32px;background:var(--navy);border-radius:6px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:12px}
+        .table-value{font-family:var(--font-mono)}
+        .table-change{font-family:var(--font-mono);font-size:12px;padding:3px 8px;border-radius:4px}
+        .table-change.positive{background:var(--success-dim);color:var(--success)}
+        .table-change.negative{background:var(--danger-dim);color:var(--danger)}
+        .table-bar{width:80px;height:6px;background:var(--stone);border-radius:3px;overflow:hidden}
+        .table-bar-fill{height:100%;background:linear-gradient(90deg,var(--navy),var(--cyan));border-radius:3px}
+        .data-source{font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);padding:16px 24px;border-top:1px solid var(--stone);display:flex;justify-content:space-between}
+        .data-source a{color:var(--cyan);text-decoration:none}
+        .footer{background:var(--navy-dark);color:white;padding:40px 0 24px}
+        .footer-content{display:flex;justify-content:space-between;align-items:center}
+        .footer-copyright{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5)}
+        @media(max-width:1024px){.nav-links{display:none}.kpi-grid{grid-template-columns:repeat(2,1fr)}.dashboard-grid{grid-template-columns:1fr}}
+        @media(max-width:768px){.kpi-grid{grid-template-columns:1fr;margin-top:-20px}.page-header-content{flex-direction:column;gap:20px;align-items:flex-start}.market-share-container{flex-direction:column}}
     </style>
 </head>
 <body>
-    <!-- Breaking News Ticker -->
-    <div class="ticker-bar">
-        <div class="ticker-content">
-            <div class="ticker-item">LIVE: EV-Marktanteil aktuell bei 52.3% – Rekordwert für die Schweiz</div>
-            <div class="ticker-item">UPDATE: 847 neue Ladepunkte im Dezember installiert</div>
-            <div class="ticker-item">TREND: Tesla Model Y bleibt meistverkauftes Auto der Schweiz</div>
-            <div class="ticker-item">DATEN: Durchschnittliche Ladezeit sinkt auf 28 Minuten</div>
-            <div class="ticker-item">LIVE: EV-Marktanteil aktuell bei 52.3% – Rekordwert für die Schweiz</div>
-            <div class="ticker-item">UPDATE: 847 neue Ladepunkte im Dezember installiert</div>
-            <div class="ticker-item">TREND: Tesla Model Y bleibt meistverkauftes Auto der Schweiz</div>
-            <div class="ticker-item">DATEN: Durchschnittliche Ladezeit sinkt auf 28 Minuten</div>
+    <header class="header"><div class="container"><div class="header-main">
+        <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
+        <ul class="nav-links">
+            <li><a href="dashboard.html" class="active">📊 Dashboard</a></li>
+            <li><a href="fahrzeuge.html">🔋 Fahrzeuge</a></li>
+            <li><a href="news.html">📰 News</a></li>
+            <li><a href="laden.html">⚡ Laden</a></li>
+            <li><a href="ratgeber.html">📋 Ratgeber</a></li>
+            <li><a href="service.html">🔧 Service</a></li>
+            <li><a href="reichweite.html">📏 Reichweite</a></li>
+        </ul>
+    </div></div></header>
+
+    <section class="page-header"><div class="container"><div class="page-header-content">
+        <div><h1>📊 Markt-Dashboard</h1><p class="page-subtitle">Echtzeit-Daten zur Elektromobilität in der Schweiz</p></div>
+        <div class="live-indicator"><div class="live-dot"></div><div><div class="live-text">CSV DATEN</div><div class="live-time" id="last-update">Wird geladen...</div></div></div>
+    </div></div></section>
+
+    <main><div class="container">
+        <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-header"><div class="kpi-icon">📈</div><span class="kpi-trend up" id="kpi1-trend">--</span></div><div class="kpi-value" id="kpi1-value">--<span class="unit">%</span></div><div class="kpi-label">BEV-Marktanteil</div></div>
+            <div class="kpi-card"><div class="kpi-header"><div class="kpi-icon">🚗</div><span class="kpi-trend up" id="kpi2-trend">--</span></div><div class="kpi-value" id="kpi2-value">--</div><div class="kpi-label">BEV Neuzulassungen</div></div>
+            <div class="kpi-card"><div class="kpi-header"><div class="kpi-icon">📊</div><span class="kpi-trend up" id="kpi3-trend">--</span></div><div class="kpi-value" id="kpi3-value">--</div><div class="kpi-label">Total Neuzulassungen</div></div>
+            <div class="kpi-card"><div class="kpi-header"><div class="kpi-icon">🔌</div><span class="kpi-trend up" id="kpi4-trend">--</span></div><div class="kpi-value" id="kpi4-value">--<span class="unit">%</span></div><div class="kpi-label">Elektrifiziert</div></div>
         </div>
-    </div>
 
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-main">
-                <a href="index.html" class="logo">
-                    <div class="logo-icon">⚡</div>
-                    <div class="logo-text">EV Technical <span>Insights</span></div>
-                </a>
-                
-                <ul class="nav-links">
-                    <li><a href="dashboard.html" class="active">📊 Dashboard</a></li>
-                    <li><a href="fahrzeuge.html">🔋 Fahrzeuge</a></li>
-                    <li><a href="news.html">📰 News</a></li>
-                    <li><a href="laden.html">⚡ Laden</a></li>
-                    <li><a href="ratgeber.html">📋 Ratgeber</a></li>
-                    <li><a href="service.html">🔧 Service</a></li>
-                    <li><a href="reichweite.html">📏 Reichweite</a></li>
-                </ul>
-            </div>
-        </div>
-    </header>
-
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <div class="page-header-content">
-                <div class="page-title-group">
-                    <h1>📊 Markt-Dashboard</h1>
-                    <p class="page-subtitle">Echtzeit-Daten zur Elektromobilität in der Schweiz</p>
-                </div>
-                <div class="live-indicator">
-                    <div class="live-dot"></div>
-                    <div>
-                        <div class="live-text">LIVE DATEN</div>
-                        <div class="live-time">Aktualisiert: Heute, 14:32 Uhr</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main Content -->
-    <main>
-        <div class="container">
-            <!-- KPI Grid -->
-            <div class="kpi-grid">
-                <div class="kpi-card">
-                    <div class="kpi-header">
-                        <div class="kpi-icon">📈</div>
-                        <span class="kpi-trend up">↑ 5.1%</span>
-                    </div>
-                    <div class="kpi-value">52.3<span class="unit">%</span></div>
-                    <div class="kpi-label">EV-Marktanteil 2024</div>
-                    <canvas class="kpi-sparkline" id="sparkline1"></canvas>
-                </div>
-                
-                <div class="kpi-card">
-                    <div class="kpi-header">
-                        <div class="kpi-icon">⚡</div>
-                        <span class="kpi-trend up">↑ 23%</span>
-                    </div>
-                    <div class="kpi-value">12,458</div>
-                    <div class="kpi-label">Ladepunkte Schweiz</div>
-                    <canvas class="kpi-sparkline" id="sparkline2"></canvas>
-                </div>
-                
-                <div class="kpi-card">
-                    <div class="kpi-header">
-                        <div class="kpi-icon">🚗</div>
-                        <span class="kpi-trend up">↑ 12</span>
-                    </div>
-                    <div class="kpi-value">156</div>
-                    <div class="kpi-label">Verfügbare EV-Modelle</div>
-                    <canvas class="kpi-sparkline" id="sparkline3"></canvas>
-                </div>
-                
-                <div class="kpi-card">
-                    <div class="kpi-header">
-                        <div class="kpi-icon">🔋</div>
-                        <span class="kpi-trend up">↑ 8%</span>
-                    </div>
-                    <div class="kpi-value">485<span class="unit">km</span></div>
-                    <div class="kpi-label">Ø Reichweite WLTP</div>
-                    <canvas class="kpi-sparkline" id="sparkline4"></canvas>
-                </div>
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="card-header"><h3 class="card-title">📊 Neuzulassungen 2024</h3></div>
+                <div class="card-body"><div class="chart-container"><canvas id="mainChart"></canvas></div></div>
+                <div class="data-source"><span>Quelle: <a href="https://www.auto.swiss" target="_blank">auto.swiss</a></span><span>2024</span></div>
             </div>
 
-            <!-- Dashboard Grid -->
-            <div class="dashboard-grid">
-                <!-- Main Chart -->
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <span class="card-title-icon">📊</span>
-                            Neuzulassungen 2024
-                        </h3>
-                        <div class="card-actions">
-                            <button class="card-action active">Monatlich</button>
-                            <button class="card-action">Kumuliert</button>
-                            <button class="card-action">Vergleich</button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-container">
-                            <canvas id="mainChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Market Share -->
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <span class="card-title-icon">🥧</span>
-                            Marktanteile
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="market-share-container">
-                            <div class="donut-chart">
-                                <canvas id="donutChart"></canvas>
-                                <div class="donut-center">
-                                    <div class="donut-value">52.3%</div>
-                                    <div class="donut-label">EV-Anteil</div>
-                                </div>
-                            </div>
-                            <div class="market-legend">
-                                <div class="legend-item">
-                                    <div class="legend-label">
-                                        <div class="legend-color" style="background: #00F2FF;"></div>
-                                        <span class="legend-text">BEV (Vollelektrisch)</span>
-                                    </div>
-                                    <span class="legend-value">38.7%</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-label">
-                                        <div class="legend-color" style="background: #002B5B;"></div>
-                                        <span class="legend-text">PHEV (Plug-in Hybrid)</span>
-                                    </div>
-                                    <span class="legend-value">13.6%</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-label">
-                                        <div class="legend-color" style="background: #6B7280;"></div>
-                                        <span class="legend-text">Hybrid (HEV)</span>
-                                    </div>
-                                    <span class="legend-value">18.2%</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-label">
-                                        <div class="legend-color" style="background: #E5E7EB;"></div>
-                                        <span class="legend-text">Verbrenner</span>
-                                    </div>
-                                    <span class="legend-value">29.5%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Top Brands Table -->
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <span class="card-title-icon">🏆</span>
-                            Top EV-Marken Dezember 2024
-                        </h3>
-                        <div class="card-actions">
-                            <button class="card-action active">Marken</button>
-                            <button class="card-action">Modelle</button>
-                        </div>
-                    </div>
-                    <div class="card-body" style="padding: 0;">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Marke</th>
-                                    <th>Verkäufe</th>
-                                    <th>Veränderung</th>
-                                    <th>Marktanteil</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="table-rank">1</td>
-                                    <td>
-                                        <div class="table-brand">
-                                            <div class="brand-logo">T</div>
-                                            <span class="brand-name">Tesla</span>
-                                        </div>
-                                    </td>
-                                    <td class="table-value">2,847</td>
-                                    <td><span class="table-change positive">+12.4%</span></td>
-                                    <td>
-                                        <div class="table-bar">
-                                            <div class="table-bar-fill" style="width: 85%;"></div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="table-rank">2</td>
-                                    <td>
-                                        <div class="table-brand">
-                                            <div class="brand-logo">B</div>
-                                            <span class="brand-name">BMW</span>
-                                        </div>
-                                    </td>
-                                    <td class="table-value">1,523</td>
-                                    <td><span class="table-change positive">+8.2%</span></td>
-                                    <td>
-                                        <div class="table-bar">
-                                            <div class="table-bar-fill" style="width: 65%;"></div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="table-rank">3</td>
-                                    <td>
-                                        <div class="table-brand">
-                                            <div class="brand-logo">M</div>
-                                            <span class="brand-name">Mercedes</span>
-                                        </div>
-                                    </td>
-                                    <td class="table-value">1,234</td>
-                                    <td><span class="table-change positive">+5.7%</span></td>
-                                    <td>
-                                        <div class="table-bar">
-                                            <div class="table-bar-fill" style="width: 52%;"></div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="table-rank">4</td>
-                                    <td>
-                                        <div class="table-brand">
-                                            <div class="brand-logo">V</div>
-                                            <span class="brand-name">VW</span>
-                                        </div>
-                                    </td>
-                                    <td class="table-value">1,156</td>
-                                    <td><span class="table-change negative">-3.2%</span></td>
-                                    <td>
-                                        <div class="table-bar">
-                                            <div class="table-bar-fill" style="width: 48%;"></div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="table-rank">5</td>
-                                    <td>
-                                        <div class="table-brand">
-                                            <div class="brand-logo">A</div>
-                                            <span class="brand-name">Audi</span>
-                                        </div>
-                                    </td>
-                                    <td class="table-value">987</td>
-                                    <td><span class="table-change positive">+2.1%</span></td>
-                                    <td>
-                                        <div class="table-bar">
-                                            <div class="table-bar-fill" style="width: 42%;"></div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Right Column -->
-                <div>
-                    <!-- Regional Data -->
-                    <div class="dashboard-card" style="margin-bottom: 24px;">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <span class="card-title-icon">🗺️</span>
-                                Regionale Daten
-                            </h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="regional-grid">
-                                <div class="regional-card">
-                                    <div class="regional-header">
-                                        <span class="regional-name">Zürich</span>
-                                        <span class="regional-flag">🏙️</span>
-                                    </div>
-                                    <div class="regional-value">58.4%</div>
-                                    <div class="regional-label">EV-Anteil</div>
-                                    <div class="regional-bar">
-                                        <div class="regional-bar-fill" style="width: 58.4%;"></div>
-                                    </div>
-                                </div>
-                                <div class="regional-card">
-                                    <div class="regional-header">
-                                        <span class="regional-name">Genf</span>
-                                        <span class="regional-flag">🏔️</span>
-                                    </div>
-                                    <div class="regional-value">54.2%</div>
-                                    <div class="regional-label">EV-Anteil</div>
-                                    <div class="regional-bar">
-                                        <div class="regional-bar-fill" style="width: 54.2%;"></div>
-                                    </div>
-                                </div>
-                                <div class="regional-card">
-                                    <div class="regional-header">
-                                        <span class="regional-name">Bern</span>
-                                        <span class="regional-flag">🏛️</span>
-                                    </div>
-                                    <div class="regional-value">51.8%</div>
-                                    <div class="regional-label">EV-Anteil</div>
-                                    <div class="regional-bar">
-                                        <div class="regional-bar-fill" style="width: 51.8%;"></div>
-                                    </div>
-                                </div>
-                                <div class="regional-card">
-                                    <div class="regional-header">
-                                        <span class="regional-name">Basel</span>
-                                        <span class="regional-flag">🌉</span>
-                                    </div>
-                                    <div class="regional-value">49.6%</div>
-                                    <div class="regional-label">EV-Anteil</div>
-                                    <div class="regional-bar">
-                                        <div class="regional-bar-fill" style="width: 49.6%;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Live Feed -->
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <span class="card-title-icon">📡</span>
-                                Live Updates
-                            </h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="live-feed">
-                                <div class="feed-item">
-                                    <div class="feed-time">14:32</div>
-                                    <div class="feed-content">
-                                        <div class="feed-title">Tesla Supercharger #247 online</div>
-                                        <div class="feed-desc">Neuer Standort in Winterthur mit 12 Ladepunkten</div>
-                                        <span class="feed-tag">INFRASTRUKTUR</span>
-                                    </div>
-                                </div>
-                                <div class="feed-item">
-                                    <div class="feed-time">13:45</div>
-                                    <div class="feed-content">
-                                        <div class="feed-title">BYD Seal offiziell verfügbar</div>
-                                        <div class="feed-desc">Ab CHF 44'990 bei Schweizer Händlern</div>
-                                        <span class="feed-tag">NEUHEIT</span>
-                                    </div>
-                                </div>
-                                <div class="feed-item">
-                                    <div class="feed-time">12:18</div>
-                                    <div class="feed-content">
-                                        <div class="feed-title">Ionity senkt Preise</div>
-                                        <div class="feed-desc">Neue Tarife: CHF 0.59/kWh mit Abo</div>
-                                        <span class="feed-tag">PREISE</span>
-                                    </div>
-                                </div>
-                                <div class="feed-item">
-                                    <div class="feed-time">11:02</div>
-                                    <div class="feed-content">
-                                        <div class="feed-title">Auto-Suisse Dezember-Zahlen</div>
-                                        <div class="feed-desc">Offizieller Bericht veröffentlicht</div>
-                                        <span class="feed-tag">STATISTIK</span>
-                                    </div>
-                                </div>
-                            </div>
+            <div class="dashboard-card">
+                <div class="card-header"><h3 class="card-title">🥧 Marktanteile Dez 2024</h3></div>
+                <div class="card-body">
+                    <div class="market-share-container">
+                        <div class="donut-chart"><canvas id="donutChart"></canvas><div class="donut-center"><div class="donut-value" id="donut-value">--%</div><div class="donut-label">Elektrifiziert</div></div></div>
+                        <div class="market-legend">
+                            <div class="legend-item"><div class="legend-label"><div class="legend-color" style="background:#00F2FF"></div><span class="legend-text">BEV</span></div><span class="legend-value" id="leg-bev">--%</span></div>
+                            <div class="legend-item"><div class="legend-label"><div class="legend-color" style="background:#002B5B"></div><span class="legend-text">PHEV</span></div><span class="legend-value" id="leg-phev">--%</span></div>
+                            <div class="legend-item"><div class="legend-label"><div class="legend-color" style="background:#6B7280"></div><span class="legend-text">Hybrid</span></div><span class="legend-value" id="leg-hev">--%</span></div>
+                            <div class="legend-item"><div class="legend-label"><div class="legend-color" style="background:#E5E7EB"></div><span class="legend-text">Verbrenner</span></div><span class="legend-value" id="leg-ice">--%</span></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Charging Infrastructure -->
-            <div class="full-width-section">
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <span class="card-title-icon">⚡</span>
-                            Ladeinfrastruktur Schweiz
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="charging-stats">
-                            <div class="charging-stat">
-                                <div class="charging-icon">🔌</div>
-                                <div class="charging-value">12,458</div>
-                                <div class="charging-label">Öffentliche Ladepunkte</div>
-                            </div>
-                            <div class="charging-stat">
-                                <div class="charging-icon">⚡</div>
-                                <div class="charging-value">2,847</div>
-                                <div class="charging-label">Schnelllader (>50kW)</div>
-                            </div>
-                            <div class="charging-stat">
-                                <div class="charging-icon">🚀</div>
-                                <div class="charging-value">486</div>
-                                <div class="charging-label">Ultra-Fast (>150kW)</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="dashboard-card">
+                <div class="card-header"><h3 class="card-title">🏆 Top BEV-Marken Dez 2024</h3></div>
+                <div class="card-body" style="padding:0"><table class="data-table"><thead><tr><th>#</th><th>Marke</th><th>Verkäufe</th><th>Trend</th><th></th></tr></thead><tbody id="brands-table"></tbody></table></div>
             </div>
 
-            <!-- Comparison Cards -->
-            <div class="full-width-section">
-                <div class="comparison-grid">
-                    <div class="comparison-card">
-                        <div class="comparison-label">Durchschnittspreis BEV</div>
-                        <div class="comparison-value">CHF <span class="highlight">52'400</span></div>
-                        <div class="comparison-detail">-8% vs. Vorjahr</div>
-                        <div class="comparison-trend">↓ Trend fallend</div>
-                    </div>
-                    <div class="comparison-card">
-                        <div class="comparison-label">Ø Ladezeit DC 10-80%</div>
-                        <div class="comparison-value"><span class="highlight">28</span> Min</div>
-                        <div class="comparison-detail">-35% vs. 2021</div>
-                        <div class="comparison-trend">↓ Verbesserung</div>
-                    </div>
-                    <div class="comparison-card">
-                        <div class="comparison-label">CO₂-Ersparnis/Jahr</div>
-                        <div class="comparison-value"><span class="highlight">2.4</span> Tonnen</div>
-                        <div class="comparison-detail">Pro Fahrzeug</div>
-                        <div class="comparison-trend">↑ +15% vs. 2023</div>
-                    </div>
-                    <div class="comparison-card">
-                        <div class="comparison-label">TCO-Vorteil BEV</div>
-                        <div class="comparison-value">CHF <span class="highlight">8'200</span></div>
-                        <div class="comparison-detail">Über 5 Jahre vs. Benzin</div>
-                        <div class="comparison-trend">↑ Wirtschaftlicher</div>
-                    </div>
-                </div>
+            <div class="dashboard-card">
+                <div class="card-header"><h3 class="card-title">🚗 Top BEV-Modelle Dez 2024</h3></div>
+                <div class="card-body" style="padding:0"><table class="data-table"><thead><tr><th>#</th><th>Modell</th><th>Verkäufe</th><th></th></tr></thead><tbody id="models-table"></tbody></table></div>
             </div>
         </div>
-    </main>
+    </div></main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <a href="index.html" class="logo">
-                        <div class="logo-icon">⚡</div>
-                        <div class="logo-text">EV Technical <span>Insights</span></div>
-                    </a>
-                    <p>Unabhängige, verifizierte und technisch fundierte Berichterstattung zur Elektromobilität in der Schweiz.</p>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Analysen</h4>
-                    <ul>
-                        <li><a href="dashboard.html">Marktdaten</a></li>
-                        <li><a href="fahrzeuge.html">Fahrzeug-Datenbank</a></li>
-                        <li><a href="laden.html">Ladeinfrastruktur</a></li>
-                        <li><a href="reichweite.html">Reichweiten-Analyse</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Ratgeber</h4>
-                    <ul>
-                        <li><a href="ratgeber.html">Kaufberatung</a></li>
-                        <li><a href="service.html">Service & Wartung</a></li>
-                        <li><a href="#">TCO-Rechner</a></li>
-                        <li><a href="#">Förderungen</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Über uns</h4>
-                    <ul>
-                        <li><a href="#">Redaktion</a></li>
-                        <li><a href="#">Methodik</a></li>
-                        <li><a href="#">Quellen</a></li>
-                        <li><a href="#">Kontakt</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p class="footer-copyright">© 2025 EV Technical Insights. Alle Rechte vorbehalten.</p>
-                <div class="footer-legal">
-                    <a href="#">Datenschutz</a>
-                    <a href="#">Impressum</a>
-                    <a href="#">AGB</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <footer class="footer"><div class="container"><div class="footer-content">
+        <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
+        <p class="footer-copyright">© 2025 EV Technical Insights</p>
+    </div></div></footer>
 
     <script>
-        // Chart Configuration
-        Chart.defaults.font.family = "'Inter', sans-serif";
-        Chart.defaults.color = '#6B7280';
+    const DATA_URLS = {
+        markt: 'https://raw.githubusercontent.com/emirdurut-maker/ev-portal-schweiz/main/data/markt.csv',
+        marken: 'https://raw.githubusercontent.com/emirdurut-maker/ev-portal-schweiz/main/data/marken.csv',
+        modelle: 'https://raw.githubusercontent.com/emirdurut-maker/ev-portal-schweiz/main/data/modelle.csv'
+    };
+    
+    let marktData = [], markenData = [], modelleData = [];
+    let mainChart, donutChart;
+    const monthNames = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+    
+    async function loadCSV(url) {
+        return new Promise((resolve, reject) => {
+            Papa.parse(url, {
+                download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
+                complete: r => resolve(r.data),
+                error: e => reject(e)
+            });
+        });
+    }
+    
+    async function init() {
+        try {
+            [marktData, markenData, modelleData] = await Promise.all([
+                loadCSV(DATA_URLS.markt),
+                loadCSV(DATA_URLS.marken),
+                loadCSV(DATA_URLS.modelle)
+            ]);
+            document.getElementById('last-update').textContent = 'Aktualisiert: ' + new Date().toLocaleDateString('de-CH');
+            updateKPIs();
+            updateMainChart();
+            updateDonutChart();
+            updateBrandsTable();
+            updateModelsTable();
+        } catch(e) {
+            console.error('Fehler:', e);
+            document.getElementById('last-update').textContent = 'Fehler beim Laden';
+        }
+    }
+    
+    function updateKPIs() {
+        const latest = marktData[marktData.length - 1];
+        const prev = marktData[marktData.length - 2];
         
-        // Main Chart - Monthly Sales
-        const mainCtx = document.getElementById('mainChart').getContext('2d');
-        new Chart(mainCtx, {
+        document.getElementById('kpi1-value').innerHTML = latest.bev_anteil.toFixed(1) + '<span class="unit">%</span>';
+        const diff1 = (latest.bev_anteil - prev.bev_anteil).toFixed(1);
+        document.getElementById('kpi1-trend').textContent = (diff1 > 0 ? '↑ +' : '↓ ') + diff1 + '%';
+        document.getElementById('kpi1-trend').className = 'kpi-trend ' + (diff1 > 0 ? 'up' : 'down');
+        
+        document.getElementById('kpi2-value').textContent = latest.bev.toLocaleString('de-CH');
+        const diff2 = ((latest.bev - prev.bev) / prev.bev * 100).toFixed(0);
+        document.getElementById('kpi2-trend').textContent = (diff2 > 0 ? '↑ +' : '↓ ') + diff2 + '%';
+        document.getElementById('kpi2-trend').className = 'kpi-trend ' + (diff2 > 0 ? 'up' : 'down');
+        
+        document.getElementById('kpi3-value').textContent = latest.total.toLocaleString('de-CH');
+        const diff3 = ((latest.total - prev.total) / prev.total * 100).toFixed(0);
+        document.getElementById('kpi3-trend').textContent = (diff3 > 0 ? '↑ +' : '↓ ') + diff3 + '%';
+        document.getElementById('kpi3-trend').className = 'kpi-trend ' + (diff3 > 0 ? 'up' : 'down');
+        
+        const elec = latest.bev_anteil + latest.phev_anteil;
+        const elecPrev = prev.bev_anteil + prev.phev_anteil;
+        document.getElementById('kpi4-value').innerHTML = elec.toFixed(1) + '<span class="unit">%</span>';
+        const diff4 = (elec - elecPrev).toFixed(1);
+        document.getElementById('kpi4-trend').textContent = (diff4 > 0 ? '↑ +' : '↓ ') + diff4 + '%';
+        document.getElementById('kpi4-trend').className = 'kpi-trend ' + (diff4 > 0 ? 'up' : 'down');
+    }
+    
+    function updateMainChart() {
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        if (mainChart) mainChart.destroy();
+        mainChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
-                datasets: [{
-                    label: 'BEV',
-                    data: [3200, 3450, 4100, 4300, 4800, 5200, 4900, 5100, 5600, 5800, 6200, 6800],
-                    backgroundColor: '#00F2FF',
-                    borderRadius: 4
-                }, {
-                    label: 'PHEV',
-                    data: [2100, 2200, 2500, 2600, 2800, 2900, 2700, 2800, 3000, 3100, 3300, 3500],
-                    backgroundColor: '#002B5B',
-                    borderRadius: 4
-                }, {
-                    label: 'Verbrenner',
-                    data: [8500, 8200, 7900, 7600, 7300, 7000, 6800, 6500, 6200, 5900, 5600, 5100],
-                    backgroundColor: '#E5E7EB',
-                    borderRadius: 4
-                }]
+                labels: marktData.map(d => monthNames[d.monat - 1]),
+                datasets: [
+                    { label: 'BEV', data: marktData.map(d => d.bev), backgroundColor: '#00F2FF', borderRadius: 4 },
+                    { label: 'PHEV', data: marktData.map(d => d.phev), backgroundColor: '#002B5B', borderRadius: 4 },
+                    { label: 'Verbrenner', data: marktData.map(d => d.ice), backgroundColor: '#E5E7EB', borderRadius: 4 }
+                ]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        align: 'end',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                            font: { size: 12, weight: '500' }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: 'rgba(0,0,0,0.05)' },
-                        ticks: { font: { family: "'JetBrains Mono', monospace", size: 11 } }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { font: { family: "'JetBrains Mono', monospace", size: 11 } }
-                    }
-                }
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'top', align: 'end' } },
+                scales: { y: { beginAtZero: true }, x: { grid: { display: false } } }
             }
         });
-        
-        // Donut Chart - Market Share
-        const donutCtx = document.getElementById('donutChart').getContext('2d');
-        new Chart(donutCtx, {
+    }
+    
+    function updateDonutChart() {
+        const latest = marktData[marktData.length - 1];
+        const ctx = document.getElementById('donutChart').getContext('2d');
+        document.getElementById('leg-bev').textContent = latest.bev_anteil.toFixed(1) + '%';
+        document.getElementById('leg-phev').textContent = latest.phev_anteil.toFixed(1) + '%';
+        document.getElementById('leg-hev').textContent = latest.hev_anteil.toFixed(1) + '%';
+        document.getElementById('leg-ice').textContent = latest.ice_anteil.toFixed(1) + '%';
+        document.getElementById('donut-value').textContent = (latest.bev_anteil + latest.phev_anteil).toFixed(1) + '%';
+        if (donutChart) donutChart.destroy();
+        donutChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['BEV', 'PHEV', 'HEV', 'Verbrenner'],
-                datasets: [{
-                    data: [38.7, 13.6, 18.2, 29.5],
-                    backgroundColor: ['#00F2FF', '#002B5B', '#6B7280', '#E5E7EB'],
-                    borderWidth: 0,
-                    cutout: '70%'
-                }]
+                labels: ['BEV', 'PHEV', 'Hybrid', 'Verbrenner'],
+                datasets: [{ data: [latest.bev_anteil, latest.phev_anteil, latest.hev_anteil, latest.ice_anteil], backgroundColor: ['#00F2FF', '#002B5B', '#6B7280', '#E5E7EB'], borderWidth: 0, cutout: '70%' }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: { display: false }
-                }
-            }
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
         });
-        
-        // Sparklines
-        function createSparkline(canvasId, data, color) {
-            const ctx = document.getElementById(canvasId);
-            if (!ctx) return;
-            
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.map((_, i) => i),
-                    datasets: [{
-                        data: data,
-                        borderColor: color,
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true,
-                        backgroundColor: color + '20',
-                        pointRadius: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { display: false },
-                        y: { display: false }
-                    }
-                }
-            });
-        }
-        
-        createSparkline('sparkline1', [42, 44, 45, 47, 48, 49, 50, 51, 52, 52.3], '#00F2FF');
-        createSparkline('sparkline2', [8500, 9200, 9800, 10400, 11000, 11500, 11900, 12100, 12300, 12458], '#00F2FF');
-        createSparkline('sparkline3', [120, 125, 130, 135, 140, 144, 148, 150, 153, 156], '#00F2FF');
-        createSparkline('sparkline4', [410, 420, 435, 445, 455, 465, 470, 478, 482, 485], '#00F2FF');
-        
-        // Update time
-        function updateTime() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' });
-            document.querySelector('.live-time').textContent = `Aktualisiert: Heute, ${timeStr} Uhr`;
-        }
-        setInterval(updateTime, 60000);
+    }
+    
+    function updateBrandsTable() {
+        const html = markenData.slice(0, 5).map(m => `
+            <tr>
+                <td class="table-rank">${m.rang}</td>
+                <td><div class="table-brand"><div class="brand-logo">${m.marke.charAt(0)}</div><span>${m.marke}</span></div></td>
+                <td class="table-value">${m.verkaeufe.toLocaleString('de-CH')}</td>
+                <td><span class="table-change ${m.trend > 0 ? 'positive' : 'negative'}">${m.trend > 0 ? '+' : ''}${m.trend}%</span></td>
+                <td><div class="table-bar"><div class="table-bar-fill" style="width:${m.anteil * 4}%"></div></div></td>
+            </tr>
+        `).join('');
+        document.getElementById('brands-table').innerHTML = html;
+    }
+    
+    function updateModelsTable() {
+        const html = modelleData.slice(0, 5).map(m => `
+            <tr>
+                <td class="table-rank">${m.rang}</td>
+                <td><div class="table-brand"><div class="brand-logo">${m.marke.charAt(0)}</div><span>${m.marke} ${m.modell}</span></div></td>
+                <td class="table-value">${m.verkaeufe.toLocaleString('de-CH')}</td>
+                <td><div class="table-bar"><div class="table-bar-fill" style="width:${m.anteil * 6}%"></div></div></td>
+            </tr>
+        `).join('');
+        document.getElementById('models-table').innerHTML = html;
+    }
+    
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#6B7280';
+    init();
     </script>
 </body>
 </html>
