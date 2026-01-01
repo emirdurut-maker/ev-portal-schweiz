@@ -1,1 +1,803 @@
-Commit message: Initial website setup
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Die führende Informationsquelle für Elektromobilität in der Schweiz - Verkaufszahlen, Tests, Ratgeber und News zu E-Autos und Plug-in Hybriden">
+    <meta name="keywords" content="Elektroauto Schweiz, EV, Plug-in Hybrid, Verkaufszahlen, Ladeinfrastruktur, E-Mobilität">
+    <title>EV Portal Schweiz | Elektromobilität & Software-Defined Vehicles</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00b4d8;
+            --secondary: #0077b6;
+            --accent: #90e0ef;
+            --dark: #03045e;
+            --light: #caf0f8;
+            --text: #023047;
+            --bg: #ffffff;
+            --gray: #f8f9fa;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+        }
+        
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo::before {
+            content: "⚡";
+            font-size: 2rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        .lang-toggle {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .lang-toggle:hover {
+            background: white;
+            color: var(--dark);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.95;
+        }
+        
+        /* Stats Bar */
+        .stats-bar {
+            background: var(--gray);
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: -2rem auto 0;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            color: var(--text);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+        
+        .section {
+            margin-bottom: 4rem;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .section-icon {
+            font-size: 2.5rem;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            color: var(--dark);
+        }
+        
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .card p {
+            color: #666;
+            line-height: 1.8;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+        
+        /* Popular Articles */
+        .article-list {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .article-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+        
+        .article-item:hover {
+            background: var(--gray);
+        }
+        
+        .article-rank {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            min-width: 50px;
+        }
+        
+        .article-content h4 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .article-meta {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 2rem 1rem;
+            margin-top: 4rem;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-section h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 0.3rem 0;
+            transition: color 0.3s;
+        }
+        
+        .footer-section a:hover {
+            color: var(--accent);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            opacity: 0.7;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+                margin-top: 1rem;
+            }
+            
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Utility Classes */
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: var(--accent);
+            color: var(--dark);
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">EV Portal CH</div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">📊 Dashboard</a></li>
+                <li><a href="#verkaufszahlen">Verkaufszahlen</a></li>
+                <li><a href="#news">News</a></li>
+                <li><a href="#fahrzeuge">Fahrzeuge</a></li>
+                <li><a href="#laden">Laden</a></li>
+                <li><a href="#ratgeber">Ratgeber</a></li>
+                <li><a href="#service">Service</a></li>
+            </ul>
+            <button class="lang-toggle" onclick="toggleLanguage()">🇬🇧 EN</button>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Elektromobilität in der Schweiz</h1>
+        <p>Ihre führende Informationsquelle für Electric Vehicles, Plug-in Hybride und Software-Defined Vehicles im DACH-Raum</p>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number">47.3%</div>
+                <div class="stat-label">EV Marktanteil 2024</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">12,458</div>
+                <div class="stat-label">Ladestationen CH</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">485 km</div>
+                <div class="stat-label">Ø Reichweite 2024</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">156</div>
+                <div class="stat-label">EV Modelle verfügbar</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        
+        <!-- Verkaufszahlen Section -->
+        <section id="verkaufszahlen" class="section">
+            <div class="section-header">
+                <span class="section-icon">📊</span>
+                <h2 class="section-title">Verkaufszahlen Schweiz</h2>
+            </div>
+            
+            <!-- Dashboard CTA -->
+            <div style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); padding: 3rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                <h3 style="color: white; font-size: 2rem; margin-bottom: 1rem;">📊 Interaktives Verkaufsdaten-Dashboard</h3>
+                <p style="color: white; opacity: 0.95; font-size: 1.2rem; margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+                    Analysieren Sie Schweizer Neuzulassungen in Echtzeit: Monatliche Trends, Top-Marken, Bestseller-Modelle und detaillierte Marktanteil-Entwicklung.
+                </p>
+                <a href="dashboard.html" class="btn" style="font-size: 1.2rem; padding: 1rem 2.5rem; background: white; color: var(--dark); display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    🚀 Zum Dashboard
+                </a>
+            </div>
+            
+            <div class="chart-container">
+                <h3>EV vs. Verbrenner - Monatliche Neuzulassungen 2024</h3>
+                <div class="chart-wrapper">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="cards-grid">
+                <div class="card" onclick="window.location.href='dashboard.html'" style="cursor: pointer;">
+                    <div class="card-icon">🏆</div>
+                    <h3>Top 5 Marken</h3>
+                    <p>Die meistverkauften Automobilmarken in der Schweiz - Antriebsart übergreifend mit detaillierter Aufschlüsselung.</p>
+                    <span class="badge">Monatlich aktualisiert</span>
+                    <div style="margin-top: 1rem; color: var(--primary); font-weight: bold;">→ Im Dashboard anzeigen</div>
+                </div>
+                <div class="card" onclick="window.location.href='dashboard.html'" style="cursor: pointer;">
+                    <div class="card-icon">🚗</div>
+                    <h3>Top 15 Modelle</h3>
+                    <p>Die beliebtesten Fahrzeugmodelle aller Antriebsarten im Vergleich - mit Verkaufstrends und Prognosen.</p>
+                    <span class="badge">Wöchentlich aktualisiert</span>
+                    <div style="margin-top: 1rem; color: var(--primary); font-weight: bold;">→ Im Dashboard anzeigen</div>
+                </div>
+                <div class="card" onclick="window.location.href='dashboard.html'" style="cursor: pointer;">
+                    <div class="card-icon">⚡</div>
+                    <h3>Top 15 EV & Plug-ins</h3>
+                    <p>Elektro- und Plug-in Hybrid Bestseller mit detaillierten Verkaufszahlen und Marktanteil-Entwicklung.</p>
+                    <span class="badge">Wöchentlich aktualisiert</span>
+                    <div style="margin-top: 1rem; color: var(--primary); font-weight: bold;">→ Im Dashboard anzeigen</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- News Section -->
+        <section id="news" class="section">
+            <div class="section-header">
+                <span class="section-icon">📰</span>
+                <h2 class="section-title">Aktuelle News & Artikel</h2>
+            </div>
+            
+            <div class="article-list">
+                <h3 style="margin-bottom: 1.5rem;">🔥 Meistgelesene Artikel (7 Tage)</h3>
+                <div class="article-item">
+                    <div class="article-rank">1</div>
+                    <div class="article-content">
+                        <h4>Tesla Model 3 Highland - Erste Fahreindrücke aus der Schweiz</h4>
+                        <p class="article-meta">Veröffentlicht: Vor 2 Tagen • 15.234 Aufrufe • 🇩🇪 🇨🇭</p>
+                    </div>
+                </div>
+                <div class="article-item">
+                    <div class="article-rank">2</div>
+                    <div class="article-content">
+                        <h4>Ladeinfrastruktur 2025: Neue Schnelllade-Hubs in der Schweiz</h4>
+                        <p class="article-meta">Veröffentlicht: Vor 5 Tagen • 12.891 Aufrufe • 🇨🇭</p>
+                    </div>
+                </div>
+                <div class="article-item">
+                    <div class="article-rank">3</div>
+                    <div class="article-content">
+                        <h4>BYD Seal im Langzeittest: 30.000 km Erfahrungsbericht</h4>
+                        <p class="article-meta">Veröffentlicht: Vor 1 Woche • 10.456 Aufrufe • 🇭🇷</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Laden Section -->
+        <section id="laden" class="section">
+            <div class="section-header">
+                <span class="section-icon">🔌</span>
+                <h2 class="section-title">Ladeinfrastruktur Schweiz</h2>
+            </div>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">🗺️</div>
+                    <h3>Ladenetzwerk</h3>
+                    <p>Aktuelle Übersicht aller Ladestationen, Schnelllade-Hubs und deren Verfügbarkeit in Echtzeit.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">💰</div>
+                    <h3>Preise & Apps</h3>
+                    <p>Vergleich der Ladekosten, beste Lade-Apps und Tipps für günstigeres Laden in der Schweiz.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">⚙️</div>
+                    <h3>Anschlüsse & Systeme</h3>
+                    <p>CCS, CHAdeMO, Tesla Supercharger - alle Steckertypen, Ladeleistungen und Kompatibilität erklärt.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reichweite Section -->
+        <section id="reichweite" class="section">
+            <div class="section-header">
+                <span class="section-icon">📏</span>
+                <h2 class="section-title">Reichweiten-Analyse</h2>
+            </div>
+            
+            <div class="chart-container">
+                <h3>Durchschnittliche Reichweite EV-Modelle 2021-2025</h3>
+                <div class="chart-wrapper">
+                    <canvas id="rangeChart"></canvas>
+                </div>
+                <p style="margin-top: 1rem; color: #666;">
+                    <strong>Hinweis:</strong> Reichweiten variieren je nach Jahreszeit. Winterwerte typischerweise 15-30% niedriger als Sommerwerte.
+                </p>
+            </div>
+        </section>
+
+        <!-- Fahrzeuge Section -->
+        <section id="fahrzeuge" class="section">
+            <div class="section-header">
+                <span class="section-icon">🚙</span>
+                <h2 class="section-title">Fahrzeug-Datenbank</h2>
+            </div>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">🇩🇪</div>
+                    <h3>Deutsche Modelle</h3>
+                    <p>Volkswagen, BMW, Mercedes, Audi, Porsche - alle in der Schweiz zugelassenen EV-Modelle.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🇨🇳</div>
+                    <h3>Chinesische Modelle</h3>
+                    <p>BYD, NIO, MG, Xpeng - die neue Generation chinesischer Elektroautos im Schweizer Markt.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🇯🇵</div>
+                    <h3>Japanische Modelle</h3>
+                    <p>Toyota, Nissan, Honda, Mazda - japanische EV- und Plug-in Hybrid-Technologie.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🇺🇸</div>
+                    <h3>Amerikanische Modelle</h3>
+                    <p>Tesla, Ford, Chevrolet - amerikanische Innovation im Elektromobilitäts-Sektor.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🇰🇷</div>
+                    <h3>Koreanische Modelle</h3>
+                    <p>Hyundai, Kia, Genesis - hochmoderne EV-Technologie aus Südkorea.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔜</div>
+                    <h3>Kommende Modelle</h3>
+                    <p>Neue EV-Modelle der nächsten 6 Monate - Markteinführungen und Verfügbarkeit.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service & Wartung Section -->
+        <section id="service" class="section">
+            <div class="section-header">
+                <span class="section-icon">🔧</span>
+                <h2 class="section-title">Service & Wartung</h2>
+            </div>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">🔋</div>
+                    <h3>Batterie-Lebensdauer</h3>
+                    <p>Informationen zur Batterie-Garantie, Degradation und Tipps zur Verlängerung der Lebensdauer.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛠️</div>
+                    <h3>Werkstätten & Service</h3>
+                    <p>Unabhängige Garagen, Markenwerkstätten und spezialisierte EV-Service-Partner in der Schweiz.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔩</div>
+                    <h3>Ersatzteile & Kosten</h3>
+                    <p>Preisvergleich, Beschaffung von Ersatzteilen und Service-Kosten für verschiedene EV-Modelle.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ratgeber Section -->
+        <section id="ratgeber" class="section">
+            <div class="section-header">
+                <span class="section-icon">📚</span>
+                <h2 class="section-title">Kauf & Finanzierung</h2>
+            </div>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">💳</div>
+                    <h3>Initialkosten</h3>
+                    <p>Kaufpreis, Garantie, Grundausstattung - vollständiger Kostenvergleich nach Fahrzeugklassen.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📈</div>
+                    <h3>Laufende Kosten</h3>
+                    <p>Service, Reifen, Versicherung, Gebühren - alle wiederkehrenden Kosten im Überblick.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎯</div>
+                    <h3>Kaufberatung</h3>
+                    <p>Individueller Ratgeber für Ihren EV-Kauf - basierend auf Ihren Anforderungen und Budget.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>EV Portal CH</h3>
+                <p>Die führende Informationsquelle für Elektromobilität in der Schweiz.</p>
+                <div class="social-links" style="margin-top: 1rem;">
+                    <a href="#" style="color: white;">📘</a>
+                    <a href="#" style="color: white;">💼</a>
+                    <a href="#" style="color: white;">🐦</a>
+                    <a href="#" style="color: white;">📱</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Kategorien</h3>
+                <ul>
+                    <li><a href="#verkaufszahlen">Verkaufszahlen</a></li>
+                    <li><a href="#news">News & Artikel</a></li>
+                    <li><a href="#fahrzeuge">Fahrzeug-Datenbank</a></li>
+                    <li><a href="#laden">Ladeinfrastruktur</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Ratgeber</h3>
+                <ul>
+                    <li><a href="#ratgeber">Kaufberatung</a></li>
+                    <li><a href="#service">Service & Wartung</a></li>
+                    <li><a href="#reichweite">Reichweiten-Analyse</a></li>
+                    <li><a href="#">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Über uns</h3>
+                <ul>
+                    <li><a href="#">Über das Projekt</a></li>
+                    <li><a href="#">Kontakt</a></li>
+                    <li><a href="#">Datenschutz</a></li>
+                    <li><a href="#">Impressum</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 EV Portal Schweiz. Alle Rechte vorbehalten. | Datenquellen: Auto-Suisse, ASTRA, diverse Hersteller</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sales Chart
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+                datasets: [{
+                    label: 'Elektro (BEV)',
+                    data: [3200, 3450, 4100, 4300, 4800, 5200, 4900, 5100, 5600, 5800, 6200, 6500],
+                    borderColor: '#00b4d8',
+                    backgroundColor: 'rgba(0, 180, 216, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Plug-in Hybrid (PHEV)',
+                    data: [2100, 2200, 2500, 2600, 2800, 2900, 2700, 2800, 3000, 3100, 3300, 3400],
+                    borderColor: '#90e0ef',
+                    backgroundColor: 'rgba(144, 224, 239, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Verbrenner',
+                    data: [8500, 8200, 7900, 7600, 7300, 7000, 6800, 6500, 6200, 5900, 5600, 5300],
+                    borderColor: '#666',
+                    backgroundColor: 'rgba(102, 102, 102, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Neuzulassungen'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Range Chart
+        const rangeCtx = document.getElementById('rangeChart').getContext('2d');
+        new Chart(rangeCtx, {
+            type: 'bar',
+            data: {
+                labels: ['2021', '2022', '2023', '2024', '2025 (Prognose)'],
+                datasets: [{
+                    label: 'Sommer (WLTP)',
+                    data: [380, 415, 445, 485, 520],
+                    backgroundColor: '#00b4d8'
+                }, {
+                    label: 'Winter (Real)',
+                    data: [285, 310, 335, 365, 390],
+                    backgroundColor: '#90e0ef'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Reichweite (km)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Language Toggle
+        function toggleLanguage() {
+            const btn = document.querySelector('.lang-toggle');
+            if (btn.textContent.includes('EN')) {
+                btn.textContent = '🇩🇪 DE';
+                alert('English version coming soon!');
+            } else {
+                btn.textContent = '🇬🇧 EN';
+            }
+        }
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>Commit message: Initial website setup
