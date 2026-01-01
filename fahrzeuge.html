@@ -270,8 +270,10 @@
             
             grid.innerHTML = filteredVehicles.map(v => `
                 <article class="vehicle-card">
-                    <div class="vehicle-image"><span class="vehicle-image-placeholder">🚗</span><span class="vehicle-badge">${v.kategorie}</span></div>
-                    <div class="vehicle-content">
+<div class="vehicle-image">
+    ${v.image ? `<img src="${v.image}" alt="${v.marke || 'Fahrzeug'}" style="width:100%; height:auto;">` : `<span class="vehicle-image-placeholder">🚗</span>`}
+    <span class="vehicle-badge">${v.kategorie}</span>
+</div>                    <div class="vehicle-content">
                         <div class="vehicle-brand">${v.marke}</div>
                         <h2 class="vehicle-name">${v.modell}</h2>
                         <div class="vehicle-variant">${v.variante} · ${v.antrieb}</div>
