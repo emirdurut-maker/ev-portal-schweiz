@@ -3,910 +3,439 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kaufratgeber | EV Portal Schweiz</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="description" content="EV Ratgeber - Kaufberatung, Tipps und Guides zur Elektromobilität">
+    <title>Ratgeber | EV Technical Insights</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
-            --primary: #00b4d8;
-            --secondary: #0077b6;
-            --accent: #90e0ef;
-            --dark: #03045e;
-            --success: #06d6a0;
-            --warning: #ffd166;
-            --danger: #ef476f;
-            --text: #023047;
-            --bg: #f8f9fa;
+            --navy: #002B5B;
+            --navy-dark: #001a38;
+            --cyan: #00F2FF;
+            --cyan-dim: rgba(0, 242, 255, 0.15);
+            --surface: #F9FAFB;
+            --stone: #E5E7EB;
+            --anthracite: #1F2937;
+            --text-secondary: #6B7280;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --font-headline: 'Inter', -apple-system, sans-serif;
+            --font-body: 'Lora', Georgia, serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --content-width: 1280px;
         }
         
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-        }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-body); font-size: 18px; line-height: 1.6; color: var(--anthracite); background: var(--surface); }
+        h1, h2, h3, h4 { font-family: var(--font-headline); font-weight: 700; color: var(--navy); line-height: 1.2; }
+        .container { max-width: var(--content-width); margin: 0 auto; padding: 0 24px; }
         
-        .header {
-            background: linear-gradient(135deg, var(--dark) 0%, var(--secondary) 100%);
-            color: white;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+        /* Ticker */
+        .ticker-bar { background: var(--navy-dark); color: var(--cyan); font-family: var(--font-mono); font-size: 13px; padding: 8px 0; overflow: hidden; }
+        .ticker-content { display: flex; animation: ticker 30s linear infinite; white-space: nowrap; }
+        .ticker-item { padding: 0 48px; display: flex; align-items: center; gap: 12px; }
+        .ticker-item::before { content: "●"; color: var(--cyan); animation: pulse 2s ease-in-out infinite; }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
+        /* Header */
+        .header { background: var(--navy); color: white; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0, 43, 91, 0.3); }
+        .header-main { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: white; }
+        .logo-icon { width: 44px; height: 44px; background: var(--cyan); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .logo-text { font-family: var(--font-headline); font-weight: 800; font-size: 20px; }
+        .logo-text span { color: var(--cyan); }
+        .nav-links { display: flex; list-style: none; gap: 8px; }
+        .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-family: var(--font-headline); font-size: 14px; font-weight: 500; padding: 10px 16px; border-radius: 6px; transition: all 0.2s ease; }
+        .nav-links a:hover { color: var(--cyan); background: rgba(0, 242, 255, 0.1); }
+        .nav-links a.active { background: var(--cyan); color: var(--navy); }
         
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
+        /* Page Header */
+        .page-header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%); color: white; padding: 48px 0; }
+        .page-header h1 { color: white; font-size: clamp(28px, 4vw, 40px); margin-bottom: 8px; }
+        .page-subtitle { font-family: var(--font-mono); font-size: 14px; color: rgba(255,255,255,0.7); }
         
-        .back-btn {
-            color: white;
-            text-decoration: none;
-            padding: 0.8rem 1.5rem;
-            background: rgba(255,255,255,0.2);
-            border-radius: 5px;
-            border: 2px solid white;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
+        /* Category Cards */
+        .categories-section { padding: 48px 0; }
+        .category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 48px; }
+        .category-card { background: white; border-radius: 12px; padding: 24px; border: 1px solid var(--stone); text-align: center; cursor: pointer; transition: all 0.3s; text-decoration: none; color: inherit; }
+        .category-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0, 43, 91, 0.15); border-color: var(--cyan); }
+        .category-icon { font-size: 48px; margin-bottom: 16px; }
+        .category-title { font-family: var(--font-headline); font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+        .category-count { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); }
         
-        .back-btn:hover {
-            background: white;
-            color: var(--dark);
-        }
+        /* Section Header */
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid var(--navy); }
+        .section-title { font-size: 24px; display: flex; align-items: center; gap: 12px; }
+        .view-all { font-family: var(--font-headline); font-size: 14px; font-weight: 600; color: var(--navy); text-decoration: none; display: flex; align-items: center; gap: 8px; padding: 10px 20px; border: 2px solid var(--navy); border-radius: 6px; transition: all 0.2s; }
+        .view-all:hover { background: var(--navy); color: white; }
         
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
+        /* Guide Cards */
+        .guide-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px; }
+        .guide-card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--stone); transition: all 0.3s; }
+        .guide-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0, 43, 91, 0.15); border-color: var(--cyan); }
+        .guide-image { height: 160px; background: linear-gradient(135deg, var(--navy-dark), var(--navy)); display: flex; align-items: center; justify-content: center; position: relative; }
+        .guide-image-icon { font-size: 56px; }
+        .guide-badge { position: absolute; top: 12px; left: 12px; background: var(--cyan); color: var(--navy); font-family: var(--font-mono); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 4px; }
+        .guide-badge.popular { background: var(--warning); color: white; }
+        .guide-body { padding: 24px; }
+        .guide-category { font-family: var(--font-mono); font-size: 11px; color: var(--cyan); text-transform: uppercase; margin-bottom: 8px; }
+        .guide-title { font-family: var(--font-headline); font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 12px; line-height: 1.4; }
+        .guide-excerpt { font-size: 15px; color: var(--text-secondary); margin-bottom: 16px; }
+        .guide-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid var(--stone); }
+        .guide-reading { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); }
+        .guide-link { font-family: var(--font-headline); font-size: 13px; font-weight: 600; color: var(--navy); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+        .guide-link:hover { color: var(--cyan); }
         
-        .section {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            margin-bottom: 2rem;
-        }
+        /* Featured Guide */
+        .featured-guide { display: grid; grid-template-columns: 1fr 1fr; gap: 0; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--stone); margin-bottom: 48px; }
+        .featured-image { background: linear-gradient(135deg, var(--navy-dark), var(--navy)); display: flex; align-items: center; justify-content: center; min-height: 300px; }
+        .featured-image-icon { font-size: 100px; }
+        .featured-body { padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+        .featured-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--cyan-dim); border: 1px solid var(--cyan); color: var(--navy); font-family: var(--font-mono); font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 20px; margin-bottom: 16px; width: fit-content; }
+        .featured-title { font-size: 28px; margin-bottom: 16px; line-height: 1.3; }
+        .featured-excerpt { font-size: 17px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.7; }
+        .featured-btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-headline); font-size: 14px; font-weight: 600; padding: 14px 28px; background: var(--navy); color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-decoration: none; width: fit-content; }
+        .featured-btn:hover { background: var(--cyan); color: var(--navy); }
         
-        .section-title {
-            font-size: 1.8rem;
-            color: var(--dark);
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 3px solid var(--primary);
-        }
+        /* Checklist Section */
+        .checklist-section { background: white; border-radius: 12px; padding: 32px; border: 1px solid var(--stone); margin-bottom: 48px; }
+        .checklist-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+        .checklist-icon { width: 56px; height: 56px; background: var(--navy); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .checklist-title { font-size: 24px; }
+        .checklist-subtitle { font-family: var(--font-mono); font-size: 13px; color: var(--text-secondary); }
+        .checklist-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .checklist-item { display: flex; align-items: flex-start; gap: 12px; padding: 16px; background: var(--surface); border-radius: 8px; border-left: 4px solid var(--cyan); }
+        .checklist-check { width: 24px; height: 24px; background: var(--cyan); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--navy); flex-shrink: 0; }
+        .checklist-text { font-family: var(--font-headline); font-size: 14px; font-weight: 500; color: var(--navy); }
         
-        .calculator {
-            background: var(--bg);
-            padding: 2rem;
-            border-radius: 10px;
-            margin: 1.5rem 0;
-        }
+        /* FAQ Section */
+        .faq-section { margin-bottom: 48px; }
+        .faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .faq-item { background: white; border-radius: 12px; padding: 24px; border: 1px solid var(--stone); transition: all 0.3s; }
+        .faq-item:hover { border-color: var(--cyan); }
+        .faq-question { font-family: var(--font-headline); font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 12px; display: flex; align-items: flex-start; gap: 12px; }
+        .faq-q { color: var(--cyan); font-size: 18px; }
+        .faq-answer { font-size: 15px; color: var(--text-secondary); padding-left: 30px; }
         
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
+        /* Tools Section */
+        .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px; }
+        .tool-card { background: linear-gradient(135deg, var(--navy-dark), var(--navy)); border-radius: 12px; padding: 32px; color: white; text-align: center; transition: all 0.3s; cursor: pointer; }
+        .tool-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0, 43, 91, 0.3); }
+        .tool-icon { font-size: 48px; margin-bottom: 16px; }
+        .tool-title { font-family: var(--font-headline); font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .tool-desc { font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 20px; }
+        .tool-btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-headline); font-size: 13px; font-weight: 600; padding: 10px 20px; background: var(--cyan); color: var(--navy); border: none; border-radius: 6px; cursor: pointer; }
         
-        .input-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-        }
+        /* Footer */
+        .footer { background: var(--navy-dark); color: white; padding: 60px 0 30px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+        .footer-brand p { color: rgba(255,255,255,0.6); font-size: 15px; margin-top: 16px; }
+        .footer-section h4 { color: var(--cyan); font-family: var(--font-headline); font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 20px; }
+        .footer-section ul { list-style: none; }
+        .footer-section a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; display: block; padding: 6px 0; }
+        .footer-section a:hover { color: var(--cyan); }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; display: flex; justify-content: space-between; }
+        .footer-copyright { font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.5); }
+        .footer-legal { display: flex; gap: 24px; }
+        .footer-legal a { font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.5); text-decoration: none; }
         
-        .input-group input,
-        .input-group select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .nav-links { display: none; }
+            .category-grid { grid-template-columns: repeat(2, 1fr); }
+            .guide-grid { grid-template-columns: repeat(2, 1fr); }
+            .featured-guide { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        
-        .input-group input:focus,
-        .input-group select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        
-        .input-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1rem;
-        }
-        
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .results {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .result-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid #e0e0e0;
-        }
-        
-        .result-label {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .result-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary);
-        }
-        
-        .result-sublabel {
-            font-size: 0.85rem;
-            color: #999;
-            margin-top: 0.3rem;
-        }
-        
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-top: 1.5rem;
-        }
-        
-        .comparison-card {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 2rem;
-        }
-        
-        .comparison-card.highlight {
-            border-color: var(--success);
-            background: linear-gradient(135deg, rgba(6, 214, 160, 0.1) 0%, rgba(255,255,255,1) 100%);
-        }
-        
-        .comparison-header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .comparison-icon {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .comparison-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--dark);
-        }
-        
-        .cost-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.8rem 0;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .cost-item:last-child {
-            border-bottom: none;
-            padding-top: 1rem;
-            margin-top: 0.5rem;
-            border-top: 2px solid var(--dark);
-        }
-        
-        .cost-label {
-            color: #666;
-        }
-        
-        .cost-value {
-            font-weight: bold;
-            color: var(--dark);
-        }
-        
-        .savings-badge {
-            background: var(--success);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            text-align: center;
-            margin-top: 1rem;
-            font-weight: bold;
-        }
-        
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid var(--primary);
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            border-radius: 5px;
-        }
-        
-        .info-box h4 {
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-        
-        .checklist {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .checklist li {
-            padding: 0.8rem;
-            margin: 0.5rem 0;
-            background: white;
-            border-radius: 5px;
-            border-left: 4px solid var(--success);
-            transition: all 0.3s;
-        }
-        
-        .checklist li:hover {
-            transform: translateX(5px);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .checklist li::before {
-            content: "✓ ";
-            color: var(--success);
-            font-weight: bold;
-            margin-right: 0.5rem;
-            font-size: 1.2rem;
-        }
-        
-        .class-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .class-card {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 1.5rem;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        
-        .class-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transform: translateY(-3px);
-        }
-        
-        .class-name {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-        
-        .class-price {
-            color: var(--primary);
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .class-features {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .class-features li {
-            padding: 0.3rem 0;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        .class-features li::before {
-            content: "• ";
-            color: var(--primary);
-            font-weight: bold;
-            margin-right: 0.5rem;
-        }
-        
-        .chart-wrapper {
-            position: relative;
-            height: 400px;
-            margin-top: 1.5rem;
-        }
-        
-        .financing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .financing-card {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-            color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .financing-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        
-        .financing-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-        
-        .financing-details {
-            background: rgba(255,255,255,0.2);
-            padding: 1rem;
-            border-radius: 5px;
-            margin-top: 1rem;
-        }
-        
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .comparison-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .input-grid {
-                grid-template-columns: 1fr;
-            }
+            .category-grid { grid-template-columns: 1fr; }
+            .guide-grid { grid-template-columns: 1fr; }
+            .checklist-grid { grid-template-columns: 1fr; }
+            .faq-grid { grid-template-columns: 1fr; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <div>
-                <h1>💰 Kaufratgeber & Kostenrechner</h1>
-                <p>Elektroauto kaufen in der Schweiz - Alle Kosten transparent</p>
-            </div>
-            <a href="index.html" class="back-btn">← Zurück zur Startseite</a>
+    <!-- Ticker -->
+    <div class="ticker-bar">
+        <div class="ticker-content">
+            <div class="ticker-item">NEU: Kaufberatung 2025 jetzt verfügbar</div>
+            <div class="ticker-item">TIPP: So maximieren Sie Ihre Reichweite im Winter</div>
+            <div class="ticker-item">UPDATE: Förderungen für Wallboxen erhöht</div>
+            <div class="ticker-item">NEU: Kaufberatung 2025 jetzt verfügbar</div>
+            <div class="ticker-item">TIPP: So maximieren Sie Ihre Reichweite im Winter</div>
         </div>
     </div>
 
-    <div class="container">
-        <!-- Cost Calculator -->
-        <div class="section">
-            <h2 class="section-title">🧮 Interaktiver Kostenrechner</h2>
-            <p style="color: #666; margin-bottom: 1.5rem;">Berechnen Sie die tatsächlichen Gesamtkosten für 5 Jahre</p>
-            
-            <div class="calculator">
-                <div class="input-grid">
-                    <div class="input-group">
-                        <label>Kaufpreis Fahrzeug (CHF)</label>
-                        <input type="number" id="purchasePrice" value="45000" min="0" step="1000">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Jahreskilometer</label>
-                        <input type="number" id="annualKm" value="15000" min="0" step="1000">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Strompreis (CHF/kWh)</label>
-                        <input type="number" id="electricityPrice" value="0.20" min="0" step="0.01">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Verbrauch (kWh/100km)</label>
-                        <input type="number" id="consumption" value="18" min="0" step="0.5">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Jährliche Versicherung (CHF)</label>
-                        <input type="number" id="insurance" value="1200" min="0" step="100">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Service/Jahr (CHF)</label>
-                        <input type="number" id="service" value="300" min="0" step="50">
-                    </div>
-                </div>
-                
-                <button class="btn btn-primary" onclick="calculateCosts()" style="margin-top: 1.5rem; width: 100%;">
-                    📊 Kosten berechnen
-                </button>
-                
-                <div class="results" id="results" style="display: none;">
-                    <div class="result-card">
-                        <div class="result-label">Kaufpreis</div>
-                        <div class="result-value" id="resultPurchase">-</div>
-                    </div>
-                    <div class="result-card">
-                        <div class="result-label">Stromkosten/Jahr</div>
-                        <div class="result-value" id="resultElectricity">-</div>
-                    </div>
-                    <div class="result-card">
-                        <div class="result-label">Laufende Kosten/Jahr</div>
-                        <div class="result-value" id="resultRunning">-</div>
-                    </div>
-                    <div class="result-card">
-                        <div class="result-label">Gesamtkosten 5 Jahre</div>
-                        <div class="result-value" id="resultTotal">-</div>
-                        <div class="result-sublabel">Inkl. Wertverlust</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TCO Comparison -->
-        <div class="section">
-            <h2 class="section-title">⚖️ TCO-Vergleich: Elektro vs. Verbrenner</h2>
-            <p style="color: #666; margin-bottom: 1.5rem;">Total Cost of Ownership über 5 Jahre (Beispiel: Kompaktklasse, 15'000 km/Jahr)</p>
-            
-            <div class="comparison-grid">
-                <div class="comparison-card highlight">
-                    <div class="comparison-header">
-                        <div class="comparison-icon">⚡</div>
-                        <div class="comparison-title">Elektroauto</div>
-                        <div style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">z.B. VW ID.3, Tesla Model 3</div>
-                    </div>
-                    
-                    <div class="cost-item">
-                        <span class="cost-label">Kaufpreis</span>
-                        <span class="cost-value">CHF 45'000</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-label">Stromkosten (5 Jahre)</span>
-                        <span class="cost-value">CHF 2'700</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-label">Versicherung (5 Jahre)</span>
-                        <span class="cost-value">CHF 6'000</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-label">Service & Wartung (5 Jahre)</span>
-                        <span class="cost-value">CHF 1'500</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-label">Steuern & Gebühren (5 Jahre)</span>
-                        <span class="cost-value">CHF 1'250</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-label">Wertverlust (40%)</span>
-                        <span class="cost-value">- CHF 18'000</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-label"><strong>TOTAL</strong></span>
-                        <span class="cost-value" style="color: var(--success); font-size: 1.3rem;">CHF 38'450</span>
-                    </div>
-                </div>
-
-                <div class="comparison-card">
-                    <div class="comparison-header">
-                        <div class="comparison-icon">⛽</div>
-                        <div class="comparison-title">Verbrenner</div>
-                        <div style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">z.B. VW Golf, Toyota Corolla</div>
-                    </div>
-                    
-                    <div class="cost-item">
-                        <span class="cost-label">Kaufpreis</span>
-                        <span class="cost-value">CHF 35'000</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-label">Benzin (5 Jahre, 6.5L/100km)</span>
-                        <span class="cost-value">CHF 9'750</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-label">Versicherung (5 Jahre)</span>
-                        <span class="cost-value">CHF 6'500</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-label">Service & Wartung (5 Jahre)</span>
-                        <span class="cost-value">CHF 4'500</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-label">Steuern & Gebühren (5 Jahre)</span>
-                        <span class="cost-value">CHF 2'500</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-label">Wertverlust (50%)</span>
-                        <span class="cost-value">- CHF 17'500</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-label"><strong>TOTAL</strong></span>
-                        <span class="cost-value" style="color: var(--danger); font-size: 1.3rem;">CHF 40'750</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="savings-badge">
-                💰 Ersparnis mit Elektroauto: CHF 2'300 über 5 Jahre
-            </div>
-        </div>
-
-        <!-- Depreciation Chart -->
-        <div class="section">
-            <h2 class="section-title">📉 Wertverlust-Analyse</h2>
-            <p style="color: #666; margin-bottom: 1rem;">Durchschnittlicher Wertverlust über 5 Jahre</p>
-            <div class="chart-wrapper">
-                <canvas id="depreciationChart"></canvas>
-            </div>
-            
-            <div class="info-box" style="margin-top: 1.5rem;">
-                <h4>💡 Wichtig zu wissen:</h4>
-                <p>Elektroautos verlieren aktuell etwas langsamer an Wert als Verbrenner, vor allem bei Premium-Marken wie Tesla. Der Hauptgrund: Die Batterie-Technologie verbessert sich ständig, aber die Nachfrage nach gebrauchten EVs steigt.</p>
-            </div>
-        </div>
-
-        <!-- Financing Options -->
-        <div class="section">
-            <h2 class="section-title">🏦 Finanzierungsoptionen</h2>
-            
-            <div class="financing-grid">
-                <div class="financing-card">
-                    <div class="financing-icon">💵</div>
-                    <div class="financing-title">Barkauf</div>
-                    <p>Direkter Kauf ohne Finanzierung</p>
-                    <div class="financing-details">
-                        <strong>Vorteile:</strong><br>
-                        ✓ Keine Zinsen<br>
-                        ✓ Sofort Eigentümer<br>
-                        ✓ Höchste Flexibilität<br><br>
-                        <strong>Nachteile:</strong><br>
-                        ✗ Hohe Anfangsinvestition<br>
-                        ✗ Kapital gebunden
-                    </div>
-                </div>
-
-                <div class="financing-card">
-                    <div class="financing-icon">📄</div>
-                    <div class="financing-title">Leasing</div>
-                    <p>Monatliche Raten, nach 3-4 Jahren zurückgeben oder kaufen</p>
-                    <div class="financing-details">
-                        <strong>Vorteile:</strong><br>
-                        ✓ Geringe Anzahlung<br>
-                        ✓ Planbare Kosten<br>
-                        ✓ Immer neues Auto<br><br>
-                        <strong>Nachteile:</strong><br>
-                        ✗ Kilometerbegrenzung<br>
-                        ✗ Kein Eigentum
-                    </div>
-                </div>
-
-                <div class="financing-card">
-                    <div class="financing-icon">🏦</div>
-                    <div class="financing-title">Kredit</div>
-                    <p>Finanzierung über Bank, Sie sind Eigentümer</p>
-                    <div class="financing-details">
-                        <strong>Vorteile:</strong><br>
-                        ✓ Sofort Eigentümer<br>
-                        ✓ Flexible Laufzeiten<br>
-                        ✓ Keine km-Begrenzung<br><br>
-                        <strong>Nachteile:</strong><br>
-                        ✗ Zinsen (ca. 2-4%)<br>
-                        ✗ Bonität erforderlich
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Swiss Tax Benefits -->
-        <div class="section">
-            <h2 class="section-title">🇨🇭 Steuervorteile & Förderungen Schweiz</h2>
-            
-            <div class="info-box">
-                <h4>💰 Kantonale Unterschiede beachten!</h4>
-                <p>Die Förderung von Elektroautos ist in der Schweiz kantonal geregelt. Hier die wichtigsten Vorteile:</p>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
-                <div style="background: var(--bg); padding: 1.5rem; border-radius: 10px; border-left: 4px solid var(--success);">
-                    <h4 style="color: var(--dark); margin-bottom: 0.5rem;">Motorfahrzeugsteuer</h4>
-                    <p style="color: #666;">Viele Kantone gewähren Reduktionen oder Befreiungen für reine Elektrofahrzeuge (teilweise bis zu 80% Rabatt)</p>
-                </div>
-
-                <div style="background: var(--bg); padding: 1.5rem; border-radius: 10px; border-left: 4px solid var(--success);">
-                    <h4 style="color: var(--dark); margin-bottom: 0.5rem;">Automobilsteuer</h4>
-                    <p style="color: #666;">Einige Kantone (z.B. Basel-Stadt, Bern) bieten Reduktionen bei der Importsteuer für EVs</p>
-                </div>
-
-                <div style="background: var(--bg); padding: 1.5rem; border-radius: 10px; border-left: 4px solid var(--success);">
-                    <h4 style="color: var(--dark); margin-bottom: 0.5rem;">Geschäftsfahrzeuge</h4>
-                    <p style="color: #666;">Firmenwagen: Tiefere Besteuerung des Privatanteils bei Elektrofahrzeugen (0.8% statt 0.9% des Kaufpreises)</p>
-                </div>
-
-                <div style="background: var(--bg); padding: 1.5rem; border-radius: 10px; border-left: 4px solid var(--success);">
-                    <h4 style="color: var(--dark); margin-bottom: 0.5rem;">Wallbox-Förderung</h4>
-                    <p style="color: #666;">Einige Energieversorger bezuschussen die Installation von Wallboxen (bis CHF 500)</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Vehicle Class Comparison -->
-        <div class="section">
-            <h2 class="section-title">🚗 Fahrzeugklassen im Vergleich</h2>
-            <p style="color: #666; margin-bottom: 1.5rem;">Finden Sie die passende Fahrzeugklasse für Ihre Bedürfnisse</p>
-            
-            <div class="class-grid">
-                <div class="class-card">
-                    <div class="class-name">Kompaktklasse</div>
-                    <div class="class-price">CHF 30'000 - 45'000</div>
-                    <ul class="class-features">
-                        <li>Reichweite: 300-450 km</li>
-                        <li>Ideal für: Pendler, Stadt</li>
-                        <li>Beispiele: VW ID.3, MG4, Nissan Leaf</li>
-                        <li>Verbrauch: ~15-18 kWh/100km</li>
-                        <li>Ladezeit DC: 30-40 Min</li>
-                    </ul>
-                </div>
-
-                <div class="class-card">
-                    <div class="class-name">Mittelklasse</div>
-                    <div class="class-price">CHF 45'000 - 65'000</div>
-                    <ul class="class-features">
-                        <li>Reichweite: 400-550 km</li>
-                        <li>Ideal für: Familien, Langstrecke</li>
-                        <li>Beispiele: Tesla Model 3, BMW i4</li>
-                        <li>Verbrauch: ~16-20 kWh/100km</li>
-                        <li>Ladezeit DC: 25-35 Min</li>
-                    </ul>
-                </div>
-
-                <div class="class-card">
-                    <div class="class-name">SUV / Crossover</div>
-                    <div class="class-price">CHF 50'000 - 85'000</div>
-                    <ul class="class-features">
-                        <li>Reichweite: 350-500 km</li>
-                        <li>Ideal für: Familien, Vielseitigkeit</li>
-                        <li>Beispiele: Tesla Model Y, VW ID.4</li>
-                        <li>Verbrauch: ~18-23 kWh/100km</li>
-                        <li>Ladezeit DC: 28-40 Min</li>
-                    </ul>
-                </div>
-
-                <div class="class-card">
-                    <div class="class-name">Premium / Luxus</div>
-                    <div class="class-price">CHF 80'000 - 150'000+</div>
-                    <ul class="class-features">
-                        <li>Reichweite: 450-650 km</li>
-                        <li>Ideal für: Komfort, Langstrecke</li>
-                        <li>Beispiele: Mercedes EQS, BMW iX</li>
-                        <li>Verbrauch: ~18-24 kWh/100km</li>
-                        <li>Ladezeit DC: 20-30 Min</li>
-                    </ul>
-                </div>
-
-                <div class="class-card">
-                    <div class="class-name">Klein- & Stadtauto</div>
-                    <div class="class-price">CHF 20'000 - 35'000</div>
-                    <ul class="class-features">
-                        <li>Reichweite: 200-300 km</li>
-                        <li>Ideal für: Stadt, Zweitwagen</li>
-                        <li>Beispiele: Fiat 500e, Renault Zoe</li>
-                        <li>Verbrauch: ~12-16 kWh/100km</li>
-                        <li>Ladezeit DC: 35-50 Min</li>
-                    </ul>
-                </div>
-
-                <div class="class-card">
-                    <div class="class-name">Sportwagen</div>
-                    <div class="class-price">CHF 90'000 - 200'000+</div>
-                    <ul class="class-features">
-                        <li>Reichweite: 350-500 km</li>
-                        <li>Ideal für: Performance, Fahrspaß</li>
-                        <li>Beispiele: Porsche Taycan, Audi e-tron GT</li>
-                        <li>Verbrauch: ~20-26 kWh/100km</li>
-                        <li>Ladezeit DC: 18-25 Min</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Buying Checklist -->
-        <div class="section">
-            <h2 class="section-title">✅ Checkliste für den EV-Kauf</h2>
-            <p style="color: #666; margin-bottom: 1.5rem;">Achten Sie auf diese wichtigen Punkte vor dem Kauf</p>
-            
-            <ul class="checklist">
-                <li><strong>Reichweite:</strong> Deckt die Reichweite Ihre täglichen Fahrten + Reserve ab? (Faustregel: Reale Reichweite = WLTP × 0.7-0.8)</li>
-                <li><strong>Lademöglichkeit zuhause:</strong> Können Sie zuhause eine Wallbox installieren? Falls nein: Öffentliche Ladeinfrastruktur in der Nähe?</li>
-                <li><strong>Ladegeschwindigkeit:</strong> Unterstützt das Fahrzeug Schnellladen (DC)? Welche maximale Ladeleistung?</li>
-                <li><strong>Batteriegarantie:</strong> Mindestens 8 Jahre oder 160'000 km Standard. Was deckt die Garantie ab?</li>
-                <li><strong>Servicekosten:</strong> Werkstatt in der Nähe? Ersatzteilversorgung gesichert? (Besonders bei chinesischen Marken prüfen!)</li>
-                <li><strong>Winterreichweite:</strong> Berücksichtigen Sie 20-30% Reichweitenverlust im Winter</li>
-                <li><strong>Kofferraum:</strong> Batterie im Boden = oft kleinerer Kofferraum als Verbrenner-Pendant</li>
-                <li><strong>Zuladung:</strong> EVs sind schwerer (Batterie) = oft geringere Zuladung</li>
-                <li><strong>Anhängelast:</strong> Viele EVs können Anhänger ziehen, aber Reichweite sinkt stark</li>
-                <li><strong>Software-Updates:</strong> Unterstützt der Hersteller Over-the-Air Updates? Wie lange?</li>
-                <li><strong>Wiederverkaufswert:</strong> Etablierte Marken haben stabileren Wiederverkaufswert</li>
-                <li><strong>Probefahrt:</strong> Mindestens 1-2 Stunden Probefahrt, idealerweise auch auf Autobahn</li>
-            </ul>
-        </div>
-
-        <!-- Warranty Comparison -->
-        <div class="section">
-            <h2 class="section-title">🛡️ Garantie & Ausstattungsvergleich</h2>
-            <p style="color: #666; margin-bottom: 1rem;">Typische Garantieleistungen bei Elektroautos</p>
-            
-            <table style="width: 100%; border-collapse: collapse; margin-top: 1.5rem;">
-                <thead>
-                    <tr style="background: var(--bg);">
-                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #ddd;">Hersteller</th>
-                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #ddd;">Fahrzeuggarantie</th>
-                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #ddd;">Batteriegarantie</th>
-                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #ddd;">Besonderheiten</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;"><strong>Tesla</strong></td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">4 Jahre / 80'000 km</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">8 Jahre / 192'000 km<br>(70% Kapazität)</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">Beste Ladeinfrastruktur</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;"><strong>VW / Audi</strong></td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">2 Jahre unbegrenzt</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">8 Jahre / 160'000 km<br>(70% Kapazität)</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">Großes Servicenetz</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;"><strong>BMW / Mercedes</strong></td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">2 Jahre unbegrenzt</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">8 Jahre / 160'000 km<br>(70% Kapazität)</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">Premium-Service</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;"><strong>Hyundai / Kia</strong></td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">5 Jahre / 100'000 km</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">8 Jahre / 160'000 km<br>(70% Kapazität)</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">Beste Gesamtgarantie</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;"><strong>BYD / MG</strong></td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">6-7 Jahre / 150'000 km</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">8 Jahre / 150'000-200'000 km</td>
-                        <td style="padding: 1rem; border-bottom: 1px solid #eee;">Lange Garantie, Servicenetz im Aufbau</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Summary -->
-        <div class="section">
-            <h2 class="section-title">📝 Zusammenfassung</h2>
-            
-            <div style="background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%); color: white; padding: 2rem; border-radius: 10px; margin-top: 1.5rem;">
-                <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">💡 Die wichtigsten Erkenntnisse</h3>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="padding: 0.5rem 0; font-size: 1.1rem;">✓ <strong>TCO:</strong> Elektroautos sind über 5 Jahre oft günstiger als Verbrenner</li>
-                    <li style="padding: 0.5rem 0; font-size: 1.1rem;">✓ <strong>Wertverlust:</strong> EVs verlieren aktuell etwas langsamer an Wert</li>
-                    <li style="padding: 0.5rem 0; font-size: 1.1rem;">✓ <strong>Laufende Kosten:</strong> Strom + Service deutlich günstiger als Benzin + Wartung</li>
-                    <li style="padding: 0.5rem 0; font-size: 1.1rem;">✓ <strong>Schweiz:</strong> Kantonale Steuervorteile nutzen (teilweise bis 80% Rabatt)</li>
-                    <li style="padding: 0.5rem 0; font-size: 1.1rem;">✓ <strong>Reichweite:</strong> 400+ km reichen für 95% aller Fahrten</li>
-                    <li style="padding: 0.5rem 0; font-size: 1.1rem;">✓ <strong>Laden:</strong> Zuhause laden ist der Schlüssel (0.15-0.25 CHF/kWh)</li>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-main">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">⚡</div>
+                    <div class="logo-text">EV Technical <span>Insights</span></div>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="dashboard.html">📊 Dashboard</a></li>
+                    <li><a href="fahrzeuge.html">🔋 Fahrzeuge</a></li>
+                    <li><a href="news.html">📰 News</a></li>
+                    <li><a href="laden.html">⚡ Laden</a></li>
+                    <li><a href="ratgeber.html" class="active">📋 Ratgeber</a></li>
+                    <li><a href="service.html">🔧 Service</a></li>
+                    <li><a href="reichweite.html">📏 Reichweite</a></li>
                 </ul>
             </div>
         </div>
-    </div>
+    </header>
 
-    <script>
-        // Cost Calculator
-        function calculateCosts() {
-            const purchasePrice = parseFloat(document.getElementById('purchasePrice').value);
-            const annualKm = parseFloat(document.getElementById('annualKm').value);
-            const electricityPrice = parseFloat(document.getElementById('electricityPrice').value);
-            const consumption = parseFloat(document.getElementById('consumption').value);
-            const insurance = parseFloat(document.getElementById('insurance').value);
-            const service = parseFloat(document.getElementById('service').value);
-            
-            // Calculations
-            const annualElectricity = (annualKm / 100) * consumption * electricityPrice;
-            const annualRunning = annualElectricity + insurance + service;
-            const depreciation = purchasePrice * 0.4; // 40% over 5 years
-            const totalCost = purchasePrice + (annualRunning * 5) - (purchasePrice - depreciation);
-            
-            // Display results
-            document.getElementById('resultPurchase').textContent = 'CHF ' + purchasePrice.toLocaleString('de-CH');
-            document.getElementById('resultElectricity').textContent = 'CHF ' + Math.round(annualElectricity).toLocaleString('de-CH');
-            document.getElementById('resultRunning').textContent = 'CHF ' + Math.round(annualRunning).toLocaleString('de-CH');
-            document.getElementById('resultTotal').textContent = 'CHF ' + Math.round(totalCost).toLocaleString('de-CH');
-            
-            document.getElementById('results').style.display = 'grid';
-        }
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>📋 Ratgeber & Guides</h1>
+            <p class="page-subtitle">Expertenwissen für Ihren Umstieg auf Elektromobilität</p>
+        </div>
+    </section>
 
-        // Depreciation Chart
-        const ctx = document.getElementById('depreciationChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Neu', '1 Jahr', '2 Jahre', '3 Jahre', '4 Jahre', '5 Jahre'],
-                datasets: [{
-                    label: 'Elektroauto',
-                    data: [100, 85, 72, 63, 56, 50],
-                    borderColor: '#00b4d8',
-                    backgroundColor: 'rgba(0, 180, 216, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }, {
-                    label: 'Verbrenner',
-                    data: [100, 78, 62, 51, 43, 37],
-                    borderColor: '#ef476f',
-                    backgroundColor: 'rgba(239, 71, 111, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        title: {
-                            display: true,
-                            text: 'Restwert (%)'
-                        }
-                    }
-                }
-            }
-        });
+    <main>
+        <div class="container">
+            <!-- Categories -->
+            <section class="categories-section">
+                <div class="category-grid">
+                    <a href="#" class="category-card">
+                        <div class="category-icon">🛒</div>
+                        <h3 class="category-title">Kaufberatung</h3>
+                        <span class="category-count">12 Artikel</span>
+                    </a>
+                    <a href="#" class="category-card">
+                        <div class="category-icon">🔌</div>
+                        <h3 class="category-title">Laden & Wallbox</h3>
+                        <span class="category-count">8 Artikel</span>
+                    </a>
+                    <a href="#" class="category-card">
+                        <div class="category-icon">💰</div>
+                        <h3 class="category-title">Kosten & Förderung</h3>
+                        <span class="category-count">6 Artikel</span>
+                    </a>
+                    <a href="#" class="category-card">
+                        <div class="category-icon">❄️</div>
+                        <h3 class="category-title">Tipps & Tricks</h3>
+                        <span class="category-count">15 Artikel</span>
+                    </a>
+                </div>
+            </section>
 
-        // Auto-calculate on load
-        window.addEventListener('load', function() {
-            calculateCosts();
-        });
+            <!-- Featured Guide -->
+            <div class="featured-guide">
+                <div class="featured-image">
+                    <span class="featured-image-icon">🚗</span>
+                </div>
+                <div class="featured-body">
+                    <div class="featured-badge">⭐ HIGHLIGHT 2025</div>
+                    <h2 class="featured-title">Der ultimative EV-Kaufratgeber</h2>
+                    <p class="featured-excerpt">Von der Bedarfsanalyse über den Modellvergleich bis zur Probefahrt: Unser umfassender Guide begleitet Sie durch alle Schritte zum perfekten Elektroauto.</p>
+                    <a href="#" class="featured-btn">Jetzt lesen →</a>
+                </div>
+            </div>
 
-        // Recalculate on input change
-        ['purchasePrice', 'annualKm', 'electricityPrice', 'consumption', 'insurance', 'service'].forEach(id => {
-            document.getElementById(id).addEventListener('input', calculateCosts);
-        });
-    </script>
+            <!-- Popular Guides -->
+            <div class="section-header">
+                <h2 class="section-title">🔥 Beliebte Ratgeber</h2>
+                <a href="#" class="view-all">Alle anzeigen →</a>
+            </div>
+            <div class="guide-grid">
+                <article class="guide-card">
+                    <div class="guide-image">
+                        <span class="guide-badge popular">BELIEBT</span>
+                        <span class="guide-image-icon">🔋</span>
+                    </div>
+                    <div class="guide-body">
+                        <span class="guide-category">Batterietechnik</span>
+                        <h3 class="guide-title">LFP vs. NMC: Welche Batterie ist besser für Sie?</h3>
+                        <p class="guide-excerpt">Vor- und Nachteile der beiden Batterietypen im direkten Vergleich.</p>
+                        <div class="guide-meta">
+                            <span class="guide-reading">8 Min. Lesezeit</span>
+                            <a href="#" class="guide-link">Lesen →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="guide-card">
+                    <div class="guide-image">
+                        <span class="guide-image-icon">🏠</span>
+                    </div>
+                    <div class="guide-body">
+                        <span class="guide-category">Laden</span>
+                        <h3 class="guide-title">Die richtige Wallbox für Ihr Zuhause</h3>
+                        <p class="guide-excerpt">11 kW oder 22 kW? Mit oder ohne Lastmanagement? Wir klären auf.</p>
+                        <div class="guide-meta">
+                            <span class="guide-reading">10 Min. Lesezeit</span>
+                            <a href="#" class="guide-link">Lesen →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="guide-card">
+                    <div class="guide-image">
+                        <span class="guide-badge">NEU</span>
+                        <span class="guide-image-icon">❄️</span>
+                    </div>
+                    <div class="guide-body">
+                        <span class="guide-category">Tipps</span>
+                        <h3 class="guide-title">Reichweite im Winter maximieren</h3>
+                        <p class="guide-excerpt">15 Tipps, um auch bei Minusgraden möglichst weit zu kommen.</p>
+                        <div class="guide-meta">
+                            <span class="guide-reading">6 Min. Lesezeit</span>
+                            <a href="#" class="guide-link">Lesen →</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Checklist -->
+            <div class="checklist-section">
+                <div class="checklist-header">
+                    <div class="checklist-icon">✅</div>
+                    <div>
+                        <h2 class="checklist-title">Checkliste: Vor dem EV-Kauf</h2>
+                        <p class="checklist-subtitle">Diese Punkte sollten Sie vor dem Kauf klären</p>
+                    </div>
+                </div>
+                <div class="checklist-grid">
+                    <div class="checklist-item">
+                        <span class="checklist-check">✓</span>
+                        <span class="checklist-text">Tägliche Fahrstrecke und Reichweitenbedarf ermitteln</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="checklist-check">✓</span>
+                        <span class="checklist-text">Lademöglichkeit zu Hause oder am Arbeitsplatz prüfen</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="checklist-check">✓</span>
+                        <span class="checklist-text">Budget inkl. Förderungen und Einsparungen berechnen</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="checklist-check">✓</span>
+                        <span class="checklist-text">Verschiedene Modelle Probe fahren</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="checklist-check">✓</span>
+                        <span class="checklist-text">Lieferzeiten und Verfügbarkeit abfragen</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="checklist-check">✓</span>
+                        <span class="checklist-text">Versicherung und Servicekosten vergleichen</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tools -->
+            <div class="section-header">
+                <h2 class="section-title">🛠️ Praktische Tools</h2>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">🧮</div>
+                    <h3 class="tool-title">TCO-Rechner</h3>
+                    <p class="tool-desc">Vergleichen Sie die Gesamtkosten von Elektro- und Verbrennerfahrzeugen.</p>
+                    <button class="tool-btn">Berechnen →</button>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">📏</div>
+                    <h3 class="tool-title">Reichweiten-Rechner</h3>
+                    <p class="tool-desc">Berechnen Sie die realistische Reichweite für Ihre Fahrbedingungen.</p>
+                    <button class="tool-btn">Berechnen →</button>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">💰</div>
+                    <h3 class="tool-title">Förder-Finder</h3>
+                    <p class="tool-desc">Finden Sie alle verfügbaren Förderungen in Ihrem Kanton.</p>
+                    <button class="tool-btn">Suchen →</button>
+                </div>
+            </div>
+
+            <!-- FAQ -->
+            <div class="section-header">
+                <h2 class="section-title">❓ Häufige Fragen</h2>
+            </div>
+            <div class="faq-section">
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <h3 class="faq-question"><span class="faq-q">Q</span> Wie weit kommt ein Elektroauto wirklich?</h3>
+                        <p class="faq-answer">Die reale Reichweite liegt meist 10-30% unter dem WLTP-Wert, abhängig von Fahrweise, Temperatur und Streckenprofil.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3 class="faq-question"><span class="faq-q">Q</span> Wie lange hält die Batterie?</h3>
+                        <p class="faq-answer">Moderne EV-Batterien sind auf 8-10 Jahre oder 160'000 km ausgelegt und behalten dabei mindestens 70-80% ihrer Kapazität.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3 class="faq-question"><span class="faq-q">Q</span> Brauche ich eine Wallbox zu Hause?</h3>
+                        <p class="faq-answer">Eine Wallbox ist nicht zwingend nötig, aber empfehlenswert. Sie lädt schneller und sicherer als eine normale Steckdose.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3 class="faq-question"><span class="faq-q">Q</span> Ist ein Elektroauto wirklich günstiger?</h3>
+                        <p class="faq-answer">Ja, bei den Gesamtkosten (TCO) über 5 Jahre sind EVs meist günstiger dank niedrigerer Energie- und Wartungskosten.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <div class="logo-icon">⚡</div>
+                        <div class="logo-text">EV Technical <span>Insights</span></div>
+                    </a>
+                    <p>Unabhängige, verifizierte und technisch fundierte Berichterstattung zur Elektromobilität in der Schweiz.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Analysen</h4>
+                    <ul>
+                        <li><a href="dashboard.html">Marktdaten</a></li>
+                        <li><a href="fahrzeuge.html">Fahrzeug-Datenbank</a></li>
+                        <li><a href="laden.html">Ladeinfrastruktur</a></li>
+                        <li><a href="reichweite.html">Reichweiten-Analyse</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Ratgeber</h4>
+                    <ul>
+                        <li><a href="ratgeber.html">Kaufberatung</a></li>
+                        <li><a href="service.html">Service & Wartung</a></li>
+                        <li><a href="#">TCO-Rechner</a></li>
+                        <li><a href="#">Förderungen</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Über uns</h4>
+                    <ul>
+                        <li><a href="#">Redaktion</a></li>
+                        <li><a href="#">Methodik</a></li>
+                        <li><a href="#">Quellen</a></li>
+                        <li><a href="#">Kontakt</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2025 EV Technical Insights. Alle Rechte vorbehalten.</p>
+                <div class="footer-legal">
+                    <a href="#">Datenschutz</a>
+                    <a href="#">Impressum</a>
+                    <a href="#">AGB</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
