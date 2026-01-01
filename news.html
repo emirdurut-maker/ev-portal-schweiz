@@ -3,13 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="EV News Hub: Live-Nachrichten aus 25+ Quellen zur Elektromobilität. Aktuelle Meldungen aus Deutschland, Schweiz, EU und international - automatisch aktualisiert.">
+    <meta name="keywords" content="Elektroauto News, EV Nachrichten, Elektromobilität aktuell, Tesla News, BYD News, Ladeinfrastruktur, E-Auto Neuheiten">
+    <meta name="author" content="EV Technical Insights">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://emirdurut-maker.github.io/ev-portal-schweiz/news.html">
+    <meta property="og:title" content="EV News Hub | Live-Nachrichten zur Elektromobilität">
+    <meta property="og:description" content="Aktuelle News aus 25+ Quellen zur Elektromobilität - automatisch aktualisiert.">
+    <meta property="og:image" content="https://emirdurut-maker.github.io/ev-portal-schweiz/og-image.png">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="EV News Hub - Elektromobilität News">
+    <meta name="twitter:description" content="Live-News aus 25+ Quellen zur Elektromobilität">
+    
+    <link rel="canonical" href="https://emirdurut-maker.github.io/ev-portal-schweiz/news.html">
+    
     <title>News | EV Technical Insights</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        :root{--navy:#002B5B;--navy-dark:#001a38;--cyan:#00F2FF;--cyan-dim:rgba(0,242,255,0.15);--surface:#F9FAFB;--stone:#E5E7EB;--anthracite:#1F2937;--text-secondary:#6B7280;--success:#10B981;--font-headline:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace}
+        :root{--navy:#002B5B;--navy-dark:#001a38;--cyan:#00F2FF;--cyan-dim:rgba(0,242,255,0.15);--surface:#F9FAFB;--stone:#E5E7EB;--anthracite:#1F2937;--text-secondary:#6B7280;--font-headline:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace}
         body{font-family:var(--font-headline);background:var(--surface);color:var(--anthracite)}
         .container{max-width:1280px;margin:0 auto;padding:0 24px}
+        
+        /* Header */
         .header{background:var(--navy);color:white;position:sticky;top:0;z-index:1000}
         .header-main{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
         .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:white}
@@ -19,72 +44,71 @@
         .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:500;padding:10px 16px;border-radius:6px;transition:all 0.2s}
         .nav-links a:hover{color:var(--cyan);background:rgba(0,242,255,0.1)}
         .nav-links a.active{background:var(--cyan);color:var(--navy)}
+        .mobile-menu-btn{display:none;background:none;border:none;color:white;font-size:28px;cursor:pointer;padding:8px}
+        
+        /* Mobile Menu */
+        .mobile-menu{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--navy);z-index:999;display:flex;flex-direction:column;padding:80px 24px 24px;transform:translateX(100%);transition:transform 0.3s}
+        .mobile-menu.active{transform:translateX(0)}
+        .mobile-menu a{color:white;text-decoration:none;font-size:20px;font-weight:600;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.1)}
+        .mobile-menu a:hover{color:var(--cyan)}
+        .mobile-menu-close{position:absolute;top:20px;right:20px;background:none;border:none;color:white;font-size:32px;cursor:pointer}
+        
+        /* Page Header */
         .page-header{background:linear-gradient(135deg,var(--navy),var(--navy-dark));color:white;padding:48px 0}
-        .page-header-content{display:flex;justify-content:space-between;align-items:flex-start}
+        .page-header-content{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:24px}
         .page-header h1{font-size:36px;margin-bottom:8px}
         .page-subtitle{font-family:var(--font-mono);font-size:14px;color:rgba(255,255,255,0.7)}
+        .stats-bar{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap}
+        .stat-pill{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);padding:8px 16px;border-radius:20px;font-family:var(--font-mono);font-size:12px;display:flex;align-items:center;gap:8px}
+        .stat-pill strong{color:var(--cyan)}
         .translate-box{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:12px 16px}
         .translate-label{font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:6px;display:block}
         
-        /* Stats Bar */
-        .stats-bar{display:flex;gap:24px;margin-top:20px;flex-wrap:wrap}
-        .stat-pill{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);padding:8px 16px;border-radius:20px;font-family:var(--font-mono);font-size:12px;display:flex;align-items:center;gap:8px}
-        .stat-pill strong{color:var(--cyan)}
-        
-        /* Filter Tabs */
+        /* Filters */
         .filter-section{background:white;border-bottom:1px solid var(--stone);padding:16px 0;position:sticky;top:76px;z-index:100}
         .filter-row{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
         .filter-tabs{display:flex;gap:6px;flex-wrap:wrap}
-        .filter-tab{padding:8px 14px;border:2px solid var(--stone);border-radius:6px;font-size:12px;font-weight:600;background:white;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:4px}
+        .filter-tab{padding:10px 16px;border:2px solid var(--stone);border-radius:6px;font-size:13px;font-weight:600;background:white;cursor:pointer;transition:all 0.2s}
         .filter-tab:hover{border-color:var(--navy)}
         .filter-tab.active{border-color:var(--cyan);background:var(--cyan);color:var(--navy)}
-        .filter-tab .flag{font-size:14px}
         .search-box{position:relative}
-        .search-box input{padding:10px 16px 10px 40px;border:2px solid var(--stone);border-radius:6px;font-size:13px;width:220px}
+        .search-box input{padding:10px 16px 10px 40px;border:2px solid var(--stone);border-radius:6px;font-size:13px;width:200px}
         .search-box input:focus{outline:none;border-color:var(--cyan)}
         .search-box::before{content:"🔍";position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px}
         
-        /* News Layout */
+        /* News Grid */
         .news-section{padding:40px 0 60px}
         .news-grid{display:grid;grid-template-columns:2fr 1fr;gap:32px}
-        
-        /* News Feed */
         .news-feed{display:flex;flex-direction:column;gap:20px}
+        
+        /* News Card */
         .news-card{background:white;border-radius:12px;border:1px solid var(--stone);overflow:hidden;transition:all 0.3s}
         .news-card:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,43,91,0.12);border-color:var(--cyan)}
         .news-card a{text-decoration:none;color:inherit;display:block}
         .news-card-inner{display:flex;gap:20px;padding:20px}
-        .news-image{width:160px;height:120px;background:linear-gradient(135deg,var(--navy-dark),var(--navy));border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
-        .news-image-placeholder{font-size:32px;opacity:0.3}
-        .news-flag{position:absolute;top:8px;left:8px;font-size:16px}
-        .news-content{flex:1;display:flex;flex-direction:column}
-        .news-meta{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+        .news-image{width:140px;height:100px;background:linear-gradient(135deg,var(--navy-dark),var(--navy));border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+        .news-image-placeholder{font-size:28px;opacity:0.3}
+        .news-flag{position:absolute;top:6px;left:6px;font-size:14px}
+        .news-content{flex:1;display:flex;flex-direction:column;min-width:0}
+        .news-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
         .news-source{font-family:var(--font-mono);font-size:10px;background:var(--navy);color:white;padding:3px 8px;border-radius:4px;font-weight:600}
         .news-category{font-family:var(--font-mono);font-size:10px;color:var(--text-secondary);background:var(--surface);padding:3px 8px;border-radius:4px}
         .news-date{font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);margin-left:auto}
-        .news-title{font-size:16px;font-weight:700;color:var(--navy);line-height:1.4;margin-bottom:8px}
-        .news-excerpt{font-size:13px;color:var(--text-secondary);line-height:1.5;flex:1}
-        .news-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--stone)}
-        .news-lang{font-size:11px;color:var(--text-secondary)}
-        .news-read-more{color:var(--cyan);font-weight:600;font-size:12px}
+        .news-title{font-size:15px;font-weight:700;color:var(--navy);line-height:1.4;margin-bottom:8px}
+        .news-excerpt{font-size:13px;color:var(--text-secondary);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
         
         /* Sidebar */
         .sidebar{display:flex;flex-direction:column;gap:20px}
         .sidebar-card{background:white;border-radius:12px;border:1px solid var(--stone);overflow:hidden}
-        .sidebar-header{background:var(--navy);color:white;padding:14px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+        .sidebar-header{background:var(--navy);color:white;padding:14px 16px;font-size:13px;font-weight:700}
         .sidebar-content{padding:12px}
-        .quick-link{display:flex;align-items:center;gap:10px;padding:10px;border-radius:6px;text-decoration:none;color:var(--anthracite);transition:all 0.2s;border:1px solid transparent}
-        .quick-link:hover{background:var(--cyan-dim);border-color:var(--cyan)}
+        .quick-link{display:flex;align-items:center;gap:10px;padding:10px;border-radius:6px;text-decoration:none;color:var(--anthracite);transition:all 0.2s}
+        .quick-link:hover{background:var(--cyan-dim)}
         .quick-link-icon{width:32px;height:32px;background:var(--surface);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px}
-        .quick-link-text{flex:1}
-        .quick-link-title{font-size:12px;font-weight:600;margin-bottom:1px}
+        .quick-link-title{font-size:12px;font-weight:600}
         .quick-link-desc{font-size:10px;color:var(--text-secondary)}
-        
-        /* Source Grid */
-        .source-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-        .source-chip{display:flex;align-items:center;gap:6px;padding:8px;background:var(--surface);border-radius:6px;font-size:11px}
-        .source-chip .flag{font-size:12px}
-        .source-chip span{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .source-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+        .source-chip{display:flex;align-items:center;gap:4px;padding:6px 8px;background:var(--surface);border-radius:4px;font-size:10px}
         
         /* Loading */
         .loading{text-align:center;padding:60px 20px}
@@ -94,21 +118,48 @@
         /* Footer */
         .footer{background:var(--navy-dark);color:white;padding:40px 0 24px}
         .footer-content{display:flex;justify-content:space-between;align-items:center}
+        .footer-links{display:flex;gap:24px}
+        .footer-links a{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none}
+        .footer-links a:hover{color:var(--cyan)}
         .footer-copyright{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5)}
         
-        /* Google Translate Override */
+        /* Google Translate */
         .goog-te-banner-frame{display:none !important}
         body{top:0 !important}
         .skiptranslate{display:none !important}
-        .goog-te-gadget{font-family:var(--font-headline) !important}
-        .goog-te-gadget-simple{background:transparent !important;border:none !important;padding:0 !important}
-        .goog-te-gadget-simple span{color:white !important;font-size:13px !important}
         
-        @media(max-width:1024px){.nav-links{display:none}.news-grid{grid-template-columns:1fr}.sidebar{order:-1}}
-        @media(max-width:768px){.filter-tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:8px}.news-card-inner{flex-direction:column}.news-image{width:100%;height:160px}.page-header-content{flex-direction:column;gap:20px}.search-box input{width:100%}}
+        /* Responsive */
+        @media(max-width:1024px){
+            .nav-links{display:none}
+            .mobile-menu-btn{display:block}
+            .news-grid{grid-template-columns:1fr}
+            .sidebar{order:-1}
+        }
+        @media(max-width:768px){
+            .filter-tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+            .filter-tab{white-space:nowrap;flex-shrink:0}
+            .news-card-inner{flex-direction:column}
+            .news-image{width:100%;height:140px}
+            .page-header h1{font-size:28px}
+            .search-box input{width:100%}
+            .footer-content{flex-direction:column;gap:16px;text-align:center}
+        }
     </style>
 </head>
 <body>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <button class="mobile-menu-close" onclick="toggleMobileMenu()">✕</button>
+        <a href="index.html">🏠 Home</a>
+        <a href="dashboard.html">📊 Dashboard</a>
+        <a href="fahrzeuge.html">🔋 Fahrzeuge</a>
+        <a href="news.html">📰 News</a>
+        <a href="laden.html">⚡ Laden</a>
+        <a href="ratgeber.html">📋 Ratgeber</a>
+        <a href="service.html">🔧 Service</a>
+        <a href="reichweite.html">📏 Reichweite</a>
+    </div>
+
     <header class="header"><div class="container"><div class="header-main">
         <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
         <ul class="nav-links">
@@ -120,6 +171,7 @@
             <li><a href="service.html">🔧 Service</a></li>
             <li><a href="reichweite.html">📏 Reichweite</a></li>
         </ul>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
     </div></div></header>
 
     <section class="page-header"><div class="container">
@@ -130,7 +182,7 @@
                 <div class="stats-bar">
                     <div class="stat-pill">📡 <strong id="source-count">25</strong> Quellen</div>
                     <div class="stat-pill">🌍 <strong>8</strong> Länder</div>
-                    <div class="stat-pill">🔄 <strong>Live</strong> RSS-Feeds</div>
+                    <div class="stat-pill">🔄 <strong>Live</strong> RSS</div>
                 </div>
             </div>
             <div class="translate-box">
@@ -144,105 +196,59 @@
         <div class="filter-row">
             <div class="filter-tabs">
                 <button class="filter-tab active" data-filter="all">🌐 Alle</button>
-                <button class="filter-tab" data-filter="dede"><span class="flag">🇩🇪</span> DACH</button>
-                <button class="filter-tab" data-filter="chch"><span class="flag">🇨🇭</span> Schweiz</button>
-                <button class="filter-tab" data-filter="eueu"><span class="flag">🇪🇺</span> EU</button>
-                <button class="filter-tab" data-filter="hrrs"><span class="flag">🇭🇷</span> Balkan</button>
+                <button class="filter-tab" data-filter="dede">🇩🇪 DACH</button>
+                <button class="filter-tab" data-filter="chch">🇨🇭 Schweiz</button>
+                <button class="filter-tab" data-filter="eueu">🇪🇺 EU</button>
+                <button class="filter-tab" data-filter="hrrs">🇭🇷 Balkan</button>
                 <button class="filter-tab" data-filter="tech">🔧 Technik</button>
                 <button class="filter-tab" data-filter="policy">⚖️ Politik</button>
-                <button class="filter-tab" data-filter="stats">📊 Statistik</button>
             </div>
             <div class="search-box">
-                <input type="text" id="search" placeholder="News durchsuchen...">
+                <input type="text" id="search" placeholder="News suchen...">
             </div>
         </div>
     </div></section>
 
     <main class="news-section"><div class="container">
         <div class="news-grid">
-            <!-- Main Feed -->
             <div class="news-feed" id="news-feed">
-                <div class="loading"><div class="loading-spinner"></div><p>News werden aus 25+ Quellen geladen...</p></div>
+                <div class="loading"><div class="loading-spinner"></div><p>News werden geladen...</p></div>
             </div>
-
-            <!-- Sidebar -->
             <div class="sidebar">
-                <!-- Quick Resources -->
                 <div class="sidebar-card">
                     <div class="sidebar-header">🔗 Wichtige Ressourcen</div>
                     <div class="sidebar-content">
                         <a href="https://www.swiss-emobility.ch" target="_blank" class="quick-link">
                             <div class="quick-link-icon">🇨🇭</div>
-                            <div class="quick-link-text"><div class="quick-link-title">Swiss eMobility</div><div class="quick-link-desc">Verband & Förderkarte CH</div></div>
+                            <div><div class="quick-link-title">Swiss eMobility</div><div class="quick-link-desc">Verband & Förderkarte</div></div>
                         </a>
                         <a href="https://ich-tanke-strom.ch" target="_blank" class="quick-link">
                             <div class="quick-link-icon">⚡</div>
-                            <div class="quick-link-text"><div class="quick-link-title">ich-tanke-strom.ch</div><div class="quick-link-desc">Ladestationen Schweiz</div></div>
+                            <div><div class="quick-link-title">ich-tanke-strom.ch</div><div class="quick-link-desc">Ladestationen CH</div></div>
                         </a>
                         <a href="https://alternative-fuels-observatory.ec.europa.eu" target="_blank" class="quick-link">
                             <div class="quick-link-icon">🇪🇺</div>
-                            <div class="quick-link-text"><div class="quick-link-title">EAFO</div><div class="quick-link-desc">EU Infrastruktur-Daten</div></div>
-                        </a>
-                        <a href="https://www.acea.auto" target="_blank" class="quick-link">
-                            <div class="quick-link-icon">📊</div>
-                            <div class="quick-link-text"><div class="quick-link-title">ACEA</div><div class="quick-link-desc">EU Zulassungszahlen</div></div>
+                            <div><div class="quick-link-title">EAFO</div><div class="quick-link-desc">EU Infrastruktur</div></div>
                         </a>
                         <a href="https://ev-volumes.com" target="_blank" class="quick-link">
-                            <div class="quick-link-icon">🌍</div>
-                            <div class="quick-link-text"><div class="quick-link-title">EV-Volumes</div><div class="quick-link-desc">Weltweite Verkaufszahlen</div></div>
-                        </a>
-                        <a href="https://www.iea.org/reports/global-ev-outlook-2024" target="_blank" class="quick-link">
-                            <div class="quick-link-icon">📈</div>
-                            <div class="quick-link-text"><div class="quick-link-title">IEA EV Outlook</div><div class="quick-link-desc">Globale Marktanalyse</div></div>
+                            <div class="quick-link-icon">📊</div>
+                            <div><div class="quick-link-title">EV-Volumes</div><div class="quick-link-desc">Weltweite Daten</div></div>
                         </a>
                     </div>
                 </div>
-
-                <!-- Active Sources -->
                 <div class="sidebar-card">
                     <div class="sidebar-header">📡 Aktive Quellen</div>
                     <div class="sidebar-content">
                         <div class="source-grid">
-                            <div class="source-chip"><span class="flag">🇩🇪</span><span>Electrive</span></div>
-                            <div class="source-chip"><span class="flag">🇩🇪</span><span>Ecomento</span></div>
-                            <div class="source-chip"><span class="flag">🇩🇪</span><span>Elektroauto-News</span></div>
-                            <div class="source-chip"><span class="flag">🇩🇪</span><span>InsideEVs DE</span></div>
-                            <div class="source-chip"><span class="flag">🇩🇪</span><span>Nextmove</span></div>
-                            <div class="source-chip"><span class="flag">🇩🇪</span><span>Golem</span></div>
-                            <div class="source-chip"><span class="flag">🇪🇺</span><span>CleanTechnica</span></div>
-                            <div class="source-chip"><span class="flag">🇪🇺</span><span>Electrek</span></div>
-                            <div class="source-chip"><span class="flag">🇪🇺</span><span>GreenCarReports</span></div>
-                            <div class="source-chip"><span class="flag">🇪🇺</span><span>Autovista24</span></div>
-                            <div class="source-chip"><span class="flag">🇪🇺</span><span>T&E</span></div>
-                            <div class="source-chip"><span class="flag">🇪🇺</span><span>Sustainable Bus</span></div>
-                            <div class="source-chip"><span class="flag">🇭🇷</span><span>Strujni Krug</span></div>
-                            <div class="source-chip"><span class="flag">🇭🇷</span><span>Autonet.hr</span></div>
-                            <div class="source-chip"><span class="flag">🇷🇸</span><span>Balkan Green</span></div>
-                            <div class="source-chip"><span class="flag">🇷🇸</span><span>Emobilnost</span></div>
+                            <div class="source-chip">🇩🇪 Electrive</div>
+                            <div class="source-chip">🇩🇪 Ecomento</div>
+                            <div class="source-chip">🇩🇪 InsideEVs</div>
+                            <div class="source-chip">🇩🇪 Nextmove</div>
+                            <div class="source-chip">🇪🇺 CleanTechnica</div>
+                            <div class="source-chip">🇪🇺 Electrek</div>
+                            <div class="source-chip">🇭🇷 Strujni Krug</div>
+                            <div class="source-chip">🇷🇸 Balkan Green</div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Expert Blogs -->
-                <div class="sidebar-card">
-                    <div class="sidebar-header">👤 Experten & Foren</div>
-                    <div class="sidebar-content">
-                        <a href="https://www.goingelectric.de/forum/" target="_blank" class="quick-link">
-                            <div class="quick-link-icon">💬</div>
-                            <div class="quick-link-text"><div class="quick-link-title">GoingElectric Forum</div><div class="quick-link-desc">Grösste DE Community</div></div>
-                        </a>
-                        <a href="https://tff-forum.de" target="_blank" class="quick-link">
-                            <div class="quick-link-icon">🚗</div>
-                            <div class="quick-link-text"><div class="quick-link-title">TFF Forum</div><div class="quick-link-desc">Tesla Fahrer & Freunde</div></div>
-                        </a>
-                        <a href="https://www.mobilityhouse.com/de_de/magazin" target="_blank" class="quick-link">
-                            <div class="quick-link-icon">🏠</div>
-                            <div class="quick-link-text"><div class="quick-link-title">Mobility House</div><div class="quick-link-desc">V2G & Energiemanagement</div></div>
-                        </a>
-                        <a href="https://www.handelsblatt.com/edison/" target="_blank" class="quick-link">
-                            <div class="quick-link-icon">💡</div>
-                            <div class="quick-link-text"><div class="quick-link-title">Edison</div><div class="quick-link-desc">Handelsblatt Innovation</div></div>
-                        </a>
                     </div>
                 </div>
             </div>
@@ -251,7 +257,11 @@
 
     <footer class="footer"><div class="container"><div class="footer-content">
         <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
-        <p class="footer-copyright">© 2025 EV Technical Insights · News via RSS</p>
+        <div class="footer-links">
+            <a href="impressum.html">Impressum</a>
+            <a href="datenschutz.html">Datenschutz</a>
+        </div>
+        <p class="footer-copyright">© 2025 EV Technical Insights</p>
     </div></div></footer>
 
     <!-- Google Translate -->
@@ -259,7 +269,7 @@
     function googleTranslateElementInit() {
         new google.translate.TranslateElement({
             pageLanguage: 'de',
-            includedLanguages: 'de,en,fr,it,hr,sr,es,pt,nl,pl,cs,hu,ro,bg,sl',
+            includedLanguages: 'de,en,fr,it,hr,sr,es,pt,nl,pl',
             layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
             autoDisplay: false
         }, 'google_translate_element');
@@ -268,184 +278,134 @@
     <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <script>
-    // =============================================
-    // RSS FEED CONFIGURATION
-    // =============================================
-    
-    const RSS_FEEDS = [
-        // 🇩🇪 DACH - German Sources
-        { name: 'Electrive', url: 'https://www.electrive.net/feed/', region: 'dede', category: 'news', lang: 'DE', flag: '🇩🇪' },
-        { name: 'Elektroauto-News', url: 'https://www.elektroauto-news.net/feed', region: 'dede', category: 'news', lang: 'DE', flag: '🇩🇪' },
-        { name: 'Ecomento', url: 'https://ecomento.de/feed/', region: 'dede', category: 'news', lang: 'DE', flag: '🇩🇪' },
-        { name: 'InsideEVs DE', url: 'https://insideevs.de/rss/news/all/', region: 'dede', category: 'news', lang: 'DE', flag: '🇩🇪' },
-        { name: 'Nextmove', url: 'https://nextmove.de/feed/', region: 'dede', category: 'tech', lang: 'DE', flag: '🇩🇪' },
-        { name: 'Golem E-Mobility', url: 'https://rss.golem.de/rss.php?tp=auto&feed=RSS2.0', region: 'dede', category: 'tech', lang: 'DE', flag: '🇩🇪' },
-        
-        // 🇨🇭 Switzerland
-        { name: 'Swiss eMobility', url: 'https://www.swiss-emobility.ch/de/feed/', region: 'chch', category: 'policy', lang: 'DE', flag: '🇨🇭' },
-        
-        // 🇪🇺 EU-wide / International
-        { name: 'Electrive EN', url: 'https://www.electrive.com/feed/', region: 'eueu', category: 'news', lang: 'EN', flag: '🇪🇺' },
-        { name: 'CleanTechnica', url: 'https://cleantechnica.com/feed/', region: 'eueu', category: 'news', lang: 'EN', flag: '🇪🇺' },
-        { name: 'Electrek', url: 'https://electrek.co/feed/', region: 'eueu', category: 'news', lang: 'EN', flag: '🇺🇸' },
-        { name: 'Green Car Reports', url: 'https://www.greencarreports.com/rss', region: 'eueu', category: 'tech', lang: 'EN', flag: '🇺🇸' },
-        { name: 'Sustainable Bus', url: 'https://www.sustainable-bus.com/feed/', region: 'eueu', category: 'news', lang: 'EN', flag: '🇪🇺' },
-        { name: 'Transport & Environment', url: 'https://www.transportenvironment.org/feed/', region: 'eueu', category: 'policy', lang: 'EN', flag: '🇪🇺' },
-        { name: 'Autovista24', url: 'https://autovista24.autovistagroup.com/feed/', region: 'eueu', category: 'stats', lang: 'EN', flag: '🇪🇺' },
-        
-        // 🇭🇷 Croatia
-        { name: 'Strujni Krug', url: 'https://strujnikrug.hr/feed/', region: 'hrrs', category: 'news', lang: 'HR', flag: '🇭🇷' },
-        { name: 'Autonet.hr', url: 'https://www.autonet.hr/feed/', region: 'hrrs', category: 'news', lang: 'HR', flag: '🇭🇷' },
-        
-        // 🇷🇸 Serbia / Balkan
-        { name: 'Balkan Green Energy', url: 'https://balkangreenenergynews.com/feed/', region: 'hrrs', category: 'news', lang: 'EN', flag: '🇷🇸' },
-        { name: 'Emobilnost', url: 'https://emobilnost.rs/feed/', region: 'hrrs', category: 'news', lang: 'SR', flag: '🇷🇸' },
-        { name: 'Energetski Portal', url: 'https://www.energetskiportal.rs/feed/', region: 'hrrs', category: 'tech', lang: 'SR', flag: '🇷🇸' },
-    ];
+        // Mobile Menu
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+            document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
+        }
 
-    const RSS2JSON_API = 'https://api.rss2json.com/v1/api.json?rss_url=';
-    
-    let allNews = [];
-    let currentFilter = 'all';
-    let searchQuery = '';
+        // RSS Feeds
+        const RSS_FEEDS = [
+            { name: 'Electrive', url: 'https://www.electrive.net/feed/', region: 'dede', category: 'news', lang: 'DE', flag: '🇩🇪' },
+            { name: 'Elektroauto-News', url: 'https://www.elektroauto-news.net/feed', region: 'dede', category: 'news', lang: 'DE', flag: '🇩🇪' },
+            { name: 'Ecomento', url: 'https://ecomento.de/feed/', region: 'dede', category: 'news', lang: 'DE', flag: '🇩🇪' },
+            { name: 'InsideEVs DE', url: 'https://insideevs.de/rss/news/all/', region: 'dede', category: 'news', lang: 'DE', flag: '🇩🇪' },
+            { name: 'Nextmove', url: 'https://nextmove.de/feed/', region: 'dede', category: 'tech', lang: 'DE', flag: '🇩🇪' },
+            { name: 'Electrive EN', url: 'https://www.electrive.com/feed/', region: 'eueu', category: 'news', lang: 'EN', flag: '🇪🇺' },
+            { name: 'CleanTechnica', url: 'https://cleantechnica.com/feed/', region: 'eueu', category: 'news', lang: 'EN', flag: '🇪🇺' },
+            { name: 'Electrek', url: 'https://electrek.co/feed/', region: 'eueu', category: 'news', lang: 'EN', flag: '🇺🇸' },
+            { name: 'Green Car Reports', url: 'https://www.greencarreports.com/rss', region: 'eueu', category: 'tech', lang: 'EN', flag: '🇺🇸' },
+            { name: 'Sustainable Bus', url: 'https://www.sustainable-bus.com/feed/', region: 'eueu', category: 'news', lang: 'EN', flag: '🇪🇺' },
+            { name: 'T&E', url: 'https://www.transportenvironment.org/feed/', region: 'eueu', category: 'policy', lang: 'EN', flag: '🇪🇺' },
+            { name: 'Strujni Krug', url: 'https://strujnikrug.hr/feed/', region: 'hrrs', category: 'news', lang: 'HR', flag: '🇭🇷' },
+            { name: 'Autonet.hr', url: 'https://www.autonet.hr/feed/', region: 'hrrs', category: 'news', lang: 'HR', flag: '🇭🇷' },
+            { name: 'Balkan Green Energy', url: 'https://balkangreenenergynews.com/feed/', region: 'hrrs', category: 'news', lang: 'EN', flag: '🇷🇸' },
+            { name: 'Emobilnost', url: 'https://emobilnost.rs/feed/', region: 'hrrs', category: 'news', lang: 'SR', flag: '🇷🇸' },
+        ];
 
-    // Load all feeds
-    async function loadAllFeeds() {
-        document.getElementById('source-count').textContent = RSS_FEEDS.length;
-        
-        const feedPromises = RSS_FEEDS.map(feed => loadFeed(feed));
-        const results = await Promise.allSettled(feedPromises);
-        
-        allNews = results
-            .filter(r => r.status === 'fulfilled' && r.value.length > 0)
-            .flatMap(r => r.value)
-            .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-        
-        renderNews();
-    }
+        const RSS2JSON_API = 'https://api.rss2json.com/v1/api.json?rss_url=';
+        let allNews = [];
+        let currentFilter = 'all';
+        let searchQuery = '';
 
-    // Load single feed
-    async function loadFeed(feed) {
-        try {
-            const response = await fetch(RSS2JSON_API + encodeURIComponent(feed.url));
-            const data = await response.json();
+        async function loadAllFeeds() {
+            document.getElementById('source-count').textContent = RSS_FEEDS.length;
+            const results = await Promise.allSettled(RSS_FEEDS.map(feed => loadFeed(feed)));
+            allNews = results.filter(r => r.status === 'fulfilled' && r.value.length > 0).flatMap(r => r.value).sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+            renderNews();
+        }
+
+        async function loadFeed(feed) {
+            try {
+                const response = await fetch(RSS2JSON_API + encodeURIComponent(feed.url));
+                const data = await response.json();
+                if (data.status === 'ok') {
+                    return data.items.slice(0, 5).map(item => ({
+                        title: item.title,
+                        link: item.link,
+                        pubDate: item.pubDate,
+                        description: item.description?.replace(/<[^>]*>/g, '').slice(0, 150) + '...',
+                        source: feed.name,
+                        region: feed.region,
+                        category: feed.category,
+                        lang: feed.lang,
+                        flag: feed.flag
+                    }));
+                }
+                return [];
+            } catch (e) { return []; }
+        }
+
+        function renderNews() {
+            const feed = document.getElementById('news-feed');
+            let news = allNews;
             
-            if (data.status === 'ok') {
-                return data.items.slice(0, 5).map(item => ({
-                    title: item.title,
-                    link: item.link,
-                    pubDate: item.pubDate,
-                    description: item.description?.replace(/<[^>]*>/g, '').slice(0, 180) + '...',
-                    source: feed.name,
-                    region: feed.region,
-                    category: feed.category,
-                    lang: feed.lang,
-                    flag: feed.flag,
-                    thumbnail: item.thumbnail || item.enclosure?.link || null
-                }));
+            if (currentFilter !== 'all') {
+                if (['tech', 'policy'].includes(currentFilter)) {
+                    news = news.filter(n => n.category === currentFilter);
+                } else {
+                    news = news.filter(n => n.region === currentFilter);
+                }
             }
-            return [];
-        } catch (e) {
-            console.warn(`Feed ${feed.name} nicht erreichbar`);
-            return [];
-        }
-    }
-
-    // Render news
-    function renderNews() {
-        const feed = document.getElementById('news-feed');
-        let news = allNews;
-        
-        // Apply filter
-        if (currentFilter !== 'all') {
-            if (['tech', 'policy', 'stats'].includes(currentFilter)) {
-                news = news.filter(n => n.category === currentFilter);
-            } else {
-                news = news.filter(n => n.region === currentFilter);
+            
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                news = news.filter(n => n.title.toLowerCase().includes(q) || n.source.toLowerCase().includes(q));
             }
-        }
-        
-        // Apply search
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            news = news.filter(n => 
-                n.title.toLowerCase().includes(query) || 
-                n.source.toLowerCase().includes(query)
-            );
-        }
 
-        if (news.length === 0) {
-            feed.innerHTML = '<div class="loading"><p>Keine News gefunden. Versuchen Sie einen anderen Filter.</p></div>';
-            return;
-        }
+            if (news.length === 0) {
+                feed.innerHTML = '<div class="loading"><p>Keine News gefunden.</p></div>';
+                return;
+            }
 
-        feed.innerHTML = news.slice(0, 30).map(item => `
-            <article class="news-card">
-                <a href="${item.link}" target="_blank">
-                    <div class="news-card-inner">
-                        <div class="news-image">
-                            <span class="news-image-placeholder">📰</span>
-                            <span class="news-flag">${item.flag}</span>
-                        </div>
-                        <div class="news-content">
-                            <div class="news-meta">
-                                <span class="news-source">${item.source}</span>
-                                <span class="news-category">${getCategoryLabel(item.category)}</span>
-                                <span class="news-date">${formatDate(item.pubDate)}</span>
-                            </div>
-                            <h3 class="news-title">${item.title}</h3>
-                            <p class="news-excerpt">${item.description}</p>
-                            <div class="news-footer">
-                                <span class="news-lang">${item.flag} ${item.lang}</span>
-                                <span class="news-read-more">Weiterlesen →</span>
+            feed.innerHTML = news.slice(0, 25).map(item => `
+                <article class="news-card">
+                    <a href="${item.link}" target="_blank" rel="noopener">
+                        <div class="news-card-inner">
+                            <div class="news-image"><span class="news-image-placeholder">📰</span><span class="news-flag">${item.flag}</span></div>
+                            <div class="news-content">
+                                <div class="news-meta">
+                                    <span class="news-source">${item.source}</span>
+                                    <span class="news-category">${item.category}</span>
+                                    <span class="news-date">${formatDate(item.pubDate)}</span>
+                                </div>
+                                <h2 class="news-title">${item.title}</h2>
+                                <p class="news-excerpt">${item.description}</p>
                             </div>
                         </div>
-                    </div>
-                </a>
-            </article>
-        `).join('');
-    }
+                    </a>
+                </article>
+            `).join('');
+        }
 
-    // Helper: Format date
-    function formatDate(dateStr) {
-        const date = new Date(dateStr);
-        const now = new Date();
-        const diffHours = Math.floor((now - date) / (1000 * 60 * 60));
-        
-        if (diffHours < 1) return 'Gerade eben';
-        if (diffHours < 24) return `Vor ${diffHours}h`;
-        if (diffHours < 48) return 'Gestern';
-        return date.toLocaleDateString('de-CH', { day: '2-digit', month: 'short' });
-    }
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diffHours = Math.floor((now - date) / (1000 * 60 * 60));
+            if (diffHours < 1) return 'Gerade eben';
+            if (diffHours < 24) return `Vor ${diffHours}h`;
+            if (diffHours < 48) return 'Gestern';
+            return date.toLocaleDateString('de-CH', { day: '2-digit', month: 'short' });
+        }
 
-    // Helper: Category label
-    function getCategoryLabel(category) {
-        const labels = { 'news': '📰 News', 'tech': '🔧 Technik', 'policy': '⚖️ Politik', 'stats': '📊 Statistik' };
-        return labels[category] || category;
-    }
-
-    // Filter tabs
-    document.querySelectorAll('.filter-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            currentFilter = tab.dataset.filter;
-            renderNews();
+        // Filter Tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentFilter = tab.dataset.filter;
+                renderNews();
+            });
         });
-    });
 
-    // Search
-    let searchTimeout;
-    document.getElementById('search').addEventListener('input', (e) => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            searchQuery = e.target.value;
-            renderNews();
-        }, 300);
-    });
+        // Search
+        let searchTimeout;
+        document.getElementById('search').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => { searchQuery = e.target.value; renderNews(); }, 300);
+        });
 
-    // Initialize
-    loadAllFeeds();
+        loadAllFeeds();
     </script>
 </body>
 </html>
