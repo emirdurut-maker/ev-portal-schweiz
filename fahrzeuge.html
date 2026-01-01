@@ -3,14 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Elektroauto-Datenbank Schweiz: 100+ Modelle mit Preisen, Reichweite, Batterie und technischen Daten. Vergleichen Sie Tesla, BMW, VW, Hyundai und mehr.">
+    <meta name="keywords" content="Elektroauto Vergleich, EV Datenbank, Elektroauto Preise Schweiz, Tesla Model 3, BMW iX, VW ID.4, Reichweite Elektroauto">
+    <meta name="author" content="EV Technical Insights">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://emirdurut-maker.github.io/ev-portal-schweiz/fahrzeuge.html">
+    <meta property="og:title" content="Elektroauto-Datenbank Schweiz | 100+ Modelle vergleichen">
+    <meta property="og:description" content="Vergleichen Sie 100+ Elektroautos mit Preisen, Reichweite und technischen Daten.">
+    <meta property="og:image" content="https://emirdurut-maker.github.io/ev-portal-schweiz/og-image.png">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Elektroauto-Datenbank Schweiz">
+    <meta name="twitter:description" content="100+ Elektroautos vergleichen - Preise, Reichweite, Specs">
+    
+    <link rel="canonical" href="https://emirdurut-maker.github.io/ev-portal-schweiz/fahrzeuge.html">
+    
     <title>Fahrzeug-Datenbank | EV Technical Insights</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        :root{--navy:#002B5B;--navy-dark:#001a38;--cyan:#00F2FF;--cyan-dim:rgba(0,242,255,0.15);--surface:#F9FAFB;--stone:#E5E7EB;--anthracite:#1F2937;--text-secondary:#6B7280;--success:#10B981;--font-headline:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace}
+        :root{--navy:#002B5B;--navy-dark:#001a38;--cyan:#00F2FF;--cyan-dim:rgba(0,242,255,0.15);--surface:#F9FAFB;--stone:#E5E7EB;--anthracite:#1F2937;--text-secondary:#6B7280;--font-headline:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace}
         body{font-family:var(--font-headline);background:var(--surface);color:var(--anthracite)}
         .container{max-width:1400px;margin:0 auto;padding:0 24px}
+        
+        /* Header */
         .header{background:var(--navy);color:white;position:sticky;top:0;z-index:1000}
         .header-main{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
         .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:white}
@@ -20,28 +45,44 @@
         .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:500;padding:10px 16px;border-radius:6px;transition:all 0.2s}
         .nav-links a:hover{color:var(--cyan);background:rgba(0,242,255,0.1)}
         .nav-links a.active{background:var(--cyan);color:var(--navy)}
+        .mobile-menu-btn{display:none;background:none;border:none;color:white;font-size:28px;cursor:pointer;padding:8px}
+        
+        /* Mobile Menu */
+        .mobile-menu{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--navy);z-index:999;display:flex;flex-direction:column;padding:80px 24px 24px;transform:translateX(100%);transition:transform 0.3s}
+        .mobile-menu.active{transform:translateX(0)}
+        .mobile-menu a{color:white;text-decoration:none;font-size:20px;font-weight:600;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.1)}
+        .mobile-menu a:hover{color:var(--cyan)}
+        .mobile-menu-close{position:absolute;top:20px;right:20px;background:none;border:none;color:white;font-size:32px;cursor:pointer}
+        
+        /* Page Header */
         .page-header{background:linear-gradient(135deg,var(--navy),var(--navy-dark));color:white;padding:48px 0}
         .page-header h1{font-size:36px;margin-bottom:8px}
         .page-subtitle{font-family:var(--font-mono);font-size:14px;color:rgba(255,255,255,0.7)}
-        .stats-bar{display:flex;gap:32px;margin-top:24px}
+        .stats-bar{display:flex;gap:32px;margin-top:24px;flex-wrap:wrap}
         .stat-item{display:flex;align-items:center;gap:8px}
         .stat-value{font-family:var(--font-mono);font-size:24px;font-weight:700;color:var(--cyan)}
         .stat-label{font-size:13px;color:rgba(255,255,255,0.6)}
+        
+        /* Filters */
         .filters-section{background:white;border-bottom:1px solid var(--stone);padding:20px 0;position:sticky;top:76px;z-index:100}
-        .filters-row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
-        .search-box{flex:1;min-width:250px;position:relative}
-        .search-box input{width:100%;padding:12px 16px 12px 44px;border:2px solid var(--stone);border-radius:8px;font-size:15px;transition:all 0.2s}
+        .filters-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+        .search-box{flex:1;min-width:200px;position:relative}
+        .search-box input{width:100%;padding:12px 16px 12px 44px;border:2px solid var(--stone);border-radius:8px;font-size:14px;transition:all 0.2s}
         .search-box input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-dim)}
-        .search-box::before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px}
-        .filter-select{padding:12px 16px;border:2px solid var(--stone);border-radius:8px;font-size:14px;background:white;cursor:pointer;min-width:150px}
+        .search-box::before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px}
+        .filter-select{padding:12px 16px;border:2px solid var(--stone);border-radius:8px;font-size:14px;background:white;cursor:pointer;min-width:140px}
         .filter-select:focus{outline:none;border-color:var(--cyan)}
-        .results-count{font-family:var(--font-mono);font-size:13px;color:var(--text-secondary);margin-left:auto}
+        .results-count{font-family:var(--font-mono);font-size:13px;color:var(--text-secondary)}
+        
+        /* Vehicles Grid */
         .vehicles-section{padding:40px 0 60px}
-        .vehicles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px}
+        .vehicles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
+        
+        /* Vehicle Card */
         .vehicle-card{background:white;border-radius:12px;border:1px solid var(--stone);overflow:hidden;transition:all 0.3s}
         .vehicle-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,43,91,0.15);border-color:var(--cyan)}
-        .vehicle-image{height:180px;background:linear-gradient(135deg,var(--navy-dark),var(--navy));display:flex;align-items:center;justify-content:center;position:relative}
-        .vehicle-image-placeholder{font-size:64px;opacity:0.5}
+        .vehicle-image{height:160px;background:linear-gradient(135deg,var(--navy-dark),var(--navy));display:flex;align-items:center;justify-content:center;position:relative}
+        .vehicle-image-placeholder{font-size:56px;opacity:0.4}
         .vehicle-badge{position:absolute;top:12px;right:12px;background:var(--cyan);color:var(--navy);font-family:var(--font-mono);font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px}
         .vehicle-content{padding:20px}
         .vehicle-brand{font-family:var(--font-mono);font-size:12px;color:var(--cyan);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
@@ -56,21 +97,51 @@
         .vehicle-price{font-size:22px;font-weight:800;color:var(--navy)}
         .vehicle-cta{padding:10px 20px;background:var(--navy);color:white;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s}
         .vehicle-cta:hover{background:var(--cyan);color:var(--navy)}
-        .loading{text-align:center;padding:80px 20px}
+        
+        /* Loading & No Results */
+        .loading,.no-results{text-align:center;padding:80px 20px}
         .loading-spinner{width:50px;height:50px;border:4px solid var(--stone);border-top-color:var(--cyan);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
         @keyframes spin{to{transform:rotate(360deg)}}
-        .no-results{text-align:center;padding:80px 20px}
         .no-results-icon{font-size:64px;margin-bottom:16px}
-        .no-results h3{font-size:24px;margin-bottom:8px}
-        .no-results p{color:var(--text-secondary)}
+        
+        /* Footer */
         .footer{background:var(--navy-dark);color:white;padding:40px 0 24px}
         .footer-content{display:flex;justify-content:space-between;align-items:center}
+        .footer-links{display:flex;gap:24px}
+        .footer-links a{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none}
+        .footer-links a:hover{color:var(--cyan)}
         .footer-copyright{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5)}
-        @media(max-width:1024px){.nav-links{display:none}.filters-row{flex-direction:column;align-items:stretch}.search-box{min-width:100%}.results-count{margin-left:0;margin-top:8px}}
-        @media(max-width:768px){.stats-bar{flex-wrap:wrap;gap:16px}.vehicles-grid{grid-template-columns:1fr}}
+        
+        /* Responsive */
+        @media(max-width:1024px){
+            .nav-links{display:none}
+            .mobile-menu-btn{display:block}
+            .filters-row{flex-direction:column;align-items:stretch}
+            .search-box{min-width:100%}
+            .filter-select{width:100%}
+        }
+        @media(max-width:768px){
+            .stats-bar{gap:16px}
+            .vehicles-grid{grid-template-columns:1fr}
+            .page-header h1{font-size:28px}
+            .footer-content{flex-direction:column;gap:16px;text-align:center}
+        }
     </style>
 </head>
 <body>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <button class="mobile-menu-close" onclick="toggleMobileMenu()">✕</button>
+        <a href="index.html">🏠 Home</a>
+        <a href="dashboard.html">📊 Dashboard</a>
+        <a href="fahrzeuge.html">🔋 Fahrzeuge</a>
+        <a href="news.html">📰 News</a>
+        <a href="laden.html">⚡ Laden</a>
+        <a href="ratgeber.html">📋 Ratgeber</a>
+        <a href="service.html">🔧 Service</a>
+        <a href="reichweite.html">📏 Reichweite</a>
+    </div>
+
     <header class="header"><div class="container"><div class="header-main">
         <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
         <ul class="nav-links">
@@ -82,6 +153,7 @@
             <li><a href="service.html">🔧 Service</a></li>
             <li><a href="reichweite.html">📏 Reichweite</a></li>
         </ul>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
     </div></div></header>
 
     <section class="page-header"><div class="container">
@@ -111,117 +183,127 @@
 
     <footer class="footer"><div class="container"><div class="footer-content">
         <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
+        <div class="footer-links">
+            <a href="impressum.html">Impressum</a>
+            <a href="datenschutz.html">Datenschutz</a>
+        </div>
         <p class="footer-copyright">© 2025 EV Technical Insights</p>
     </div></div></footer>
 
     <script>
-    const DATA_URL = 'https://raw.githubusercontent.com/emirdurut-maker/ev-portal-schweiz/main/data/fahrzeuge.csv';
-    let allVehicles = [], filteredVehicles = [];
-    
-    async function loadVehicles() {
-        return new Promise((resolve, reject) => {
-            Papa.parse(DATA_URL, { download: true, header: true, dynamicTyping: true, skipEmptyLines: true, complete: r => resolve(r.data), error: e => reject(e) });
-        });
-    }
-    
-    async function init() {
-        try {
-            allVehicles = await loadVehicles();
-            filteredVehicles = [...allVehicles];
-            updateStats();
-            populateBrandFilter();
+        // Mobile Menu
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+            document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
+        }
+
+        const DATA_URL = 'https://raw.githubusercontent.com/emirdurut-maker/ev-portal-schweiz/main/data/fahrzeuge.csv';
+        let allVehicles = [], filteredVehicles = [];
+        
+        async function loadVehicles() {
+            return new Promise((resolve, reject) => {
+                Papa.parse(DATA_URL, { download: true, header: true, dynamicTyping: true, skipEmptyLines: true, complete: r => resolve(r.data), error: e => reject(e) });
+            });
+        }
+        
+        async function init() {
+            try {
+                allVehicles = await loadVehicles();
+                filteredVehicles = [...allVehicles];
+                updateStats();
+                populateBrandFilter();
+                renderVehicles();
+                setupEventListeners();
+            } catch(e) {
+                document.getElementById('vehicles-grid').innerHTML = '<div class="no-results"><div class="no-results-icon">❌</div><h3>Fehler beim Laden</h3><p>Die Fahrzeugdaten konnten nicht geladen werden.</p></div>';
+            }
+        }
+        
+        function updateStats() {
+            const brands = [...new Set(allVehicles.map(v => v.marke))];
+            document.getElementById('stat-total').textContent = allVehicles.length;
+            document.getElementById('stat-brands').textContent = brands.length;
+            document.getElementById('stat-cheapest').textContent = Math.min(...allVehicles.map(v => v.preis_chf)).toLocaleString('de-CH');
+            document.getElementById('stat-range').textContent = Math.max(...allVehicles.map(v => v.reichweite_wltp));
+        }
+        
+        function populateBrandFilter() {
+            const brands = [...new Set(allVehicles.map(v => v.marke))].sort();
+            const select = document.getElementById('filter-brand');
+            brands.forEach(b => { const o = document.createElement('option'); o.value = b; o.textContent = b; select.appendChild(o); });
+        }
+        
+        function applyFilters() {
+            const search = document.getElementById('search').value.toLowerCase();
+            const brand = document.getElementById('filter-brand').value;
+            const category = document.getElementById('filter-category').value;
+            const price = document.getElementById('filter-price').value;
+            const range = document.getElementById('filter-range').value;
+            const sortBy = document.getElementById('sort-by').value;
+            
+            filteredVehicles = allVehicles.filter(v => {
+                if (search && !`${v.marke} ${v.modell} ${v.variante}`.toLowerCase().includes(search)) return false;
+                if (brand && v.marke !== brand) return false;
+                if (category && v.kategorie !== category) return false;
+                if (price) { const [min, max] = price.split('-').map(Number); if (v.preis_chf < min || v.preis_chf > max) return false; }
+                if (range) { const [min, max] = range.split('-').map(Number); if (v.reichweite_wltp < min || v.reichweite_wltp > max) return false; }
+                return true;
+            });
+            
+            const [sortField, sortDir] = sortBy.split('-');
+            filteredVehicles.sort((a, b) => {
+                let valA = a[sortField], valB = b[sortField];
+                if (typeof valA === 'string') return sortDir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                return sortDir === 'asc' ? valA - valB : valB - valA;
+            });
             renderVehicles();
-            setupEventListeners();
-        } catch(e) {
-            document.getElementById('vehicles-grid').innerHTML = '<div class="no-results"><div class="no-results-icon">❌</div><h3>Fehler beim Laden</h3><p>Die Fahrzeugdaten konnten nicht geladen werden.</p></div>';
-        }
-    }
-    
-    function updateStats() {
-        const brands = [...new Set(allVehicles.map(v => v.marke))];
-        document.getElementById('stat-total').textContent = allVehicles.length;
-        document.getElementById('stat-brands').textContent = brands.length;
-        document.getElementById('stat-cheapest').textContent = Math.min(...allVehicles.map(v => v.preis_chf)).toLocaleString('de-CH');
-        document.getElementById('stat-range').textContent = Math.max(...allVehicles.map(v => v.reichweite_wltp));
-    }
-    
-    function populateBrandFilter() {
-        const brands = [...new Set(allVehicles.map(v => v.marke))].sort();
-        const select = document.getElementById('filter-brand');
-        brands.forEach(b => { const o = document.createElement('option'); o.value = b; o.textContent = b; select.appendChild(o); });
-    }
-    
-    function applyFilters() {
-        const search = document.getElementById('search').value.toLowerCase();
-        const brand = document.getElementById('filter-brand').value;
-        const category = document.getElementById('filter-category').value;
-        const price = document.getElementById('filter-price').value;
-        const range = document.getElementById('filter-range').value;
-        const sortBy = document.getElementById('sort-by').value;
-        
-        filteredVehicles = allVehicles.filter(v => {
-            if (search && !`${v.marke} ${v.modell} ${v.variante}`.toLowerCase().includes(search)) return false;
-            if (brand && v.marke !== brand) return false;
-            if (category && v.kategorie !== category) return false;
-            if (price) { const [min, max] = price.split('-').map(Number); if (v.preis_chf < min || v.preis_chf > max) return false; }
-            if (range) { const [min, max] = range.split('-').map(Number); if (v.reichweite_wltp < min || v.reichweite_wltp > max) return false; }
-            return true;
-        });
-        
-        const [sortField, sortDir] = sortBy.split('-');
-        filteredVehicles.sort((a, b) => {
-            let valA = a[sortField], valB = b[sortField];
-            if (typeof valA === 'string') return sortDir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
-            return sortDir === 'asc' ? valA - valB : valB - valA;
-        });
-        renderVehicles();
-    }
-    
-    function renderVehicles() {
-        const grid = document.getElementById('vehicles-grid');
-        document.getElementById('results-count').textContent = `${filteredVehicles.length} Fahrzeuge`;
-        
-        if (filteredVehicles.length === 0) {
-            grid.innerHTML = '<div class="no-results"><div class="no-results-icon">🔍</div><h3>Keine Fahrzeuge gefunden</h3><p>Versuchen Sie andere Filtereinstellungen.</p></div>';
-            return;
         }
         
-        grid.innerHTML = filteredVehicles.map(v => `
-            <div class="vehicle-card">
-                <div class="vehicle-image"><span class="vehicle-image-placeholder">🚗</span><span class="vehicle-badge">${v.kategorie}</span></div>
-                <div class="vehicle-content">
-                    <div class="vehicle-brand">${v.marke}</div>
-                    <div class="vehicle-name">${v.modell}</div>
-                    <div class="vehicle-variant">${v.variante} · ${v.antrieb}</div>
-                    <div class="vehicle-specs">
-                        <div class="spec-item"><span class="spec-label">Reichweite</span><span class="spec-value highlight">${v.reichweite_wltp} km</span></div>
-                        <div class="spec-item"><span class="spec-label">Batterie</span><span class="spec-value">${v.batterie_kwh} kWh</span></div>
-                        <div class="spec-item"><span class="spec-label">Leistung</span><span class="spec-value">${v.leistung_ps} PS</span></div>
-                        <div class="spec-item"><span class="spec-label">0-100 km/h</span><span class="spec-value">${v.null_hundert}s</span></div>
-                        <div class="spec-item"><span class="spec-label">DC-Laden</span><span class="spec-value">${v.ladeleistung_dc} kW</span></div>
-                        <div class="spec-item"><span class="spec-label">Verbrauch</span><span class="spec-value">${v.verbrauch_kwh} kWh</span></div>
+        function renderVehicles() {
+            const grid = document.getElementById('vehicles-grid');
+            document.getElementById('results-count').textContent = `${filteredVehicles.length} Fahrzeuge`;
+            
+            if (filteredVehicles.length === 0) {
+                grid.innerHTML = '<div class="no-results"><div class="no-results-icon">🔍</div><h3>Keine Fahrzeuge gefunden</h3><p>Versuchen Sie andere Filtereinstellungen.</p></div>';
+                return;
+            }
+            
+            grid.innerHTML = filteredVehicles.map(v => `
+                <article class="vehicle-card">
+                    <div class="vehicle-image"><span class="vehicle-image-placeholder">🚗</span><span class="vehicle-badge">${v.kategorie}</span></div>
+                    <div class="vehicle-content">
+                        <div class="vehicle-brand">${v.marke}</div>
+                        <h2 class="vehicle-name">${v.modell}</h2>
+                        <div class="vehicle-variant">${v.variante} · ${v.antrieb}</div>
+                        <div class="vehicle-specs">
+                            <div class="spec-item"><span class="spec-label">Reichweite</span><span class="spec-value highlight">${v.reichweite_wltp} km</span></div>
+                            <div class="spec-item"><span class="spec-label">Batterie</span><span class="spec-value">${v.batterie_kwh} kWh</span></div>
+                            <div class="spec-item"><span class="spec-label">Leistung</span><span class="spec-value">${v.leistung_ps} PS</span></div>
+                            <div class="spec-item"><span class="spec-label">0-100 km/h</span><span class="spec-value">${v.null_hundert}s</span></div>
+                            <div class="spec-item"><span class="spec-label">DC-Laden</span><span class="spec-value">${v.ladeleistung_dc} kW</span></div>
+                            <div class="spec-item"><span class="spec-label">Verbrauch</span><span class="spec-value">${v.verbrauch_kwh} kWh</span></div>
+                        </div>
+                        <div class="vehicle-footer">
+                            <div class="vehicle-price">CHF ${v.preis_chf.toLocaleString('de-CH')}</div>
+                            <button class="vehicle-cta" onclick="showDetails(${v.id})">Details</button>
+                        </div>
                     </div>
-                    <div class="vehicle-footer">
-                        <div class="vehicle-price">CHF ${v.preis_chf.toLocaleString('de-CH')}</div>
-                        <button class="vehicle-cta" onclick="showDetails(${v.id})">Details</button>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-    
-    function showDetails(id) {
-        const v = allVehicles.find(x => x.id === id);
-        if (v) alert(`${v.marke} ${v.modell} ${v.variante}\n\nPreis: CHF ${v.preis_chf.toLocaleString('de-CH')}\nReichweite: ${v.reichweite_wltp} km WLTP\nBatterie: ${v.batterie_kwh} kWh\nLeistung: ${v.leistung_ps} PS (${v.leistung_kw} kW)\nDrehmoment: ${v.drehmoment_nm} Nm\n0-100: ${v.null_hundert}s\nVmax: ${v.vmax} km/h\nAC-Laden: ${v.ladeleistung_ac} kW\nDC-Laden: ${v.ladeleistung_dc} kW\nKofferraum: ${v.kofferraum_l} L\nGewicht: ${v.gewicht_kg} kg\nGarantie: ${v.garantie_batterie}`);
-    }
-    
-    function setupEventListeners() {
-        let timeout;
-        document.getElementById('search').addEventListener('input', () => { clearTimeout(timeout); timeout = setTimeout(applyFilters, 300); });
-        ['filter-brand','filter-category','filter-price','filter-range','sort-by'].forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
-    }
-    
-    init();
+                </article>
+            `).join('');
+        }
+        
+        function showDetails(id) {
+            const v = allVehicles.find(x => x.id === id);
+            if (v) alert(`${v.marke} ${v.modell} ${v.variante}\n\nPreis: CHF ${v.preis_chf.toLocaleString('de-CH')}\nReichweite: ${v.reichweite_wltp} km WLTP\nBatterie: ${v.batterie_kwh} kWh\nLeistung: ${v.leistung_ps} PS (${v.leistung_kw} kW)\nDrehmoment: ${v.drehmoment_nm} Nm\n0-100: ${v.null_hundert}s\nVmax: ${v.vmax} km/h\nAC-Laden: ${v.ladeleistung_ac} kW\nDC-Laden: ${v.ladeleistung_dc} kW\nKofferraum: ${v.kofferraum_l} L\nGewicht: ${v.gewicht_kg} kg\nGarantie: ${v.garantie_batterie}`);
+        }
+        
+        function setupEventListeners() {
+            let timeout;
+            document.getElementById('search').addEventListener('input', () => { clearTimeout(timeout); timeout = setTimeout(applyFilters, 300); });
+            ['filter-brand','filter-category','filter-price','filter-range','sort-by'].forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
+        }
+        
+        init();
     </script>
 </body>
 </html>
