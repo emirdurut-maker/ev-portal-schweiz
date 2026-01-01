@@ -3,1183 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="EV Fahrzeug-Datenbank - Alle Elektroautos im Vergleich mit technischen Daten">
-    <title>Fahrzeuge | EV Technical Insights</title>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
+    <title>Fahrzeug-Datenbank | EV Technical Insights</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <style>
-        /* ====== CSS RESET & VARIABLES ====== */
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        :root {
-            --navy: #002B5B;
-            --navy-dark: #001a38;
-            --cyan: #00F2FF;
-            --cyan-dim: rgba(0, 242, 255, 0.15);
-            --surface: #F9FAFB;
-            --stone: #E5E7EB;
-            --anthracite: #1F2937;
-            --text-secondary: #6B7280;
-            --success: #10B981;
-            --warning: #F59E0B;
-            --font-headline: 'Inter', -apple-system, sans-serif;
-            --font-body: 'Lora', Georgia, serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            --content-width: 1280px;
-        }
-        
-        html { scroll-behavior: smooth; }
-        
-        body {
-            font-family: var(--font-body);
-            font-size: 18px;
-            line-height: 1.6;
-            color: var(--anthracite);
-            background: var(--surface);
-        }
-        
-        h1, h2, h3, h4 {
-            font-family: var(--font-headline);
-            font-weight: 700;
-            color: var(--navy);
-            line-height: 1.2;
-        }
-        
-        .container {
-            max-width: var(--content-width);
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-        
-        /* ====== TICKER ====== */
-        .ticker-bar {
-            background: var(--navy-dark);
-            color: var(--cyan);
-            font-family: var(--font-mono);
-            font-size: 13px;
-            padding: 8px 0;
-            overflow: hidden;
-        }
-        
-        .ticker-content {
-            display: flex;
-            animation: ticker 30s linear infinite;
-            white-space: nowrap;
-        }
-        
-        .ticker-item {
-            padding: 0 48px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .ticker-item::before {
-            content: "●";
-            color: var(--cyan);
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes ticker {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        
-        /* ====== HEADER ====== */
-        .header {
-            background: var(--navy);
-            color: white;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0, 43, 91, 0.3);
-        }
-        
-        .header-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: white;
-        }
-        
-        .logo-icon {
-            width: 44px;
-            height: 44px;
-            background: var(--cyan);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-        
-        .logo-text {
-            font-family: var(--font-headline);
-            font-weight: 800;
-            font-size: 20px;
-        }
-        
-        .logo-text span { color: var(--cyan); }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 8px;
-        }
-        
-        .nav-links a {
-            color: rgba(255,255,255,0.85);
-            text-decoration: none;
-            font-family: var(--font-headline);
-            font-size: 14px;
-            font-weight: 500;
-            padding: 10px 16px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-        
-        .nav-links a:hover {
-            color: var(--cyan);
-            background: rgba(0, 242, 255, 0.1);
-        }
-        
-        .nav-links a.active {
-            background: var(--cyan);
-            color: var(--navy);
-        }
-        
-        /* ====== PAGE HEADER ====== */
-        .page-header {
-            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
-            color: white;
-            padding: 48px 0;
-            position: relative;
-        }
-        
-        .page-header h1 {
-            color: white;
-            font-size: clamp(28px, 4vw, 40px);
-            margin-bottom: 8px;
-        }
-        
-        .page-subtitle {
-            font-family: var(--font-mono);
-            font-size: 14px;
-            color: rgba(255,255,255,0.7);
-        }
-        
-        /* ====== FILTERS ====== */
-        .filters-section {
-            background: white;
-            border-bottom: 1px solid var(--stone);
-            padding: 24px 0;
-            position: sticky;
-            top: 76px;
-            z-index: 100;
-        }
-        
-        .filters-grid {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        
-        .filter-label {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-        }
-        
-        .filter-select {
-            font-family: var(--font-headline);
-            font-size: 14px;
-            padding: 10px 16px;
-            border: 2px solid var(--stone);
-            border-radius: 8px;
-            background: white;
-            color: var(--anthracite);
-            cursor: pointer;
-            min-width: 160px;
-            transition: all 0.2s;
-        }
-        
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--cyan);
-        }
-        
-        .filter-search {
-            flex: 1;
-            min-width: 250px;
-            position: relative;
-        }
-        
-        .filter-search input {
-            width: 100%;
-            font-family: var(--font-headline);
-            font-size: 14px;
-            padding: 10px 16px 10px 44px;
-            border: 2px solid var(--stone);
-            border-radius: 8px;
-            background: white;
-        }
-        
-        .filter-search input:focus {
-            outline: none;
-            border-color: var(--cyan);
-        }
-        
-        .filter-search::before {
-            content: "🔍";
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 16px;
-        }
-        
-        .filter-btn {
-            font-family: var(--font-headline);
-            font-size: 14px;
-            font-weight: 600;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .filter-btn-primary {
-            background: var(--navy);
-            color: white;
-        }
-        
-        .filter-btn-primary:hover {
-            background: var(--cyan);
-            color: var(--navy);
-        }
-        
-        .results-count {
-            font-family: var(--font-mono);
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-left: auto;
-        }
-        
-        /* ====== VEHICLE GRID ====== */
-        .vehicles-section {
-            padding: 48px 0;
-        }
-        
-        .vehicle-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-        
-        .vehicle-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--stone);
-            transition: all 0.3s ease;
-        }
-        
-        .vehicle-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 43, 91, 0.15);
-            border-color: var(--cyan);
-        }
-        
-        .vehicle-image {
-            height: 180px;
-            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        
-        .vehicle-image-icon {
-            font-size: 64px;
-        }
-        
-        .vehicle-badge {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: var(--cyan);
-            color: var(--navy);
-            font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 4px;
-        }
-        
-        .vehicle-badge.new {
-            background: var(--success);
-            color: white;
-        }
-        
-        .vehicle-body {
-            padding: 20px;
-        }
-        
-        .vehicle-brand {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--cyan);
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        
-        .vehicle-name {
-            font-family: var(--font-headline);
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--navy);
-            margin-bottom: 16px;
-        }
-        
-        .vehicle-specs {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .spec-item {
-            background: var(--surface);
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .spec-value {
-            font-family: var(--font-headline);
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--navy);
-        }
-        
-        .spec-value .unit {
-            font-size: 12px;
-            color: var(--cyan);
-        }
-        
-        .spec-label {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            margin-top: 2px;
-        }
-        
-        .vehicle-price {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 16px;
-            border-top: 1px solid var(--stone);
-        }
-        
-        .price-label {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-        
-        .price-value {
-            font-family: var(--font-headline);
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--navy);
-        }
-        
-        .vehicle-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 16px;
-        }
-        
-        .btn-compare {
-            flex: 1;
-            font-family: var(--font-headline);
-            font-size: 13px;
-            font-weight: 600;
-            padding: 10px;
-            border: 2px solid var(--navy);
-            border-radius: 6px;
-            background: white;
-            color: var(--navy);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .btn-compare:hover {
-            background: var(--navy);
-            color: white;
-        }
-        
-        .btn-details {
-            flex: 1;
-            font-family: var(--font-headline);
-            font-size: 13px;
-            font-weight: 600;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            background: var(--cyan);
-            color: var(--navy);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .btn-details:hover {
-            background: var(--navy);
-            color: var(--cyan);
-        }
-        
-        /* ====== COMPARISON TABLE ====== */
-        .comparison-section {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid var(--stone);
-            margin-bottom: 48px;
-            overflow: hidden;
-        }
-        
-        .comparison-header {
-            background: var(--navy);
-            color: white;
-            padding: 20px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .comparison-header h3 {
-            color: white;
-            font-size: 18px;
-        }
-        
-        .comparison-count {
-            font-family: var(--font-mono);
-            font-size: 13px;
-            color: var(--cyan);
-        }
-        
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .comparison-table th {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 500;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            text-align: left;
-            padding: 16px;
-            background: var(--surface);
-            border-bottom: 2px solid var(--navy);
-        }
-        
-        .comparison-table td {
-            font-family: var(--font-headline);
-            font-size: 14px;
-            padding: 16px;
-            border-bottom: 1px solid var(--stone);
-            vertical-align: middle;
-        }
-        
-        .comparison-table tr:hover td {
-            background: var(--cyan-dim);
-        }
-        
-        .table-vehicle {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .table-vehicle-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--navy);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-        
-        .table-vehicle-info {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .table-vehicle-brand {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-        
-        .table-vehicle-name {
-            font-weight: 600;
-            color: var(--navy);
-        }
-        
-        .table-highlight {
-            color: var(--cyan);
-            font-weight: 700;
-        }
-        
-        .table-bar {
-            width: 80px;
-            height: 6px;
-            background: var(--stone);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .table-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--navy), var(--cyan));
-            border-radius: 3px;
-        }
-        
-        /* ====== FOOTER ====== */
-        .footer {
-            background: var(--navy-dark);
-            color: white;
-            padding: 60px 0 30px;
-            margin-top: 60px;
-        }
-        
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 48px;
-            margin-bottom: 48px;
-        }
-        
-        .footer-brand p {
-            color: rgba(255,255,255,0.6);
-            font-size: 15px;
-            margin-top: 16px;
-        }
-        
-        .footer-section h4 {
-            color: var(--cyan);
-            font-family: var(--font-headline);
-            font-size: 13px;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-        }
-        
-        .footer-section ul { list-style: none; }
-        
-        .footer-section a {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            font-size: 14px;
-            display: block;
-            padding: 6px 0;
-            transition: color 0.2s;
-        }
-        
-        .footer-section a:hover { color: var(--cyan); }
-        
-        .footer-bottom {
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .footer-copyright {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
-        }
-        
-        .footer-legal {
-            display: flex;
-            gap: 24px;
-        }
-        
-        .footer-legal a {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
-            text-decoration: none;
-        }
-        
-        /* ====== RESPONSIVE ====== */
-        @media (max-width: 1024px) {
-            .nav-links { display: none; }
-            .vehicle-grid { grid-template-columns: repeat(2, 1fr); }
-            .footer-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        
-        @media (max-width: 768px) {
-            .filters-grid { flex-direction: column; align-items: stretch; }
-            .filter-search { min-width: 100%; }
-            .results-count { margin-left: 0; margin-top: 8px; }
-            .vehicle-grid { grid-template-columns: 1fr; }
-            .comparison-table { font-size: 12px; }
-            .footer-grid { grid-template-columns: 1fr; }
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--navy:#002B5B;--navy-dark:#001a38;--cyan:#00F2FF;--cyan-dim:rgba(0,242,255,0.15);--surface:#F9FAFB;--stone:#E5E7EB;--anthracite:#1F2937;--text-secondary:#6B7280;--success:#10B981;--font-headline:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace}
+        body{font-family:var(--font-headline);background:var(--surface);color:var(--anthracite)}
+        .container{max-width:1400px;margin:0 auto;padding:0 24px}
+        .header{background:var(--navy);color:white;position:sticky;top:0;z-index:1000}
+        .header-main{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
+        .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:white}
+        .logo-icon{width:44px;height:44px;background:var(--cyan);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px}
+        .logo-text{font-weight:800;font-size:20px}.logo-text span{color:var(--cyan)}
+        .nav-links{display:flex;list-style:none;gap:8px}
+        .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:500;padding:10px 16px;border-radius:6px;transition:all 0.2s}
+        .nav-links a:hover{color:var(--cyan);background:rgba(0,242,255,0.1)}
+        .nav-links a.active{background:var(--cyan);color:var(--navy)}
+        .page-header{background:linear-gradient(135deg,var(--navy),var(--navy-dark));color:white;padding:48px 0}
+        .page-header h1{font-size:36px;margin-bottom:8px}
+        .page-subtitle{font-family:var(--font-mono);font-size:14px;color:rgba(255,255,255,0.7)}
+        .stats-bar{display:flex;gap:32px;margin-top:24px}
+        .stat-item{display:flex;align-items:center;gap:8px}
+        .stat-value{font-family:var(--font-mono);font-size:24px;font-weight:700;color:var(--cyan)}
+        .stat-label{font-size:13px;color:rgba(255,255,255,0.6)}
+        .filters-section{background:white;border-bottom:1px solid var(--stone);padding:20px 0;position:sticky;top:76px;z-index:100}
+        .filters-row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+        .search-box{flex:1;min-width:250px;position:relative}
+        .search-box input{width:100%;padding:12px 16px 12px 44px;border:2px solid var(--stone);border-radius:8px;font-size:15px;transition:all 0.2s}
+        .search-box input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-dim)}
+        .search-box::before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px}
+        .filter-select{padding:12px 16px;border:2px solid var(--stone);border-radius:8px;font-size:14px;background:white;cursor:pointer;min-width:150px}
+        .filter-select:focus{outline:none;border-color:var(--cyan)}
+        .results-count{font-family:var(--font-mono);font-size:13px;color:var(--text-secondary);margin-left:auto}
+        .vehicles-section{padding:40px 0 60px}
+        .vehicles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px}
+        .vehicle-card{background:white;border-radius:12px;border:1px solid var(--stone);overflow:hidden;transition:all 0.3s}
+        .vehicle-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,43,91,0.15);border-color:var(--cyan)}
+        .vehicle-image{height:180px;background:linear-gradient(135deg,var(--navy-dark),var(--navy));display:flex;align-items:center;justify-content:center;position:relative}
+        .vehicle-image-placeholder{font-size:64px;opacity:0.5}
+        .vehicle-badge{position:absolute;top:12px;right:12px;background:var(--cyan);color:var(--navy);font-family:var(--font-mono);font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px}
+        .vehicle-content{padding:20px}
+        .vehicle-brand{font-family:var(--font-mono);font-size:12px;color:var(--cyan);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
+        .vehicle-name{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:4px}
+        .vehicle-variant{font-size:14px;color:var(--text-secondary);margin-bottom:16px}
+        .vehicle-specs{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
+        .spec-item{display:flex;flex-direction:column;gap:2px}
+        .spec-label{font-family:var(--font-mono);font-size:10px;color:var(--text-secondary);text-transform:uppercase}
+        .spec-value{font-family:var(--font-mono);font-size:14px;font-weight:600;color:var(--anthracite)}
+        .spec-value.highlight{color:var(--cyan)}
+        .vehicle-footer{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--stone)}
+        .vehicle-price{font-size:22px;font-weight:800;color:var(--navy)}
+        .vehicle-cta{padding:10px 20px;background:var(--navy);color:white;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s}
+        .vehicle-cta:hover{background:var(--cyan);color:var(--navy)}
+        .loading{text-align:center;padding:80px 20px}
+        .loading-spinner{width:50px;height:50px;border:4px solid var(--stone);border-top-color:var(--cyan);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .no-results{text-align:center;padding:80px 20px}
+        .no-results-icon{font-size:64px;margin-bottom:16px}
+        .no-results h3{font-size:24px;margin-bottom:8px}
+        .no-results p{color:var(--text-secondary)}
+        .footer{background:var(--navy-dark);color:white;padding:40px 0 24px}
+        .footer-content{display:flex;justify-content:space-between;align-items:center}
+        .footer-copyright{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5)}
+        @media(max-width:1024px){.nav-links{display:none}.filters-row{flex-direction:column;align-items:stretch}.search-box{min-width:100%}.results-count{margin-left:0;margin-top:8px}}
+        @media(max-width:768px){.stats-bar{flex-wrap:wrap;gap:16px}.vehicles-grid{grid-template-columns:1fr}}
     </style>
 </head>
 <body>
-    <!-- Ticker -->
-    <div class="ticker-bar">
-        <div class="ticker-content">
-            <div class="ticker-item">NEU: Tesla Model 3 Highland ab sofort verfügbar</div>
-            <div class="ticker-item">UPDATE: BMW iX1 erhält grössere Batterie-Option</div>
-            <div class="ticker-item">TEST: BYD Seal erreicht 5 Sterne im Euro NCAP</div>
-            <div class="ticker-item">PREIS: Hyundai senkt Ioniq 5 Einstiegspreis um CHF 4'000</div>
-            <div class="ticker-item">NEU: Tesla Model 3 Highland ab sofort verfügbar</div>
-            <div class="ticker-item">UPDATE: BMW iX1 erhält grössere Batterie-Option</div>
+    <header class="header"><div class="container"><div class="header-main">
+        <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
+        <ul class="nav-links">
+            <li><a href="dashboard.html">📊 Dashboard</a></li>
+            <li><a href="fahrzeuge.html" class="active">🔋 Fahrzeuge</a></li>
+            <li><a href="news.html">📰 News</a></li>
+            <li><a href="laden.html">⚡ Laden</a></li>
+            <li><a href="ratgeber.html">📋 Ratgeber</a></li>
+            <li><a href="service.html">🔧 Service</a></li>
+            <li><a href="reichweite.html">📏 Reichweite</a></li>
+        </ul>
+    </div></div></header>
+
+    <section class="page-header"><div class="container">
+        <h1>🔋 Fahrzeug-Datenbank</h1>
+        <p class="page-subtitle">Alle Elektrofahrzeuge mit technischen Daten und Preisen</p>
+        <div class="stats-bar">
+            <div class="stat-item"><span class="stat-value" id="stat-total">--</span><span class="stat-label">Fahrzeuge</span></div>
+            <div class="stat-item"><span class="stat-value" id="stat-brands">--</span><span class="stat-label">Marken</span></div>
+            <div class="stat-item"><span class="stat-value" id="stat-cheapest">--</span><span class="stat-label">Ab CHF</span></div>
+            <div class="stat-item"><span class="stat-value" id="stat-range">--</span><span class="stat-label">Max. km</span></div>
         </div>
-    </div>
+    </div></section>
 
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-main">
-                <a href="index.html" class="logo">
-                    <div class="logo-icon">⚡</div>
-                    <div class="logo-text">EV Technical <span>Insights</span></div>
-                </a>
-                <ul class="nav-links">
-                    <li><a href="dashboard.html">📊 Dashboard</a></li>
-                    <li><a href="fahrzeuge.html" class="active">🔋 Fahrzeuge</a></li>
-                    <li><a href="news.html">📰 News</a></li>
-                    <li><a href="laden.html">⚡ Laden</a></li>
-                    <li><a href="ratgeber.html">📋 Ratgeber</a></li>
-                    <li><a href="service.html">🔧 Service</a></li>
-                    <li><a href="reichweite.html">📏 Reichweite</a></li>
-                </ul>
-            </div>
-        </div>
-    </header>
+    <section class="filters-section"><div class="container"><div class="filters-row">
+        <div class="search-box"><input type="text" id="search" placeholder="Marke, Modell oder Variante suchen..."></div>
+        <select class="filter-select" id="filter-brand"><option value="">Alle Marken</option></select>
+        <select class="filter-select" id="filter-category"><option value="">Alle Kategorien</option><option value="Kompakt">Kompakt</option><option value="Limousine">Limousine</option><option value="SUV">SUV</option></select>
+        <select class="filter-select" id="filter-price"><option value="">Alle Preise</option><option value="0-40000">Unter CHF 40'000</option><option value="40000-60000">CHF 40'000 - 60'000</option><option value="60000-100000">CHF 60'000 - 100'000</option><option value="100000-999999">Über CHF 100'000</option></select>
+        <select class="filter-select" id="filter-range"><option value="">Alle Reichweiten</option><option value="0-400">Unter 400 km</option><option value="400-500">400 - 500 km</option><option value="500-600">500 - 600 km</option><option value="600-9999">Über 600 km</option></select>
+        <select class="filter-select" id="sort-by"><option value="preis_chf-asc">Preis ↑</option><option value="preis_chf-desc">Preis ↓</option><option value="reichweite_wltp-desc">Reichweite ↓</option><option value="leistung_ps-desc">Leistung ↓</option><option value="marke-asc">Marke A-Z</option></select>
+        <span class="results-count" id="results-count">-- Fahrzeuge</span>
+    </div></div></section>
 
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <h1>🔋 Fahrzeug-Datenbank</h1>
-            <p class="page-subtitle">156 Elektrofahrzeuge mit technischen Daten im Vergleich</p>
-        </div>
-    </section>
+    <main class="vehicles-section"><div class="container">
+        <div id="vehicles-grid" class="vehicles-grid"><div class="loading"><div class="loading-spinner"></div><p>Fahrzeuge werden geladen...</p></div></div>
+    </div></main>
 
-    <!-- Filters -->
-    <section class="filters-section">
-        <div class="container">
-            <div class="filters-grid">
-                <div class="filter-group">
-                    <span class="filter-label">Marke</span>
-                    <select class="filter-select">
-                        <option>Alle Marken</option>
-                        <option>Audi</option>
-                        <option>BMW</option>
-                        <option>BYD</option>
-                        <option>Hyundai</option>
-                        <option>Mercedes</option>
-                        <option>Porsche</option>
-                        <option>Tesla</option>
-                        <option>VW</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <span class="filter-label">Karosserie</span>
-                    <select class="filter-select">
-                        <option>Alle Typen</option>
-                        <option>SUV</option>
-                        <option>Limousine</option>
-                        <option>Kombi</option>
-                        <option>Kompakt</option>
-                        <option>Coupé</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <span class="filter-label">Reichweite</span>
-                    <select class="filter-select">
-                        <option>Alle</option>
-                        <option>> 600 km</option>
-                        <option>500-600 km</option>
-                        <option>400-500 km</option>
-                        <option>300-400 km</option>
-                        <option>< 300 km</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <span class="filter-label">Preis</span>
-                    <select class="filter-select">
-                        <option>Alle Preise</option>
-                        <option>< CHF 40'000</option>
-                        <option>40-60'000</option>
-                        <option>60-80'000</option>
-                        <option>80-100'000</option>
-                        <option>> CHF 100'000</option>
-                    </select>
-                </div>
-                <div class="filter-group filter-search">
-                    <span class="filter-label">Suche</span>
-                    <input type="text" placeholder="Modell suchen...">
-                </div>
-                <button class="filter-btn filter-btn-primary">Filter anwenden</button>
-                <span class="results-count">156 Fahrzeuge gefunden</span>
-            </div>
-        </div>
-    </section>
+    <footer class="footer"><div class="container"><div class="footer-content">
+        <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
+        <p class="footer-copyright">© 2025 EV Technical Insights</p>
+    </div></div></footer>
 
-    <!-- Comparison Table -->
-    <main>
-        <div class="container">
-            <section class="comparison-section" style="margin-top: 32px;">
-                <div class="comparison-header">
-                    <h3>🏆 Top 5 Reichweiten-Champions</h3>
-                    <span class="comparison-count">Basierend auf WLTP-Daten</span>
-                </div>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Fahrzeug</th>
-                            <th>Reichweite</th>
-                            <th>Batterie</th>
-                            <th>Ladeleistung</th>
-                            <th>0-100</th>
-                            <th>Preis ab</th>
-                            <th>Effizienz</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="table-vehicle">
-                                    <div class="table-vehicle-icon">🚗</div>
-                                    <div class="table-vehicle-info">
-                                        <span class="table-vehicle-brand">Mercedes</span>
-                                        <span class="table-vehicle-name">EQS 450+</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><span class="table-highlight">780 km</span></td>
-                            <td>107.8 kWh</td>
-                            <td>200 kW</td>
-                            <td>6.2s</td>
-                            <td>CHF 129'900</td>
-                            <td>
-                                <div class="table-bar">
-                                    <div class="table-bar-fill" style="width: 95%;"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="table-vehicle">
-                                    <div class="table-vehicle-icon">🚗</div>
-                                    <div class="table-vehicle-info">
-                                        <span class="table-vehicle-brand">Tesla</span>
-                                        <span class="table-vehicle-name">Model S LR</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><span class="table-highlight">723 km</span></td>
-                            <td>100 kWh</td>
-                            <td>250 kW</td>
-                            <td>3.2s</td>
-                            <td>CHF 99'990</td>
-                            <td>
-                                <div class="table-bar">
-                                    <div class="table-bar-fill" style="width: 92%;"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="table-vehicle">
-                                    <div class="table-vehicle-icon">🚗</div>
-                                    <div class="table-vehicle-info">
-                                        <span class="table-vehicle-brand">BMW</span>
-                                        <span class="table-vehicle-name">iX xDrive50</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><span class="table-highlight">630 km</span></td>
-                            <td>111.5 kWh</td>
-                            <td>195 kW</td>
-                            <td>4.6s</td>
-                            <td>CHF 111'900</td>
-                            <td>
-                                <div class="table-bar">
-                                    <div class="table-bar-fill" style="width: 85%;"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="table-vehicle">
-                                    <div class="table-vehicle-icon">🚗</div>
-                                    <div class="table-vehicle-info">
-                                        <span class="table-vehicle-brand">Tesla</span>
-                                        <span class="table-vehicle-name">Model 3 LR</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><span class="table-highlight">629 km</span></td>
-                            <td>82 kWh</td>
-                            <td>250 kW</td>
-                            <td>4.4s</td>
-                            <td>CHF 52'990</td>
-                            <td>
-                                <div class="table-bar">
-                                    <div class="table-bar-fill" style="width: 98%;"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="table-vehicle">
-                                    <div class="table-vehicle-icon">🚗</div>
-                                    <div class="table-vehicle-info">
-                                        <span class="table-vehicle-brand">Hyundai</span>
-                                        <span class="table-vehicle-name">Ioniq 6 LR</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><span class="table-highlight">614 km</span></td>
-                            <td>77.4 kWh</td>
-                            <td>233 kW</td>
-                            <td>5.1s</td>
-                            <td>CHF 54'900</td>
-                            <td>
-                                <div class="table-bar">
-                                    <div class="table-bar-fill" style="width: 96%;"></div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-
-            <!-- Vehicle Grid -->
-            <section class="vehicles-section">
-                <div class="vehicle-grid">
-                    <!-- Vehicle 1 -->
-                    <article class="vehicle-card">
-                        <div class="vehicle-image">
-                            <span class="vehicle-badge new">NEU 2024</span>
-                            <span class="vehicle-image-icon">🚗</span>
-                        </div>
-                        <div class="vehicle-body">
-                            <span class="vehicle-brand">Tesla</span>
-                            <h3 class="vehicle-name">Model Y Long Range</h3>
-                            <div class="vehicle-specs">
-                                <div class="spec-item">
-                                    <div class="spec-value">533 <span class="unit">km</span></div>
-                                    <div class="spec-label">Reichweite</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">250 <span class="unit">kW</span></div>
-                                    <div class="spec-label">Ladeleistung</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">5.0 <span class="unit">s</span></div>
-                                    <div class="spec-label">0-100 km/h</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">82 <span class="unit">kWh</span></div>
-                                    <div class="spec-label">Batterie</div>
-                                </div>
-                            </div>
-                            <div class="vehicle-price">
-                                <span class="price-label">Ab</span>
-                                <span class="price-value">CHF 49'990</span>
-                            </div>
-                            <div class="vehicle-actions">
-                                <button class="btn-compare">+ Vergleichen</button>
-                                <button class="btn-details">Details →</button>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Vehicle 2 -->
-                    <article class="vehicle-card">
-                        <div class="vehicle-image">
-                            <span class="vehicle-badge">BESTSELLER</span>
-                            <span class="vehicle-image-icon">🚗</span>
-                        </div>
-                        <div class="vehicle-body">
-                            <span class="vehicle-brand">BMW</span>
-                            <h3 class="vehicle-name">iX3</h3>
-                            <div class="vehicle-specs">
-                                <div class="spec-item">
-                                    <div class="spec-value">461 <span class="unit">km</span></div>
-                                    <div class="spec-label">Reichweite</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">150 <span class="unit">kW</span></div>
-                                    <div class="spec-label">Ladeleistung</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">6.8 <span class="unit">s</span></div>
-                                    <div class="spec-label">0-100 km/h</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">80 <span class="unit">kWh</span></div>
-                                    <div class="spec-label">Batterie</div>
-                                </div>
-                            </div>
-                            <div class="vehicle-price">
-                                <span class="price-label">Ab</span>
-                                <span class="price-value">CHF 69'900</span>
-                            </div>
-                            <div class="vehicle-actions">
-                                <button class="btn-compare">+ Vergleichen</button>
-                                <button class="btn-details">Details →</button>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Vehicle 3 -->
-                    <article class="vehicle-card">
-                        <div class="vehicle-image">
-                            <span class="vehicle-badge new">NEU 2024</span>
-                            <span class="vehicle-image-icon">🚗</span>
-                        </div>
-                        <div class="vehicle-body">
-                            <span class="vehicle-brand">BYD</span>
-                            <h3 class="vehicle-name">Seal</h3>
-                            <div class="vehicle-specs">
-                                <div class="spec-item">
-                                    <div class="spec-value">570 <span class="unit">km</span></div>
-                                    <div class="spec-label">Reichweite</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">150 <span class="unit">kW</span></div>
-                                    <div class="spec-label">Ladeleistung</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">5.9 <span class="unit">s</span></div>
-                                    <div class="spec-label">0-100 km/h</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">82.5 <span class="unit">kWh</span></div>
-                                    <div class="spec-label">Batterie</div>
-                                </div>
-                            </div>
-                            <div class="vehicle-price">
-                                <span class="price-label">Ab</span>
-                                <span class="price-value">CHF 44'990</span>
-                            </div>
-                            <div class="vehicle-actions">
-                                <button class="btn-compare">+ Vergleichen</button>
-                                <button class="btn-details">Details →</button>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Vehicle 4 -->
-                    <article class="vehicle-card">
-                        <div class="vehicle-image">
-                            <span class="vehicle-image-icon">🚗</span>
-                        </div>
-                        <div class="vehicle-body">
-                            <span class="vehicle-brand">Hyundai</span>
-                            <h3 class="vehicle-name">Ioniq 5</h3>
-                            <div class="vehicle-specs">
-                                <div class="spec-item">
-                                    <div class="spec-value">507 <span class="unit">km</span></div>
-                                    <div class="spec-label">Reichweite</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">233 <span class="unit">kW</span></div>
-                                    <div class="spec-label">Ladeleistung</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">5.2 <span class="unit">s</span></div>
-                                    <div class="spec-label">0-100 km/h</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">77.4 <span class="unit">kWh</span></div>
-                                    <div class="spec-label">Batterie</div>
-                                </div>
-                            </div>
-                            <div class="vehicle-price">
-                                <span class="price-label">Ab</span>
-                                <span class="price-value">CHF 48'900</span>
-                            </div>
-                            <div class="vehicle-actions">
-                                <button class="btn-compare">+ Vergleichen</button>
-                                <button class="btn-details">Details →</button>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Vehicle 5 -->
-                    <article class="vehicle-card">
-                        <div class="vehicle-image">
-                            <span class="vehicle-image-icon">🚗</span>
-                        </div>
-                        <div class="vehicle-body">
-                            <span class="vehicle-brand">Volkswagen</span>
-                            <h3 class="vehicle-name">ID.4 Pro</h3>
-                            <div class="vehicle-specs">
-                                <div class="spec-item">
-                                    <div class="spec-value">520 <span class="unit">km</span></div>
-                                    <div class="spec-label">Reichweite</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">175 <span class="unit">kW</span></div>
-                                    <div class="spec-label">Ladeleistung</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">8.5 <span class="unit">s</span></div>
-                                    <div class="spec-label">0-100 km/h</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">77 <span class="unit">kWh</span></div>
-                                    <div class="spec-label">Batterie</div>
-                                </div>
-                            </div>
-                            <div class="vehicle-price">
-                                <span class="price-label">Ab</span>
-                                <span class="price-value">CHF 49'950</span>
-                            </div>
-                            <div class="vehicle-actions">
-                                <button class="btn-compare">+ Vergleichen</button>
-                                <button class="btn-details">Details →</button>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Vehicle 6 -->
-                    <article class="vehicle-card">
-                        <div class="vehicle-image">
-                            <span class="vehicle-badge">PREMIUM</span>
-                            <span class="vehicle-image-icon">🚗</span>
-                        </div>
-                        <div class="vehicle-body">
-                            <span class="vehicle-brand">Porsche</span>
-                            <h3 class="vehicle-name">Taycan 4S</h3>
-                            <div class="vehicle-specs">
-                                <div class="spec-item">
-                                    <div class="spec-value">464 <span class="unit">km</span></div>
-                                    <div class="spec-label">Reichweite</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">270 <span class="unit">kW</span></div>
-                                    <div class="spec-label">Ladeleistung</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">4.0 <span class="unit">s</span></div>
-                                    <div class="spec-label">0-100 km/h</div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-value">93.4 <span class="unit">kWh</span></div>
-                                    <div class="spec-label">Batterie</div>
-                                </div>
-                            </div>
-                            <div class="vehicle-price">
-                                <span class="price-label">Ab</span>
-                                <span class="price-value">CHF 113'900</span>
-                            </div>
-                            <div class="vehicle-actions">
-                                <button class="btn-compare">+ Vergleichen</button>
-                                <button class="btn-details">Details →</button>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <a href="index.html" class="logo">
-                        <div class="logo-icon">⚡</div>
-                        <div class="logo-text">EV Technical <span>Insights</span></div>
-                    </a>
-                    <p>Unabhängige, verifizierte und technisch fundierte Berichterstattung zur Elektromobilität in der Schweiz.</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Analysen</h4>
-                    <ul>
-                        <li><a href="dashboard.html">Marktdaten</a></li>
-                        <li><a href="fahrzeuge.html">Fahrzeug-Datenbank</a></li>
-                        <li><a href="laden.html">Ladeinfrastruktur</a></li>
-                        <li><a href="reichweite.html">Reichweiten-Analyse</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Ratgeber</h4>
-                    <ul>
-                        <li><a href="ratgeber.html">Kaufberatung</a></li>
-                        <li><a href="service.html">Service & Wartung</a></li>
-                        <li><a href="#">TCO-Rechner</a></li>
-                        <li><a href="#">Förderungen</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Über uns</h4>
-                    <ul>
-                        <li><a href="#">Redaktion</a></li>
-                        <li><a href="#">Methodik</a></li>
-                        <li><a href="#">Quellen</a></li>
-                        <li><a href="#">Kontakt</a></li>
-                    </ul>
+    <script>
+    const DATA_URL = 'https://raw.githubusercontent.com/emirdurut-maker/ev-portal-schweiz/main/data/fahrzeuge.csv';
+    let allVehicles = [], filteredVehicles = [];
+    
+    async function loadVehicles() {
+        return new Promise((resolve, reject) => {
+            Papa.parse(DATA_URL, { download: true, header: true, dynamicTyping: true, skipEmptyLines: true, complete: r => resolve(r.data), error: e => reject(e) });
+        });
+    }
+    
+    async function init() {
+        try {
+            allVehicles = await loadVehicles();
+            filteredVehicles = [...allVehicles];
+            updateStats();
+            populateBrandFilter();
+            renderVehicles();
+            setupEventListeners();
+        } catch(e) {
+            document.getElementById('vehicles-grid').innerHTML = '<div class="no-results"><div class="no-results-icon">❌</div><h3>Fehler beim Laden</h3><p>Die Fahrzeugdaten konnten nicht geladen werden.</p></div>';
+        }
+    }
+    
+    function updateStats() {
+        const brands = [...new Set(allVehicles.map(v => v.marke))];
+        document.getElementById('stat-total').textContent = allVehicles.length;
+        document.getElementById('stat-brands').textContent = brands.length;
+        document.getElementById('stat-cheapest').textContent = Math.min(...allVehicles.map(v => v.preis_chf)).toLocaleString('de-CH');
+        document.getElementById('stat-range').textContent = Math.max(...allVehicles.map(v => v.reichweite_wltp));
+    }
+    
+    function populateBrandFilter() {
+        const brands = [...new Set(allVehicles.map(v => v.marke))].sort();
+        const select = document.getElementById('filter-brand');
+        brands.forEach(b => { const o = document.createElement('option'); o.value = b; o.textContent = b; select.appendChild(o); });
+    }
+    
+    function applyFilters() {
+        const search = document.getElementById('search').value.toLowerCase();
+        const brand = document.getElementById('filter-brand').value;
+        const category = document.getElementById('filter-category').value;
+        const price = document.getElementById('filter-price').value;
+        const range = document.getElementById('filter-range').value;
+        const sortBy = document.getElementById('sort-by').value;
+        
+        filteredVehicles = allVehicles.filter(v => {
+            if (search && !`${v.marke} ${v.modell} ${v.variante}`.toLowerCase().includes(search)) return false;
+            if (brand && v.marke !== brand) return false;
+            if (category && v.kategorie !== category) return false;
+            if (price) { const [min, max] = price.split('-').map(Number); if (v.preis_chf < min || v.preis_chf > max) return false; }
+            if (range) { const [min, max] = range.split('-').map(Number); if (v.reichweite_wltp < min || v.reichweite_wltp > max) return false; }
+            return true;
+        });
+        
+        const [sortField, sortDir] = sortBy.split('-');
+        filteredVehicles.sort((a, b) => {
+            let valA = a[sortField], valB = b[sortField];
+            if (typeof valA === 'string') return sortDir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            return sortDir === 'asc' ? valA - valB : valB - valA;
+        });
+        renderVehicles();
+    }
+    
+    function renderVehicles() {
+        const grid = document.getElementById('vehicles-grid');
+        document.getElementById('results-count').textContent = `${filteredVehicles.length} Fahrzeuge`;
+        
+        if (filteredVehicles.length === 0) {
+            grid.innerHTML = '<div class="no-results"><div class="no-results-icon">🔍</div><h3>Keine Fahrzeuge gefunden</h3><p>Versuchen Sie andere Filtereinstellungen.</p></div>';
+            return;
+        }
+        
+        grid.innerHTML = filteredVehicles.map(v => `
+            <div class="vehicle-card">
+                <div class="vehicle-image"><span class="vehicle-image-placeholder">🚗</span><span class="vehicle-badge">${v.kategorie}</span></div>
+                <div class="vehicle-content">
+                    <div class="vehicle-brand">${v.marke}</div>
+                    <div class="vehicle-name">${v.modell}</div>
+                    <div class="vehicle-variant">${v.variante} · ${v.antrieb}</div>
+                    <div class="vehicle-specs">
+                        <div class="spec-item"><span class="spec-label">Reichweite</span><span class="spec-value highlight">${v.reichweite_wltp} km</span></div>
+                        <div class="spec-item"><span class="spec-label">Batterie</span><span class="spec-value">${v.batterie_kwh} kWh</span></div>
+                        <div class="spec-item"><span class="spec-label">Leistung</span><span class="spec-value">${v.leistung_ps} PS</span></div>
+                        <div class="spec-item"><span class="spec-label">0-100 km/h</span><span class="spec-value">${v.null_hundert}s</span></div>
+                        <div class="spec-item"><span class="spec-label">DC-Laden</span><span class="spec-value">${v.ladeleistung_dc} kW</span></div>
+                        <div class="spec-item"><span class="spec-label">Verbrauch</span><span class="spec-value">${v.verbrauch_kwh} kWh</span></div>
+                    </div>
+                    <div class="vehicle-footer">
+                        <div class="vehicle-price">CHF ${v.preis_chf.toLocaleString('de-CH')}</div>
+                        <button class="vehicle-cta" onclick="showDetails(${v.id})">Details</button>
+                    </div>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p class="footer-copyright">© 2025 EV Technical Insights. Alle Rechte vorbehalten.</p>
-                <div class="footer-legal">
-                    <a href="#">Datenschutz</a>
-                    <a href="#">Impressum</a>
-                    <a href="#">AGB</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+        `).join('');
+    }
+    
+    function showDetails(id) {
+        const v = allVehicles.find(x => x.id === id);
+        if (v) alert(`${v.marke} ${v.modell} ${v.variante}\n\nPreis: CHF ${v.preis_chf.toLocaleString('de-CH')}\nReichweite: ${v.reichweite_wltp} km WLTP\nBatterie: ${v.batterie_kwh} kWh\nLeistung: ${v.leistung_ps} PS (${v.leistung_kw} kW)\nDrehmoment: ${v.drehmoment_nm} Nm\n0-100: ${v.null_hundert}s\nVmax: ${v.vmax} km/h\nAC-Laden: ${v.ladeleistung_ac} kW\nDC-Laden: ${v.ladeleistung_dc} kW\nKofferraum: ${v.kofferraum_l} L\nGewicht: ${v.gewicht_kg} kg\nGarantie: ${v.garantie_batterie}`);
+    }
+    
+    function setupEventListeners() {
+        let timeout;
+        document.getElementById('search').addEventListener('input', () => { clearTimeout(timeout); timeout = setTimeout(applyFilters, 300); });
+        ['filter-brand','filter-category','filter-price','filter-range','sort-by'].forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
+    }
+    
+    init();
+    </script>
 </body>
 </html>
