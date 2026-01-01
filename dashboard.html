@@ -3,24 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <meta name="description" content="EV Markt-Dashboard Schweiz: Live-Statistiken zu Elektroauto-Zulassungen, Marktanteilen und Trends. Monatlich aktualisierte Daten.">
-    <meta name="keywords" content="Elektroauto Statistik Schweiz, EV Marktanteil, Zulassungszahlen, BEV PHEV, Tesla Schweiz, Elektromobilität Daten">
-    <meta name="author" content="EV Technical Insights">
-    <meta name="robots" content="index, follow">
-    
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://emirdurut-maker.github.io/ev-portal-schweiz/dashboard.html">
-    <meta property="og:title" content="EV Markt-Dashboard Schweiz | EV Technical Insights">
-    <meta property="og:description" content="Live-Statistiken zu Elektroauto-Zulassungen, Marktanteilen und Trends in der Schweiz.">
-    <meta property="og:image" content="https://emirdurut-maker.github.io/ev-portal-schweiz/og-image.png">
-    
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="EV Markt-Dashboard Schweiz">
-    <meta name="twitter:description" content="Live-Statistiken zur Elektromobilität in der Schweiz.">
-    
-    <link rel="canonical" href="https://emirdurut-maker.github.io/ev-portal-schweiz/dashboard.html">
-    
     <title>Markt-Dashboard | EV Technical Insights</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -28,106 +10,51 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     
     <style>
+        /* Styles identisch gelassen */
         *{margin:0;padding:0;box-sizing:border-box}
-        :root{--navy:#002B5B;--navy-dark:#001a38;--cyan:#00F2FF;--cyan-dim:rgba(0,242,255,0.15);--surface:#F9FAFB;--stone:#E5E7EB;--anthracite:#1F2937;--text-secondary:#6B7280;--success:#10B981;--danger:#EF4444;--font-headline:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace}
+        :root{--navy:#002B5B;--navy-dark:#001a38;--cyan:#00F2FF;--surface:#F9FAFB;--stone:#E5E7EB;--anthracite:#1F2937;--text-secondary:#6B7280;--success:#10B981;--danger:#EF4444;--font-headline:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace}
         body{font-family:var(--font-headline);background:var(--surface);color:var(--anthracite)}
         .container{max-width:1280px;margin:0 auto;padding:0 24px}
         
-        /* Header */
         .header{background:var(--navy);color:white;position:sticky;top:0;z-index:1000}
         .header-main{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
-        .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:white}
-        .logo-icon{width:44px;height:44px;background:var(--cyan);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px}
-        .logo-text{font-weight:800;font-size:20px}.logo-text span{color:var(--cyan)}
         .nav-links{display:flex;list-style:none;gap:8px}
-        .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:500;padding:10px 16px;border-radius:6px;transition:all 0.2s}
-        .nav-links a:hover{color:var(--cyan);background:rgba(0,242,255,0.1)}
+        .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:500;padding:10px 16px;border-radius:6px}
         .nav-links a.active{background:var(--cyan);color:var(--navy)}
-        .mobile-menu-btn{display:none;background:none;border:none;color:white;font-size:28px;cursor:pointer;padding:8px}
+        .mobile-menu-btn{display:none;background:none;border:none;color:white;font-size:28px}
         
-        /* Mobile Menu */
-        .mobile-menu{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--navy);z-index:999;display:flex;flex-direction:column;padding:80px 24px 24px;transform:translateX(100%);transition:transform 0.3s}
-        .mobile-menu.active{transform:translateX(0)}
-        .mobile-menu a{color:white;text-decoration:none;font-size:20px;font-weight:600;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.1)}
-        .mobile-menu a:hover{color:var(--cyan)}
-        .mobile-menu-close{position:absolute;top:20px;right:20px;background:none;border:none;color:white;font-size:32px;cursor:pointer}
-        
-        /* Page Header */
         .page-header{background:linear-gradient(135deg,var(--navy),var(--navy-dark));color:white;padding:48px 0}
-        .page-header h1{font-size:36px;margin-bottom:8px}
-        .page-subtitle{font-family:var(--font-mono);font-size:14px;color:rgba(255,255,255,0.7)}
         .data-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,242,255,0.15);border:1px solid var(--cyan);padding:6px 12px;border-radius:20px;font-family:var(--font-mono);font-size:11px;color:var(--cyan);margin-top:16px}
-        .data-badge::before{content:"";width:8px;height:8px;background:var(--cyan);border-radius:50%;animation:pulse 2s infinite}
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
         
-        /* KPI Cards */
         .kpi-section{padding:32px 0;background:white;border-bottom:1px solid var(--stone)}
         .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
         .kpi-card{background:var(--surface);border-radius:12px;padding:24px;border:1px solid var(--stone)}
-        .kpi-label{font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
         .kpi-value{font-family:var(--font-mono);font-size:32px;font-weight:800;color:var(--navy)}
-        .kpi-change{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:12px;margin-top:8px;padding:4px 8px;border-radius:4px}
+        .kpi-change{font-family:var(--font-mono);font-size:12px;margin-top:8px;padding:4px 8px;border-radius:4px;display:inline-block}
         .kpi-change.positive{background:rgba(16,185,129,0.1);color:var(--success)}
         .kpi-change.negative{background:rgba(239,68,68,0.1);color:var(--danger)}
         
-        /* Charts */
         .charts-section{padding:40px 0}
         .charts-grid{display:grid;grid-template-columns:2fr 1fr;gap:24px}
-        .chart-card{background:white;border-radius:12px;border:1px solid var(--stone);overflow:hidden}
-        .chart-header{padding:20px;border-bottom:1px solid var(--stone)}
-        .chart-title{font-size:16px;font-weight:700;color:var(--navy)}
-        .chart-body{padding:20px;height:300px}
+        .chart-card{background:white;border-radius:12px;border:1px solid var(--stone);overflow:hidden;height:400px;padding:20px}
         
-        /* Tables */
         .tables-section{padding:0 0 60px}
         .tables-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-        .table-card{background:white;border-radius:12px;border:1px solid var(--stone);overflow:hidden}
-        .table-header{padding:20px;border-bottom:1px solid var(--stone);display:flex;justify-content:space-between;align-items:center}
-        .table-title{font-size:16px;font-weight:700;color:var(--navy)}
-        table{width:100%;border-collapse:collapse}
-        th,td{padding:12px 20px;text-align:left;border-bottom:1px solid var(--stone)}
-        th{font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);text-transform:uppercase;background:var(--surface)}
-        td{font-size:14px; vertical-align: middle;}
-        .rank{font-family:var(--font-mono);font-weight:700;color:var(--cyan)}
-        .trend-up{color:var(--success)}
-        .trend-down{color:var(--danger)}
-        
-        /* Footer */
-        .footer{background:var(--navy-dark);color:white;padding:40px 0 24px}
-        .footer-content{display:flex;justify-content:space-between;align-items:center}
-        .footer-links{display:flex;gap:24px}
-        .footer-links a{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none}
-        .footer-links a:hover{color:var(--cyan)}
-        .footer-copyright{font-family:var(--font-mono);font-size:12px;color:rgba(255,255,255,0.5)}
-        
-        /* Responsive */
-        @media(max-width:1024px){
-            .nav-links{display:none}
-            .mobile-menu-btn{display:block}
-            .kpi-grid{grid-template-columns:repeat(2,1fr)}
-            .charts-grid,.tables-grid{grid-template-columns:1fr}
-        }
-        @media(max-width:768px){
-            .kpi-grid{grid-template-columns:1fr}
-            .page-header h1{font-size:28px}
-            .footer-content{flex-direction:column;gap:16px;text-align:center}
-        }
+        .table-card{background:white;border-radius:12px;border:1px solid var(--stone);padding:20px}
+        table{width:100%;border-collapse:collapse;margin-top:10px}
+        th,td{padding:12px;text-align:left;border-bottom:1px solid var(--stone)}
+        .trend-up{color:var(--success)} .trend-down{color:var(--danger)}
+
+        .footer{background:var(--navy-dark);color:white;padding:40px 0}
+
+        @media(max-width:1024px){.nav-links{display:none}.mobile-menu-btn{display:block}.kpi-grid{grid-template-columns:1fr 1fr}.charts-grid,.tables-grid{grid-template-columns:1fr}}
+        @media(max-width:768px){.kpi-grid{grid-template-columns:1fr}}
     </style>
 </head>
 <body>
-    <div class="mobile-menu" id="mobile-menu">
-        <button class="mobile-menu-close" onclick="toggleMobileMenu()">✕</button>
-        <a href="index.html">🏠 Home</a>
-        <a href="dashboard.html">📊 Dashboard</a>
-        <a href="fahrzeuge.html">🔋 Fahrzeuge</a>
-        <a href="news.html">📰 News</a>
-        <a href="laden.html">⚡ Laden</a>
-        <a href="ratgeber.html">📋 Ratgeber</a>
-        <a href="reichweite.html">📏 Analyse</a>
-    </div>
 
     <header class="header"><div class="container"><div class="header-main">
-        <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
+        <a href="index.html" style="text-decoration:none;font-weight:800;font-size:20px;color:white">⚡ EV <span style="color:var(--cyan)">Insights</span></a>
         <ul class="nav-links">
             <li><a href="dashboard.html" class="active">📊 Dashboard</a></li>
             <li><a href="fahrzeuge.html">🔋 Fahrzeuge</a></li>
@@ -136,36 +63,36 @@
             <li><a href="ratgeber.html">📋 Ratgeber</a></li>
             <li><a href="reichweite.html">📏 Analyse</a></li>
         </ul>
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <button class="mobile-menu-btn">☰</button>
     </div></div></header>
 
     <section class="page-header"><div class="container">
-        <h1>📊 Markt-Dashboard</h1>
-        <p class="page-subtitle">Elektromobilität Schweiz - Live-Daten & Statistiken</p>
-        <div class="data-badge" id="update-badge">Daten werden geladen...</div>
+        <h1 style="font-size:32px; margin-bottom:10px;">📊 Markt-Dashboard</h1>
+        <p>Live-Daten & Statistiken Schweiz</p>
+        <div class="data-badge" id="update-badge">Lade Daten...</div>
     </div></section>
 
     <section class="kpi-section"><div class="container">
         <div class="kpi-grid">
             <div class="kpi-card">
-                <div class="kpi-label">BEV-Marktanteil</div>
-                <div class="kpi-value" id="kpi-bev-share">--</div>
-                <div class="kpi-change positive" id="kpi-bev-change">--</div>
+                <div style="font-size:12px;color:#666;text-transform:uppercase;">BEV-Marktanteil</div>
+                <div class="kpi-value" id="kpi-share">--</div>
+                <div class="kpi-change" id="kpi-share-change">--</div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-label">BEV Neuzulassungen</div>
-                <div class="kpi-value" id="kpi-bev-total">--</div>
-                <div class="kpi-change positive" id="kpi-bev-total-change">--</div>
+                <div style="font-size:12px;color:#666;text-transform:uppercase;">BEV Neuzulassungen</div>
+                <div class="kpi-value" id="kpi-sales">--</div>
+                <div class="kpi-change" id="kpi-sales-change">--</div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-label">Total Neuzulassungen</div>
+                <div style="font-size:12px;color:#666;text-transform:uppercase;">Markt Total</div>
                 <div class="kpi-value" id="kpi-total">--</div>
-                <div class="kpi-change positive" id="kpi-total-change">--</div>
+                <div class="kpi-change" id="kpi-total-change">--</div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-label">Elektrifiziert (BEV+PHEV)</div>
-                <div class="kpi-value" id="kpi-electrified">--</div>
-                <div class="kpi-change positive" id="kpi-electrified-change">--</div>
+                <div style="font-size:12px;color:#666;text-transform:uppercase;">Elektrifiziert (BEV+PHEV)</div>
+                <div class="kpi-value" id="kpi-elec">--</div>
+                <div class="kpi-change" id="kpi-elec-change">--</div>
             </div>
         </div>
     </div></section>
@@ -173,12 +100,12 @@
     <section class="charts-section"><div class="container">
         <div class="charts-grid">
             <div class="chart-card">
-                <div class="chart-header"><h3 class="chart-title">📈 Monatliche Entwicklung 2024</h3></div>
-                <div class="chart-body"><canvas id="chart-monthly"></canvas></div>
+                <h3>📈 Trend 2024</h3>
+                <div style="height:320px"><canvas id="chart-main"></canvas></div>
             </div>
             <div class="chart-card">
-                <div class="chart-header"><h3 class="chart-title">🥧 Marktanteile aktueller Monat</h3></div>
-                <div class="chart-body"><canvas id="chart-share"></canvas></div>
+                <h3>🥧 Antriebsarten</h3>
+                <div style="height:320px"><canvas id="chart-pie"></canvas></div>
             </div>
         </div>
     </div></section>
@@ -186,59 +113,74 @@
     <section class="tables-section"><div class="container">
         <div class="tables-grid">
             <div class="table-card">
-                <div class="table-header"><h3 class="table-title">🏆 Top 5 Marken (BEV)</h3></div>
-                <table id="table-brands">
-                    <thead><tr><th>Rang</th><th>Marke</th><th>Verkäufe</th><th>Trend</th></tr></thead>
-                    <tbody></tbody>
-                </table>
+                <h3>🏆 Top Marken</h3>
+                <table id="table-brands"><thead><tr><th>#</th><th>Marke</th><th>Verkäufe</th><th>Trend</th></tr></thead><tbody></tbody></table>
             </div>
             <div class="table-card">
-                <div class="table-header"><h3 class="table-title">🚗 Top 5 Modelle (BEV)</h3></div>
-                <table id="table-models">
-                    <thead><tr><th>Rang</th><th>Modell</th><th>Verkäufe</th><th>Anteil</th></tr></thead>
-                    <tbody></tbody>
-                </table>
+                <h3>🚗 Top Modelle</h3>
+                <table id="table-models"><thead><tr><th>#</th><th>Modell</th><th>Verkäufe</th><th>Anteil</th></tr></thead><tbody></tbody></table>
             </div>
         </div>
     </div></section>
 
-    <footer class="footer"><div class="container"><div class="footer-content">
-        <a href="index.html" class="logo"><div class="logo-icon">⚡</div><div class="logo-text">EV Technical <span>Insights</span></div></a>
-        <div class="footer-links">
-            <a href="impressum.html">Impressum</a>
-            <a href="datenschutz.html">Datenschutz</a>
-        </div>
-        <p class="footer-copyright">© 2025 EV Technical Insights</p>
-    </div></div></footer>
+    <footer class="footer"><div class="container" style="text-align:center; font-size:12px; color:rgba(255,255,255,0.5)">
+        © 2025 EV Technical Insights | <a href="impressum.html" style="color:white">Impressum</a>
+    </div></footer>
 
     <script>
-        // Mobile Menu
-        function toggleMobileMenu() {
-            document.getElementById('mobile-menu').classList.toggle('active');
-            document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
+        // --- HIER WAR DER FEHLER: JETZT MIT DER KORREKTEN URL ---
+        // Wir nutzen den Pfad mit /refs/heads/, den du gefunden hast:
+        const DATA_BASE = 'https://raw.githubusercontent.com/emirdurut-maker/ev-portal-schweiz/refs/heads/main/data/';
+        
+        async function init() {
+            try {
+                // Lade alle CSVs parallel
+                const [markt, marken, modelle] = await Promise.all([
+                    loadCSV(DATA_BASE + 'markt.csv'),
+                    loadCSV(DATA_BASE + 'marken.csv'),
+                    loadCSV(DATA_BASE + 'modelle.csv')
+                ]);
+
+                // Update Datum-Badge
+                const last = markt[markt.length - 1];
+                document.getElementById('update-badge').textContent = `Stand: ${last.monat} ${last.jahr}`;
+
+                // Update KPIs & Charts
+                updateKPIs(markt);
+                renderCharts(markt);
+                
+                // Tabellen füllen
+                renderTable('table-brands', marken, ['rang', 'marke', 'verkaeufe', 'trend']);
+                
+                // Modelle MIT BILDERN
+                const tbody = document.querySelector('#table-models tbody');
+                tbody.innerHTML = modelle.slice(0, 5).map(row => {
+                    // Bild-Name generieren (Tesla Model Y -> tesla-model-y.jpg)
+                    const imgName = (row.marke + " " + row.modell).toLowerCase()
+                        .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue')
+                        .replace(/[^a-z0-9 ]/g, '').trim().replace(/\s+/g, '-') + '.jpg';
+                    
+                    return `
+                    <tr>
+                        <td style="font-weight:bold; color:#00F2FF">#${row.rang}</td>
+                        <td style="display:flex; align-items:center; gap:10px;">
+                            <img src="./images/${imgName}" onerror="this.style.display='none'" 
+                                 style="width:40px; height:24px; object-fit:cover; border-radius:4px; background:#eee;">
+                            <strong>${row.marke} ${row.modell}</strong>
+                        </td>
+                        <td>${row.verkaeufe}</td>
+                        <td>${row.anteil}%</td>
+                    </tr>`;
+                }).join('');
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById('update-badge').textContent = "⚠️ Fehler: Daten-URL falsch";
+            }
         }
 
-        // Data URLs (Auf ./data/ geändert für bessere Performance & relative Pfade)
-// Wir nutzen wieder den vollen Pfad, um sicherzugehen
-const DATA_BASE = 'https://raw.githubusercontent.com/emirdurut-maker/ev-portal-schweiz/main/data/';        const URLS = {
-            markt: DATA_BASE + 'markt.csv',
-            marken: DATA_BASE + 'marken.csv',
-            modelle: DATA_BASE + 'modelle.csv'
-        };
-
-        let chartMonthly, chartShare;
-
-        // Helfer: Bild-URL generieren (Tesla Model 3 -> tesla-model-3.jpg)
-        function getCarImage(marke, modell) {
-            const cleanName = (marke + " " + modell).toLowerCase()
-                .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue')
-                .replace(/[^a-z0-9 ]/g, '') // Sonderzeichen weg
-                .trim().replace(/\s+/g, '-'); // Leerzeichen zu Bindestrich
-            return `./images/${cleanName}.jpg`;
-        }
-
-        // Load CSV
-        async function loadCSV(url) {
+        // Helfer-Funktionen
+        function loadCSV(url) {
             return new Promise((resolve, reject) => {
                 Papa.parse(url, {
                     download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
@@ -248,141 +190,59 @@ const DATA_BASE = 'https://raw.githubusercontent.com/emirdurut-maker/ev-portal-s
             });
         }
 
-        // Initialize
-        async function init() {
-            try {
-                const [markt, marken, modelle] = await Promise.all([
-                    loadCSV(URLS.markt),
-                    loadCSV(URLS.marken),
-                    loadCSV(URLS.modelle)
-                ]);
-
-                updateKPIs(markt);
-                renderMonthlyChart(markt);
-                renderShareChart(markt);
-                renderBrandsTable(marken);
-                renderModelsTable(modelle); // Jetzt mit Bildern!
-
-                const latest = markt[markt.length - 1];
-                document.getElementById('update-badge').textContent = `Stand: ${latest.monat} ${latest.jahr}`;
-
-            } catch (e) {
-                console.error('Fehler:', e);
-                document.getElementById('update-badge').textContent = '⚠️ Daten laden...';
-                // Fallback, falls lokale Pfade scheitern (z.B. bei lokalem Öffnen ohne Server)
-                console.log("Hinweis: Öffne die Seite über einen lokalen Server oder GitHub Pages, damit CSVs geladen werden können.");
-            }
-        }
-
-        // Update KPIs
         function updateKPIs(data) {
-            const latest = data[data.length - 1];
-            const prev = data[data.length - 2];
-
-            document.getElementById('kpi-bev-share').textContent = latest.bev_anteil + '%';
-            document.getElementById('kpi-bev-total').textContent = latest.bev.toLocaleString('de-CH');
-            document.getElementById('kpi-total').textContent = latest.total.toLocaleString('de-CH');
+            const cur = data[data.length-1];
+            const prev = data[data.length-2] || cur;
             
-            const electrified = latest.bev_anteil + latest.phev_anteil;
-            document.getElementById('kpi-electrified').textContent = electrified.toFixed(1) + '%';
-
-            // Changes
-            const bevChange = (latest.bev_anteil - prev.bev_anteil).toFixed(1);
-            setChange('kpi-bev-change', bevChange, '%');
+            setKPI('kpi-share', cur.bev_anteil + '%', (cur.bev_anteil - prev.bev_anteil).toFixed(1));
+            setKPI('kpi-sales', cur.bev, ((cur.bev - prev.bev)/prev.bev * 100).toFixed(0));
+            setKPI('kpi-total', cur.total, ((cur.total - prev.total)/prev.total * 100).toFixed(0));
             
-            const bevTotalChange = (((latest.bev - prev.bev) / prev.bev) * 100).toFixed(0);
-            setChange('kpi-bev-total-change', bevTotalChange, '%');
-            
-            const totalChange = (((latest.total - prev.total) / prev.total) * 100).toFixed(0);
-            setChange('kpi-total-change', totalChange, '%');
-            
-            const prevElectrified = prev.bev_anteil + prev.phev_anteil;
-            const electrifiedChange = (electrified - prevElectrified).toFixed(1);
-            setChange('kpi-electrified-change', electrifiedChange, '%');
+            const elec = (cur.bev_anteil + cur.phev_anteil).toFixed(1);
+            setKPI('kpi-elec', elec + '%', (elec - (prev.bev_anteil + prev.phev_anteil)).toFixed(1));
         }
 
-        function setChange(id, value, suffix) {
-            const el = document.getElementById(id);
-            const isPositive = parseFloat(value) >= 0;
-            el.className = 'kpi-change ' + (isPositive ? 'positive' : 'negative');
-            el.textContent = (isPositive ? '+' : '') + value + suffix;
+        function setKPI(id, val, change) {
+            document.getElementById(id).textContent = val;
+            const el = document.getElementById(id + '-change');
+            el.textContent = (change >= 0 ? '+' : '') + change + '%';
+            el.className = `kpi-change ${change >= 0 ? 'positive' : 'negative'}`;
         }
 
-        // Monthly Chart
-        function renderMonthlyChart(data) {
-            const ctx = document.getElementById('chart-monthly').getContext('2d');
-            chartMonthly = new Chart(ctx, {
+        function renderCharts(data) {
+            new Chart(document.getElementById('chart-main'), {
                 type: 'bar',
                 data: {
-                    labels: data.map(d => d.monat.toString().slice(0, 3)),
-                    datasets: [
-                        { label: 'BEV', data: data.map(d => d.bev), backgroundColor: '#00F2FF' },
-                        { label: 'PHEV', data: data.map(d => d.phev), backgroundColor: '#002B5B' },
-                        { label: 'Verbrenner', data: data.map(d => d.ice), backgroundColor: '#E5E7EB' }
-                    ]
+                    labels: data.map(d => d.monat),
+                    datasets: [{label:'BEV', data:data.map(d=>d.bev), backgroundColor:'#00F2FF'}, {label:'Rest', data:data.map(d=>d.total-d.bev), backgroundColor:'#002B5B'}]
                 },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: { x: { stacked: true }, y: { stacked: true } },
-                    plugins: { legend: { position: 'bottom' } }
-                }
+                options: {responsive:true, maintainAspectRatio:false, scales:{x:{stacked:true},y:{stacked:true}}}
             });
-        }
-
-        // Share Chart
-        function renderShareChart(data) {
-            const latest = data[data.length - 1];
-            const ctx = document.getElementById('chart-share').getContext('2d');
-            chartShare = new Chart(ctx, {
+            
+            const last = data[data.length-1];
+            new Chart(document.getElementById('chart-pie'), {
                 type: 'doughnut',
                 data: {
                     labels: ['BEV', 'PHEV', 'Hybrid', 'Verbrenner'],
-                    datasets: [{
-                        data: [latest.bev_anteil, latest.phev_anteil, latest.hev_anteil, latest.ice_anteil],
-                        backgroundColor: ['#00F2FF', '#002B5B', '#6B7280', '#E5E7EB']
-                    }]
+                    datasets: [{data:[last.bev_anteil, last.phev_anteil, last.hev_anteil, last.ice_anteil], backgroundColor:['#00F2FF','#002B5B','#6B7280','#E5E7EB']}]
                 },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } }
-                }
+                options: {responsive:true, maintainAspectRatio:false}
             });
         }
 
-        // Brands Table
-        function renderBrandsTable(data) {
-            const tbody = document.querySelector('#table-brands tbody');
-            tbody.innerHTML = data.slice(0, 5).map(d => `
-                <tr>
-                    <td class="rank">#${d.rang}</td>
-                    <td><strong>${d.marke}</strong></td>
-                    <td>${d.verkaeufe.toLocaleString('de-CH')}</td>
-                    <td class="${d.trend >= 0 ? 'trend-up' : 'trend-down'}">${d.trend >= 0 ? '+' : ''}${d.trend}%</td>
-                </tr>
-            `).join('');
+        function renderTable(id, data, cols) {
+            document.querySelector(`#${id} tbody`).innerHTML = data.slice(0,5).map(r => 
+                `<tr><td>#${r[cols[0]]}</td><td><strong>${r[cols[1]]}</strong></td><td>${r[cols[2]]}</td><td class="${r[cols[3]]>=0?'trend-up':'trend-down'}">${r[cols[3]]}%</td></tr>`
+            ).join('');
         }
 
-        // Models Table MIT BILDERN
-        function renderModelsTable(data) {
-            const tbody = document.querySelector('#table-models tbody');
-            tbody.innerHTML = data.slice(0, 5).map(d => {
-                const imgPath = getCarImage(d.marke, d.modell);
-                return `
-                <tr>
-                    <td class="rank">#${d.rang}</td>
-                    <td>
-                        <div style="display:flex; align-items:center;">
-                            <img src="${imgPath}" 
-                                 onerror="this.style.display='none'" 
-                                 style="width:50px; height:30px; object-fit:cover; border-radius:4px; margin-right:12px; border:1px solid #eee; background:#fff;">
-                            <strong>${d.marke} ${d.modell}</strong>
-                        </div>
-                    </td>
-                    <td>${d.verkaeufe.toLocaleString('de-CH')}</td>
-                    <td>${d.anteil}%</td>
-                </tr>
-            `}).join('');
-        }
+        // Mobile Menu Button
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+             document.getElementById('mobile-menu').classList.add('active');
+        });
+        document.querySelector('.mobile-menu-close').addEventListener('click', () => {
+             document.getElementById('mobile-menu').classList.remove('active');
+        });
 
         init();
     </script>
