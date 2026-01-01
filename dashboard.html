@@ -4,20 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SEO Meta Tags -->
     <meta name="description" content="EV Markt-Dashboard Schweiz: Live-Statistiken zu Elektroauto-Zulassungen, Marktanteilen und Trends. Monatlich aktualisierte Daten.">
     <meta name="keywords" content="Elektroauto Statistik Schweiz, EV Marktanteil, Zulassungszahlen, BEV PHEV, Tesla Schweiz, Elektromobilität Daten">
     <meta name="author" content="EV Technical Insights">
     <meta name="robots" content="index, follow">
     
-    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://emirdurut-maker.github.io/ev-portal-schweiz/dashboard.html">
     <meta property="og:title" content="EV Markt-Dashboard Schweiz | EV Technical Insights">
     <meta property="og:description" content="Live-Statistiken zu Elektroauto-Zulassungen, Marktanteilen und Trends in der Schweiz.">
     <meta property="og:image" content="https://emirdurut-maker.github.io/ev-portal-schweiz/og-image.png">
     
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="EV Markt-Dashboard Schweiz">
     <meta name="twitter:description" content="Live-Statistiken zur Elektromobilität in der Schweiz.">
@@ -90,7 +87,7 @@
         table{width:100%;border-collapse:collapse}
         th,td{padding:12px 20px;text-align:left;border-bottom:1px solid var(--stone)}
         th{font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);text-transform:uppercase;background:var(--surface)}
-        td{font-size:14px}
+        td{font-size:14px; vertical-align: middle;}
         .rank{font-family:var(--font-mono);font-weight:700;color:var(--cyan)}
         .trend-up{color:var(--success)}
         .trend-down{color:var(--danger)}
@@ -118,7 +115,6 @@
     </style>
 </head>
 <body>
-    <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobile-menu">
         <button class="mobile-menu-close" onclick="toggleMobileMenu()">✕</button>
         <a href="index.html">🏠 Home</a>
@@ -127,8 +123,7 @@
         <a href="news.html">📰 News</a>
         <a href="laden.html">⚡ Laden</a>
         <a href="ratgeber.html">📋 Ratgeber</a>
-        <a href="service.html">🔧 Service</a>
-        <a href="reichweite.html">📏 Reichweite</a>
+        <a href="reichweite.html">📏 Analyse</a>
     </div>
 
     <header class="header"><div class="container"><div class="header-main">
@@ -139,8 +134,7 @@
             <li><a href="news.html">📰 News</a></li>
             <li><a href="laden.html">⚡ Laden</a></li>
             <li><a href="ratgeber.html">📋 Ratgeber</a></li>
-            <li><a href="service.html">🔧 Service</a></li>
-            <li><a href="reichweite.html">📏 Reichweite</a></li>
+            <li><a href="reichweite.html">📏 Analyse</a></li>
         </ul>
         <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
     </div></div></header>
@@ -224,8 +218,8 @@
             document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
         }
 
-        // Data URLs
-        const DATA_BASE = 'https://raw.githubusercontent.com/emirdurut-maker/ev-portal-schweiz/main/data/';
+        // Data URLs (Auf ./data/ geändert für bessere Performance & relative Pfade)
+        const DATA_BASE = './data/';
         const URLS = {
             markt: DATA_BASE + 'markt.csv',
             marken: DATA_BASE + 'marken.csv',
@@ -233,6 +227,15 @@
         };
 
         let chartMonthly, chartShare;
+
+        // Helfer: Bild-URL generieren (Tesla Model 3 -> tesla-model-3.jpg)
+        function getCarImage(marke, modell) {
+            const cleanName = (marke + " " + modell).toLowerCase()
+                .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue')
+                .replace(/[^a-z0-9 ]/g, '') // Sonderzeichen weg
+                .trim().replace(/\s+/g, '-'); // Leerzeichen zu Bindestrich
+            return `./images/${cleanName}.jpg`;
+        }
 
         // Load CSV
         async function loadCSV(url) {
@@ -258,14 +261,16 @@
                 renderMonthlyChart(markt);
                 renderShareChart(markt);
                 renderBrandsTable(marken);
-                renderModelsTable(modelle);
+                renderModelsTable(modelle); // Jetzt mit Bildern!
 
                 const latest = markt[markt.length - 1];
-                document.getElementById('update-badge').textContent = `CSV-Daten: ${latest.monat} ${latest.jahr}`;
+                document.getElementById('update-badge').textContent = `Stand: ${latest.monat} ${latest.jahr}`;
 
             } catch (e) {
                 console.error('Fehler:', e);
-                document.getElementById('update-badge').textContent = '❌ Fehler beim Laden';
+                document.getElementById('update-badge').textContent = '⚠️ Daten laden...';
+                // Fallback, falls lokale Pfade scheitern (z.B. bei lokalem Öffnen ohne Server)
+                console.log("Hinweis: Öffne die Seite über einen lokalen Server oder GitHub Pages, damit CSVs geladen werden können.");
             }
         }
 
@@ -309,7 +314,7 @@
             chartMonthly = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: data.map(d => d.monat.slice(0, 3)),
+                    labels: data.map(d => d.monat.toString().slice(0, 3)),
                     datasets: [
                         { label: 'BEV', data: data.map(d => d.bev), backgroundColor: '#00F2FF' },
                         { label: 'PHEV', data: data.map(d => d.phev), backgroundColor: '#002B5B' },
@@ -357,17 +362,26 @@
             `).join('');
         }
 
-        // Models Table
+        // Models Table MIT BILDERN
         function renderModelsTable(data) {
             const tbody = document.querySelector('#table-models tbody');
-            tbody.innerHTML = data.slice(0, 5).map(d => `
+            tbody.innerHTML = data.slice(0, 5).map(d => {
+                const imgPath = getCarImage(d.marke, d.modell);
+                return `
                 <tr>
                     <td class="rank">#${d.rang}</td>
-                    <td><strong>${d.marke} ${d.modell}</strong></td>
+                    <td>
+                        <div style="display:flex; align-items:center;">
+                            <img src="${imgPath}" 
+                                 onerror="this.style.display='none'" 
+                                 style="width:50px; height:30px; object-fit:cover; border-radius:4px; margin-right:12px; border:1px solid #eee; background:#fff;">
+                            <strong>${d.marke} ${d.modell}</strong>
+                        </div>
+                    </td>
                     <td>${d.verkaeufe.toLocaleString('de-CH')}</td>
                     <td>${d.anteil}%</td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
 
         init();
