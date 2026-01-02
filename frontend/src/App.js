@@ -1125,7 +1125,7 @@ const KnowledgePage = () => {
                   <XCircle className="text-red-500 flex-shrink-0 mt-1" size={20} />
                   <div className="flex-1">
                     <p className="font-medium text-red-700">Mythos:</p>
-                    <p className="text-slate-800">"{myth.myth}"</p>
+                    <p className="text-slate-800">&ldquo;{myth.myth}&rdquo;</p>
                   </div>
                   {expandedMyth === myth.id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </div>
