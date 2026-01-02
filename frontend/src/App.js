@@ -1412,74 +1412,298 @@ const CostCalculatorPage = () => {
 // ==================== NEWS PAGE ====================
 
 const NewsPage = () => {
-  const newsFeeds = [
-    { name: 'Electrive', url: 'https://www.electrive.net/', icon: '🔌' },
-    { name: 'InsideEVs', url: 'https://insideevs.com/', icon: '🚗' },
-    { name: 'Elektroauto-News', url: 'https://www.elektroauto-news.net/', icon: '📰' },
-    { name: 'Auto-Schweiz', url: 'https://auto.swiss/', icon: '🇨🇭' },
-    { name: 'TCS', url: 'https://www.tcs.ch/', icon: '🛡️' },
-    { name: 'Swiss eMobility', url: 'https://www.swiss-emobility.ch/', icon: '⚡' },
+  const [articles, setArticles] = useState([]);
+  const [sources, setSources] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [filters, setFilters] = useState({
+    region: '',
+    category: '',
+    language: ''
+  });
+  const [cacheInfo, setCacheInfo] = useState(null);
+  
+  const fetchNews = async (forceRefresh = false) => {
+    if (forceRefresh) setRefreshing(true);
+    else setLoading(true);
+    
+    try {
+      const params = new URLSearchParams();
+      if (filters.region) params.append('region', filters.region);
+      if (filters.category) params.append('category', filters.category);
+      if (filters.language) params.append('language', filters.language);
+      if (forceRefresh) params.append('refresh', 'true');
+      params.append('limit', '100');
+      
+      const res = await axios.get(`${API}/news?${params}`);
+      setArticles(res.data.articles || []);
+      setCacheInfo({
+        age: res.data.cache_age_minutes,
+        sourcesCount: res.data.sources_count
+      });
+    } catch (err) {
+      console.error('Error fetching news:', err);
+    }
+    setLoading(false);
+    setRefreshing(false);
+  };
+  
+  useEffect(() => {
+    Promise.all([
+      axios.get(`${API}/news/sources`),
+      axios.get(`${API}/news/categories`),
+    ]).then(([sourcesRes, catsRes]) => {
+      setSources(sourcesRes.data.sources || []);
+      setCategories(catsRes.data.categories || []);
+    }).catch(console.error);
+    
+    fetchNews();
+  }, []);
+  
+  useEffect(() => {
+    fetchNews();
+  }, [filters]);
+  
+  const regionOptions = [
+    { value: '', label: 'Alle Regionen' },
+    { value: 'swiss', label: '🇨🇭 Schweiz' },
+    { value: 'german', label: '🇩🇪 Deutschland' },
+    { value: 'international', label: '🌍 International' },
+    { value: 'balkan', label: '🇷🇸🇭🇷 Balkan' },
   ];
+  
+  const languageOptions = [
+    { value: '', label: 'Alle Sprachen' },
+    { value: 'de', label: 'Deutsch' },
+    { value: 'en', label: 'English' },
+    { value: 'sr', label: 'Srpski' },
+    { value: 'hr', label: 'Hrvatski' },
+  ];
+  
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffHours < 1) return 'Gerade eben';
+    if (diffHours < 24) return `vor ${diffHours} Stunden`;
+    if (diffDays === 1) return 'Gestern';
+    if (diffDays < 7) return `vor ${diffDays} Tagen`;
+    return date.toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
+  
+  const getCategoryIcon = (categoryId) => {
+    const cat = categories.find(c => c.id === categoryId);
+    return cat?.icon || '📰';
+  };
   
   return (
     <div className="max-w-7xl mx-auto px-4 py-8" data-testid="news-page">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">📰 News Hub</h1>
-        <p className="text-slate-600">Aktuelle Nachrichten aus der Welt der Elektromobilität</p>
+      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">📰 News Hub</h1>
+          <p className="text-slate-600">Automatische News-Aggregation aus {sources.length}+ EV-Quellen</p>
+        </div>
+        <button
+          onClick={() => fetchNews(true)}
+          disabled={refreshing}
+          className="mt-4 md:mt-0 bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50 flex items-center space-x-2"
+          data-testid="refresh-news"
+        >
+          <span className={refreshing ? 'animate-spin' : ''}>🔄</span>
+          <span>{refreshing ? 'Aktualisieren...' : 'Aktualisieren'}</span>
+        </button>
       </div>
       
-      <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-8">
-        <div className="flex items-start space-x-3">
-          <AlertCircle className="text-yellow-600 flex-shrink-0 mt-1" size={24} />
-          <div>
-            <h3 className="font-bold text-yellow-800">News-Feed in Entwicklung</h3>
-            <p className="text-yellow-700 mt-1">
-              Wir arbeiten an einer automatischen Aggregation von EV-News aus verschiedenen Quellen. 
-              In der Zwischenzeit finden Sie unten Links zu den besten Quellen.
-            </p>
+      {/* Cache Info */}
+      {cacheInfo && (
+        <div className="bg-slate-100 rounded-lg px-4 py-2 mb-4 text-sm text-slate-600 flex items-center justify-between">
+          <span>Letzte Aktualisierung vor {Math.round(cacheInfo.age)} Minuten • {sources.length} Quellen</span>
+        </div>
+      )}
+      
+      {/* Filters */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6" data-testid="news-filters">
+        <div className="flex flex-wrap gap-4">
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-sm font-medium text-slate-700 mb-1">Region</label>
+            <select
+              value={filters.region}
+              onChange={(e) => setFilters({...filters, region: e.target.value})}
+              className="w-full border border-slate-300 rounded-lg px-3 py-2"
+              data-testid="filter-region"
+            >
+              {regionOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-sm font-medium text-slate-700 mb-1">Kategorie</label>
+            <select
+              value={filters.category}
+              onChange={(e) => setFilters({...filters, category: e.target.value})}
+              className="w-full border border-slate-300 rounded-lg px-3 py-2"
+              data-testid="filter-category"
+            >
+              <option value="">Alle Kategorien</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-sm font-medium text-slate-700 mb-1">Sprache</label>
+            <select
+              value={filters.language}
+              onChange={(e) => setFilters({...filters, language: e.target.value})}
+              className="w-full border border-slate-300 rounded-lg px-3 py-2"
+              data-testid="filter-language"
+            >
+              {languageOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
       
-      <h2 className="text-xl font-bold mb-4">🔗 Empfohlene Quellen</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {newsFeeds.map((feed, idx) => (
-          <a
-            key={idx}
-            href={feed.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-emerald-300 transition-all flex items-center space-x-4"
-            data-testid={`news-feed-${idx}`}
+      {/* Category Quick Filters */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        <button
+          onClick={() => setFilters({...filters, category: ''})}
+          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+            !filters.category ? 'bg-emerald-600 text-white' : 'bg-slate-100 hover:bg-slate-200'
+          }`}
+        >
+          Alle
+        </button>
+        {categories.map(cat => (
+          <button
+            key={cat.id}
+            onClick={() => setFilters({...filters, category: cat.id})}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all flex items-center space-x-1 ${
+              filters.category === cat.id ? 'bg-emerald-600 text-white' : 'bg-slate-100 hover:bg-slate-200'
+            }`}
           >
-            <span className="text-3xl">{feed.icon}</span>
-            <div>
-              <h3 className="font-bold">{feed.name}</h3>
-              <span className="text-emerald-600 text-sm flex items-center space-x-1">
-                <span>Besuchen</span>
-                <ExternalLink size={14} />
-              </span>
-            </div>
-          </a>
+            <span>{cat.icon}</span>
+            <span>{cat.name_de || cat.name}</span>
+          </button>
         ))}
       </div>
       
-      <div className="mt-12 bg-slate-100 rounded-xl p-8 text-center">
-        <h3 className="text-xl font-bold mb-2">🔔 Newsletter (Coming Soon)</h3>
-        <p className="text-slate-600 mb-4">Erhalten Sie wöchentlich die wichtigsten EV-News direkt in Ihr Postfach.</p>
+      {/* Articles */}
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+        </div>
+      ) : articles.length === 0 ? (
+        <div className="text-center py-12 bg-slate-50 rounded-xl">
+          <p className="text-slate-500">Keine Artikel gefunden. Versuchen Sie andere Filter.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {articles.map((article, idx) => (
+            <a
+              key={article.id || idx}
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md hover:border-emerald-300 transition-all group"
+              data-testid={`news-article-${idx}`}
+            >
+              {article.image_url && (
+                <div className="aspect-video bg-slate-100 overflow-hidden">
+                  <img 
+                    src={article.image_url} 
+                    alt={article.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => e.target.style.display = 'none'}
+                  />
+                </div>
+              )}
+              <div className="p-4">
+                <div className="flex items-center space-x-2 mb-2">
+                  <span className="text-xs bg-slate-100 px-2 py-0.5 rounded">{article.source}</span>
+                  <span className="text-xs text-slate-400">{formatDate(article.published)}</span>
+                </div>
+                
+                <h3 className="font-bold text-lg mb-2 line-clamp-2 group-hover:text-emerald-600 transition-colors">
+                  {article.title}
+                </h3>
+                
+                {article.summary && (
+                  <p className="text-slate-600 text-sm line-clamp-3 mb-3">
+                    {article.summary}
+                  </p>
+                )}
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap gap-1">
+                    {article.categories?.slice(0, 2).map((cat, catIdx) => (
+                      <span key={catIdx} className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded">
+                        {getCategoryIcon(cat)} {cat}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex items-center space-x-1 text-xs text-slate-400">
+                    <span className="uppercase">{article.language}</span>
+                    <span>•</span>
+                    <span>{article.region}</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+      
+      {/* Sources Section */}
+      <div className="mt-12">
+        <h2 className="text-xl font-bold mb-4">📡 Unsere {sources.length} News-Quellen</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {sources.map((source, idx) => (
+              <div key={idx} className="text-center">
+                <span className={`inline-block px-2 py-1 rounded text-xs mb-1 ${
+                  source.region_group === 'swiss' ? 'bg-red-100 text-red-700' :
+                  source.region_group === 'german' ? 'bg-yellow-100 text-yellow-700' :
+                  source.region_group === 'balkan' ? 'bg-blue-100 text-blue-700' :
+                  'bg-green-100 text-green-700'
+                }`}>
+                  {source.region}
+                </span>
+                <p className="text-sm font-medium truncate">{source.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      {/* Newsletter Coming Soon */}
+      <div className="mt-12 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl p-8 text-white text-center">
+        <h3 className="text-2xl font-bold mb-2">🔔 Newsletter (Coming Soon)</h3>
+        <p className="text-emerald-100 mb-4">Erhalten Sie wöchentlich die wichtigsten EV-News direkt in Ihr Postfach.</p>
         <div className="flex max-w-md mx-auto">
           <input 
             type="email" 
             placeholder="ihre@email.ch" 
-            className="flex-1 px-4 py-3 rounded-l-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="flex-1 px-4 py-3 rounded-l-lg text-slate-900 focus:ring-2 focus:ring-white"
             disabled
           />
-          <button className="bg-slate-400 text-white px-6 py-3 rounded-r-lg font-medium cursor-not-allowed">
+          <button className="bg-white/20 text-white px-6 py-3 rounded-r-lg font-medium cursor-not-allowed">
             Anmelden
           </button>
         </div>
-        <p className="text-xs text-slate-500 mt-2">Newsletter-Funktion wird bald verfügbar sein</p>
+        <p className="text-xs text-emerald-200 mt-2">Newsletter-Funktion wird bald verfügbar sein</p>
       </div>
     </div>
   );
 };
+
