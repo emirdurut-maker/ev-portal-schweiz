@@ -1167,6 +1167,115 @@ def get_range_tips(temp: int, speed: int, climate: bool) -> List[str]:
     tips.append("Rekuperation auf Maximum stellen für beste Effizienz in der Stadt")
     return tips
 
+# ==================== NEWS FEED ====================
+
+@api_router.get("/news")
+async def get_news(
+    region: Optional[str] = Query(None, description="Filter by region: swiss, german, international, balkan"),
+    category: Optional[str] = Query(None, description="Filter by category: vehicles, battery, charging, policy, market, technology, infrastructure"),
+    language: Optional[str] = Query(None, description="Filter by language: de, en, sr, hr"),
+    limit: int = Query(50, description="Maximum number of articles"),
+    refresh: bool = Query(False, description="Force refresh cache")
+):
+    """Get aggregated news from multiple EV-related RSS feeds"""
+    global news_cache
+    
+    # Check cache validity
+    cache_valid = (
+        news_cache["last_updated"] is not None and
+        datetime.now(timezone.utc) - news_cache["last_updated"] < news_cache["cache_duration"] and
+        len(news_cache["articles"]) > 0 and
+        not refresh
+    )
+    
+    if not cache_valid:
+        logger.info("Fetching fresh news from RSS feeds...")
+        news_cache["articles"] = await fetch_all_feeds()
+        news_cache["last_updated"] = datetime.now(timezone.utc)
+        logger.info(f"Fetched {len(news_cache['articles'])} articles")
+    
+    articles = news_cache["articles"].copy()
+    
+    # Apply filters
+    if region:
+        region_codes = {
+            "swiss": ["CH"],
+            "german": ["DE"],
+            "international": ["US", "UK", "EU"],
+            "balkan": ["RS", "HR", "SI", "BA"]
+        }
+        allowed_regions = region_codes.get(region, [])
+        articles = [a for a in articles if a.get("region") in allowed_regions]
+    
+    if language:
+        articles = [a for a in articles if a.get("language") == language]
+    
+    if category:
+        articles = [a for a in articles if category in a.get("categories", [])]
+    
+    # Limit results
+    articles = articles[:limit]
+    
+    return {
+        "articles": articles,
+        "total": len(articles),
+        "cache_age_minutes": round((datetime.now(timezone.utc) - news_cache["last_updated"]).total_seconds() / 60, 1) if news_cache["last_updated"] else 0,
+        "sources_count": len([f for feeds in NEWS_FEEDS.values() for f in feeds]),
+        "filters": {
+            "region": region,
+            "category": category,
+            "language": language
+        }
+    }
+
+@api_router.get("/news/sources")
+async def get_news_sources():
+    """Get list of all configured news sources"""
+    sources = []
+    for region, feeds in NEWS_FEEDS.items():
+        for feed in feeds:
+            sources.append({
+                "name": feed["name"],
+                "url": feed["url"].replace("/feed/", "").replace("/feed", "").replace("/rss", ""),
+                "language": feed["lang"],
+                "region": feed["region"],
+                "region_group": region
+            })
+    
+    return {
+        "sources": sources,
+        "total": len(sources),
+        "regions": list(NEWS_FEEDS.keys()),
+        "languages": list(set(f["lang"] for feeds in NEWS_FEEDS.values() for f in feeds))
+    }
+
+@api_router.get("/news/categories")
+async def get_news_categories():
+    """Get available news categories"""
+    categories = [
+        {"id": "vehicles", "name": "Neue Fahrzeuge", "icon": "🚗", "name_de": "Neue Fahrzeuge", "name_en": "New Vehicles"},
+        {"id": "battery", "name": "Batterie & Reichweite", "icon": "🔋", "name_de": "Batterie & Reichweite", "name_en": "Battery & Range"},
+        {"id": "charging", "name": "Laden & Infrastruktur", "icon": "⚡", "name_de": "Laden & Infrastruktur", "name_en": "Charging & Infrastructure"},
+        {"id": "policy", "name": "Politik & Förderung", "icon": "📜", "name_de": "Politik & Förderung", "name_en": "Policy & Subsidies"},
+        {"id": "market", "name": "Markt & Wirtschaft", "icon": "📊", "name_de": "Markt & Wirtschaft", "name_en": "Market & Economy"},
+        {"id": "technology", "name": "Technologie & Updates", "icon": "🔧", "name_de": "Technologie & Updates", "name_en": "Technology & Updates"},
+        {"id": "infrastructure", "name": "Netzwerk & Ausbau", "icon": "🌐", "name_de": "Netzwerk & Ausbau", "name_en": "Network & Expansion"},
+        {"id": "general", "name": "Allgemein", "icon": "📰", "name_de": "Allgemein", "name_en": "General"},
+    ]
+    return {"categories": categories}
+
+@api_router.post("/news/refresh")
+async def refresh_news():
+    """Force refresh the news cache"""
+    global news_cache
+    news_cache["articles"] = await fetch_all_feeds()
+    news_cache["last_updated"] = datetime.now(timezone.utc)
+    return {
+        "status": "refreshed",
+        "articles_count": len(news_cache["articles"]),
+        "timestamp": news_cache["last_updated"].isoformat()
+    }
+
 # ==================== STATUS CHECK (Original) ====================
 
 @api_router.post("/status", response_model=StatusCheck)
