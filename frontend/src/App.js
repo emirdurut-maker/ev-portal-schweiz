@@ -1686,6 +1686,9 @@ const NewsPage = () => {
         </div>
       </div>
       
+      {/* YouTube Section */}
+      <YouTubeSection />
+      
       {/* Newsletter Coming Soon */}
       <div className="mt-12 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl p-8 text-white text-center">
         <h3 className="text-2xl font-bold mb-2">🔔 Newsletter (Coming Soon)</h3>
@@ -1703,6 +1706,377 @@ const NewsPage = () => {
         </div>
         <p className="text-xs text-emerald-200 mt-2">Newsletter-Funktion wird bald verfügbar sein</p>
       </div>
+    </div>
+  );
+};
+
+// ==================== YOUTUBE SECTION COMPONENT ====================
+
+const YouTubeSection = () => {
+  const [selectedChannel, setSelectedChannel] = useState(null);
+  const [activeRegion, setActiveRegion] = useState('all');
+  
+  // Kuratierte EV-YouTube-Kanäle
+  const youtubeChannels = [
+    // Deutsche Kanäle
+    {
+      id: 'bjorn-nyland',
+      name: 'Bjørn Nyland',
+      channelId: 'UCyTviYvim9gy5x5TBdQaTmw',
+      description: 'Umfassende EV-Tests mit echten Reichweiten- und Verbrauchsdaten',
+      language: 'en',
+      region: 'de',
+      specialty: 'Reichweite & Tests',
+      subscribers: '430K',
+      latestVideoId: 'dQw4w9WgXcQ', // Placeholder - würde dynamisch sein
+    },
+    {
+      id: 'nextmove',
+      name: 'nextmove',
+      channelId: 'UCg0fn8XbDSz5KvNCHrD5iig',
+      description: 'Deutschlands größter E-Auto-Kanal mit Praxistests',
+      language: 'de',
+      region: 'de',
+      specialty: 'Praxistests',
+      subscribers: '170K',
+    },
+    {
+      id: 'strominator',
+      name: 'Strominator',
+      channelId: 'UCTn-SXzPkZf3iZBjKZBPu_Q',
+      description: 'Technische Details und Hintergrundwissen zu EVs',
+      language: 'de',
+      region: 'de',
+      specialty: 'Technik',
+      subscribers: '85K',
+    },
+    {
+      id: 'autogefuehl',
+      name: 'Autogefühl',
+      channelId: 'UCe8Wu4DYQ2G5X7HqbT8I0ew',
+      description: 'Detaillierte Fahrzeugreviews auf Deutsch und Englisch',
+      language: 'de',
+      region: 'de',
+      specialty: 'Reviews',
+      subscribers: '1.2M',
+    },
+    {
+      id: 'felixba',
+      name: 'Felix Ba',
+      channelId: 'UCYjqv7GLUG4lWbNqZIXpCxQ',
+      description: 'Tesla und EV-Lifestyle aus Deutschland',
+      language: 'de',
+      region: 'de',
+      specialty: 'Tesla & Lifestyle',
+      subscribers: '320K',
+    },
+    // Internationale Kanäle
+    {
+      id: 'out-of-spec',
+      name: 'Out of Spec Reviews',
+      channelId: 'UCVrfPNpHFCqb1S1sBYqMMKg',
+      description: 'Detaillierte EV-Tests mit Fokus auf Langstrecke und Laden',
+      language: 'en',
+      region: 'int',
+      specialty: 'Langstrecke',
+      subscribers: '450K',
+    },
+    {
+      id: 'engineering-explained',
+      name: 'Engineering Explained',
+      channelId: 'UClqhvGmHcvWL9w3R48t9QXQ',
+      description: 'Technische Erklärungen zu EV-Technologie',
+      language: 'en',
+      region: 'int',
+      specialty: 'Technologie',
+      subscribers: '3.5M',
+    },
+    {
+      id: 'mkbhd',
+      name: 'MKBHD',
+      channelId: 'UCBcRF18a7Qf58cCRy5xuWwQ',
+      description: 'Tech-Reviews inklusive EVs von Marques Brownlee',
+      language: 'en',
+      region: 'int',
+      specialty: 'Tech Reviews',
+      subscribers: '19M',
+    },
+    {
+      id: 'fully-charged',
+      name: 'Fully Charged Show',
+      channelId: 'UCzz4CoEgSgWNs9ZAvRMhW2A',
+      description: 'Britischer EV- und Energie-Kanal',
+      language: 'en',
+      region: 'int',
+      specialty: 'EVs & Energie',
+      subscribers: '1.1M',
+    },
+    {
+      id: 'transport-evolved',
+      name: 'Transport Evolved',
+      channelId: 'UC8WyKOHW1R6A3eHQx3RVCFA',
+      description: 'Nachhaltige Mobilität und EV-News',
+      language: 'en',
+      region: 'int',
+      specialty: 'Nachhaltigkeit',
+      subscribers: '180K',
+    },
+    // Balkan/Südosteuropa Kanäle
+    {
+      id: 'carwow-serbia',
+      name: 'carwow Srbija',
+      channelId: 'UCFw2eGC6APuIEjnheBEyGlw',
+      description: 'Auto-Reviews auf Serbisch inkl. EVs',
+      language: 'sr',
+      region: 'balkan',
+      specialty: 'Reviews',
+      subscribers: '45K',
+    },
+    {
+      id: 'auto-portal-hr',
+      name: 'AutoPortal.hr',
+      channelId: 'UC_auto_portal_hr',
+      description: 'Kroatische Auto-Tests und EV-Berichte',
+      language: 'hr',
+      region: 'balkan',
+      specialty: 'Tests',
+      subscribers: '35K',
+    },
+    {
+      id: 'mondo-rs',
+      name: 'Mondo Auto',
+      channelId: 'UC_mondo_auto',
+      description: 'Serbische Auto-News und EV-Berichte',
+      language: 'sr',
+      region: 'balkan',
+      specialty: 'News',
+      subscribers: '28K',
+    },
+  ];
+  
+  // Empfohlene Videos (kuratiert)
+  const featuredVideos = [
+    {
+      id: 'v1',
+      title: '2025 EV Reichweiten-Ranking: Wer fährt am weitesten?',
+      channelName: 'Bjørn Nyland',
+      videoId: 'bjorn_range_2025',
+      thumbnail: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=400&h=225&fit=crop',
+      duration: '28:45',
+      views: '245K',
+      category: 'Reichweite',
+    },
+    {
+      id: 'v2',
+      title: 'Tesla Model 3 Highland vs. BYD Seal - Der große Vergleich',
+      channelName: 'nextmove',
+      videoId: 'nextmove_comparison',
+      thumbnail: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=225&fit=crop',
+      duration: '42:12',
+      views: '189K',
+      category: 'Vergleich',
+    },
+    {
+      id: 'v3',
+      title: 'Warum LFP-Batterien die Zukunft sind',
+      channelName: 'Engineering Explained',
+      videoId: 'eng_lfp',
+      thumbnail: 'https://images.unsplash.com/photo-1619317886570-0a3c2a43bc7e?w=400&h=225&fit=crop',
+      duration: '18:33',
+      views: '520K',
+      category: 'Technologie',
+    },
+    {
+      id: 'v4',
+      title: 'Ionity vs. Tesla Supercharger - Welches Netzwerk ist besser?',
+      channelName: 'Out of Spec Reviews',
+      videoId: 'oos_charging',
+      thumbnail: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=400&h=225&fit=crop',
+      duration: '35:20',
+      views: '312K',
+      category: 'Laden',
+    },
+    {
+      id: 'v5',
+      title: 'Elektroauto im Winter: 10 Tipps für maximale Reichweite',
+      channelName: 'Strominator',
+      videoId: 'strom_winter',
+      thumbnail: 'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?w=400&h=225&fit=crop',
+      duration: '22:15',
+      views: '156K',
+      category: 'Tipps',
+    },
+    {
+      id: 'v6',
+      title: 'Novi Renault Scenic E-Tech - Test i utisci',
+      channelName: 'Mondo Auto',
+      videoId: 'mondo_scenic',
+      thumbnail: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&h=225&fit=crop',
+      duration: '19:48',
+      views: '45K',
+      category: 'Test',
+    },
+  ];
+  
+  const regionFilters = [
+    { id: 'all', label: 'Alle', icon: '🌍' },
+    { id: 'de', label: 'Deutschland', icon: '🇩🇪' },
+    { id: 'int', label: 'International', icon: '🌐' },
+    { id: 'balkan', label: 'Balkan', icon: '🇷🇸' },
+  ];
+  
+  const filteredChannels = activeRegion === 'all' 
+    ? youtubeChannels 
+    : youtubeChannels.filter(ch => ch.region === activeRegion);
+  
+  return (
+    <div className="mt-12" data-testid="youtube-section">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold flex items-center space-x-2">
+            <span className="text-red-600">▶</span>
+            <span>EV-YouTube-Kanäle</span>
+          </h2>
+          <p className="text-slate-600 mt-1">Kuratierte Auswahl der besten EV-Kanäle</p>
+        </div>
+      </div>
+      
+      {/* Region Filter */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {regionFilters.map(filter => (
+          <button
+            key={filter.id}
+            onClick={() => setActiveRegion(filter.id)}
+            className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center space-x-2 ${
+              activeRegion === filter.id 
+                ? 'bg-red-600 text-white' 
+                : 'bg-slate-100 hover:bg-slate-200'
+            }`}
+          >
+            <span>{filter.icon}</span>
+            <span>{filter.label}</span>
+          </button>
+        ))}
+      </div>
+      
+      {/* Featured Videos */}
+      <div className="mb-8">
+        <h3 className="font-bold text-lg mb-4">🎬 Empfohlene Videos</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {featuredVideos.map((video) => (
+            <div 
+              key={video.id}
+              className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-all group cursor-pointer"
+              onClick={() => setSelectedChannel(video)}
+            >
+              <div className="aspect-video bg-slate-100 relative overflow-hidden">
+                <img 
+                  src={video.thumbnail} 
+                  alt={video.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
+                  {video.duration}
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30">
+                  <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center">
+                    <span className="text-white text-2xl ml-1">▶</span>
+                  </div>
+                </div>
+              </div>
+              <div className="p-3">
+                <h4 className="font-medium text-sm line-clamp-2 group-hover:text-red-600 transition-colors">
+                  {video.title}
+                </h4>
+                <div className="flex items-center justify-between mt-2 text-xs text-slate-500">
+                  <span>{video.channelName}</span>
+                  <span>{video.views} Aufrufe</span>
+                </div>
+                <span className="inline-block mt-2 text-xs bg-slate-100 px-2 py-0.5 rounded">
+                  {video.category}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Channel List */}
+      <div>
+        <h3 className="font-bold text-lg mb-4">📺 Kanäle ({filteredChannels.length})</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredChannels.map((channel) => (
+            <a
+              key={channel.id}
+              href={`https://www.youtube.com/channel/${channel.channelId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md hover:border-red-300 transition-all group"
+            >
+              <div className="flex items-start space-x-3">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-bold text-lg">
+                  {channel.name.charAt(0)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-bold group-hover:text-red-600 transition-colors truncate">
+                    {channel.name}
+                  </h4>
+                  <p className="text-xs text-slate-500">{channel.subscribers} Abonnenten</p>
+                </div>
+              </div>
+              <p className="text-sm text-slate-600 mt-3 line-clamp-2">
+                {channel.description}
+              </p>
+              <div className="flex items-center justify-between mt-3">
+                <span className="text-xs bg-slate-100 px-2 py-1 rounded">{channel.specialty}</span>
+                <span className="text-xs text-slate-400 uppercase">{channel.language}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+      
+      {/* Video Modal */}
+      {selectedChannel && (
+        <div 
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedChannel(null)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-xl max-w-4xl w-full overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-4 border-b">
+              <h3 className="font-bold">{selectedChannel.title}</h3>
+              <button 
+                onClick={() => setSelectedChannel(null)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="aspect-video bg-black flex items-center justify-center">
+              <div className="text-center text-white">
+                <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-4xl ml-1">▶</span>
+                </div>
+                <p className="text-lg">Video würde hier abgespielt</p>
+                <p className="text-sm text-slate-400 mt-2">
+                  Kanal: {selectedChannel.channelName}
+                </p>
+                <a 
+                  href={`https://www.youtube.com/results?search_query=${encodeURIComponent(selectedChannel.title)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-4 bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700"
+                >
+                  Auf YouTube ansehen
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
