@@ -516,6 +516,181 @@ Bei CHF 10'000 Preisunterschied und CHF 2'000 Ersparnis/Jahr:
     },
 ]
 
+# ==================== NEWS FEED CONFIGURATION ====================
+
+# RSS Feed Sources organized by region and category
+NEWS_FEEDS = {
+    # Schweizer Quellen
+    "swiss": [
+        {"url": "https://www.tcs.ch/de/testberichte-ratgeber/ratgeber/rss/elektromobilitaet.rss", "name": "TCS Elektromobilität", "lang": "de", "region": "CH"},
+        {"url": "https://www.blick.ch/auto/rss.xml", "name": "Blick Auto", "lang": "de", "region": "CH"},
+    ],
+    # Deutsche Quellen
+    "german": [
+        {"url": "https://www.electrive.net/feed/", "name": "Electrive.net", "lang": "de", "region": "DE"},
+        {"url": "https://ecomento.de/feed/", "name": "Ecomento", "lang": "de", "region": "DE"},
+        {"url": "https://www.elektroauto-news.net/feed/", "name": "Elektroauto-News", "lang": "de", "region": "DE"},
+        {"url": "https://teslamag.de/feed", "name": "Teslamag", "lang": "de", "region": "DE"},
+        {"url": "https://www.golem.de/rss.php?tp=auto", "name": "Golem Auto", "lang": "de", "region": "DE"},
+    ],
+    # Internationale/Europäische Quellen  
+    "international": [
+        {"url": "https://electrek.co/feed/", "name": "Electrek", "lang": "en", "region": "US"},
+        {"url": "https://insideevs.com/rss/news/all/", "name": "InsideEVs", "lang": "en", "region": "US"},
+        {"url": "https://cleantechnica.com/feed/", "name": "CleanTechnica", "lang": "en", "region": "US"},
+        {"url": "https://www.greencarreports.com/rss/news", "name": "Green Car Reports", "lang": "en", "region": "US"},
+        {"url": "https://chargedevs.com/feed/", "name": "Charged EVs", "lang": "en", "region": "US"},
+    ],
+    # Balkan/Südosteuropa Quellen
+    "balkan": [
+        {"url": "https://www.netokracija.rs/feed", "name": "Netokracija RS", "lang": "sr", "region": "RS"},
+        {"url": "https://www.netokracija.com/feed", "name": "Netokracija HR", "lang": "hr", "region": "HR"},
+        {"url": "https://www.automarket.hr/rss/vijesti", "name": "Automarket HR", "lang": "hr", "region": "HR"},
+        {"url": "https://www.automobili.hr/rss.xml", "name": "Automobili HR", "lang": "hr", "region": "HR"},
+    ],
+}
+
+# News categories for filtering
+NEWS_CATEGORIES = {
+    "vehicles": ["fahrzeug", "vehicle", "auto", "car", "model", "modell", "ev", "elektroauto", "automobil", "vozilo"],
+    "battery": ["batterie", "battery", "akku", "zelle", "cell", "reichweite", "range", "degradation", "lebensdauer", "baterija"],
+    "charging": ["laden", "charging", "ladestation", "charger", "ladesäule", "wallbox", "schnellladen", "dc", "ac", "punjenje", "punjač"],
+    "policy": ["förderung", "subsidy", "gesetz", "law", "regulierung", "regulation", "steuer", "tax", "politik", "policy", "zakon", "poticaj"],
+    "market": ["markt", "market", "verkauf", "sales", "zulassung", "registration", "statistik", "statistic", "preis", "price", "tržište"],
+    "technology": ["technologie", "technology", "update", "software", "ota", "autopilot", "fsd", "tuning", "upgrade", "tehnologija"],
+    "infrastructure": ["infrastruktur", "infrastructure", "netzwerk", "network", "ausbau", "expansion", "strom", "grid", "mreža"],
+}
+
+# Cache for news articles
+news_cache = {
+    "articles": [],
+    "last_updated": None,
+    "cache_duration": timedelta(hours=1)
+}
+
+def clean_html(text: str) -> str:
+    """Remove HTML tags and clean text"""
+    if not text:
+        return ""
+    # Remove HTML tags
+    clean = re.sub(r'<[^>]+>', '', text)
+    # Unescape HTML entities
+    clean = unescape(clean)
+    # Remove extra whitespace
+    clean = re.sub(r'\s+', ' ', clean).strip()
+    return clean[:500] + "..." if len(clean) > 500 else clean
+
+def categorize_article(title: str, summary: str) -> List[str]:
+    """Categorize article based on keywords in title and summary"""
+    categories = []
+    text = (title + " " + summary).lower()
+    
+    for cat, keywords in NEWS_CATEGORIES.items():
+        for keyword in keywords:
+            if keyword in text:
+                categories.append(cat)
+                break
+    
+    return categories if categories else ["general"]
+
+def generate_article_id(url: str) -> str:
+    """Generate unique ID for article based on URL"""
+    return hashlib.md5(url.encode()).hexdigest()[:12]
+
+async def fetch_single_feed(feed_config: Dict) -> List[Dict]:
+    """Fetch and parse a single RSS feed"""
+    articles = []
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            response = await client.get(feed_config["url"], follow_redirects=True)
+            if response.status_code == 200:
+                feed = feedparser.parse(response.text)
+                
+                for entry in feed.entries[:10]:  # Limit to 10 per feed
+                    # Parse publication date
+                    pub_date = None
+                    if hasattr(entry, 'published_parsed') and entry.published_parsed:
+                        try:
+                            pub_date = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
+                        except:
+                            pub_date = datetime.now(timezone.utc)
+                    elif hasattr(entry, 'updated_parsed') and entry.updated_parsed:
+                        try:
+                            pub_date = datetime(*entry.updated_parsed[:6], tzinfo=timezone.utc)
+                        except:
+                            pub_date = datetime.now(timezone.utc)
+                    else:
+                        pub_date = datetime.now(timezone.utc)
+                    
+                    # Get summary/description
+                    summary = ""
+                    if hasattr(entry, 'summary'):
+                        summary = clean_html(entry.summary)
+                    elif hasattr(entry, 'description'):
+                        summary = clean_html(entry.description)
+                    
+                    # Get image if available
+                    image_url = None
+                    if hasattr(entry, 'media_content') and entry.media_content:
+                        image_url = entry.media_content[0].get('url')
+                    elif hasattr(entry, 'enclosures') and entry.enclosures:
+                        for enc in entry.enclosures:
+                            if enc.get('type', '').startswith('image'):
+                                image_url = enc.get('href')
+                                break
+                    
+                    title = clean_html(entry.get('title', 'Kein Titel'))
+                    link = entry.get('link', '')
+                    
+                    article = {
+                        "id": generate_article_id(link),
+                        "title": title,
+                        "summary": summary,
+                        "url": link,
+                        "source": feed_config["name"],
+                        "language": feed_config["lang"],
+                        "region": feed_config["region"],
+                        "published": pub_date.isoformat() if pub_date else None,
+                        "image_url": image_url,
+                        "categories": categorize_article(title, summary),
+                    }
+                    articles.append(article)
+                    
+    except Exception as e:
+        logger.warning(f"Error fetching feed {feed_config['name']}: {e}")
+    
+    return articles
+
+async def fetch_all_feeds() -> List[Dict]:
+    """Fetch all RSS feeds concurrently"""
+    all_feeds = []
+    for region_feeds in NEWS_FEEDS.values():
+        all_feeds.extend(region_feeds)
+    
+    # Fetch all feeds concurrently
+    tasks = [fetch_single_feed(feed) for feed in all_feeds]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    
+    # Combine all articles
+    all_articles = []
+    for result in results:
+        if isinstance(result, list):
+            all_articles.extend(result)
+    
+    # Sort by publication date (newest first)
+    all_articles.sort(key=lambda x: x.get('published', '') or '', reverse=True)
+    
+    # Remove duplicates based on title similarity
+    seen_titles = set()
+    unique_articles = []
+    for article in all_articles:
+        title_key = article['title'].lower()[:50]
+        if title_key not in seen_titles:
+            seen_titles.add(title_key)
+            unique_articles.append(article)
+    
+    return unique_articles
+
 # ==================== ROUTES ====================
 
 @api_router.get("/")
